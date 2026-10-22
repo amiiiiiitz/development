@@ -1,20 +1,18 @@
 # Dev Journey
 
-A collection of my software development projects, experiments, and hands-on learning across frontend development, backend engineering, and AI.
+A collection of software development projects, practical experiments, and technical learning focused on building applications and strengthening engineering skills.
 
-## About
+## Overview
 
-This repository serves as a centralized collection of my development work as I explore technologies, build applications, and expand my engineering skills.
+This repository documents my ongoing development journey through hands-on projects, experimentation, and continuous learning. It brings together work across frontend development, backend engineering, and AI, with individual projects documented separately.
 
-It includes projects ranging from web development to AI-powered applications, with each project maintained in its own directory and documented separately.
+## Areas of Focus
 
-## Focus Areas
-
-- **Frontend Development:** Building responsive, accessible, and user-friendly web interfaces.
-- **Backend Development:** Developing APIs, server-side logic, and database-driven applications.
-- **AI and Machine Learning:** Exploring machine learning concepts, tools, and practical applications.
-- **AI Engineering:** Developing applications powered by large language models (LLMs), retrieval-augmented generation (RAG), and AI agents.
-- **Software Projects and Experiments:** Applying technical knowledge to practical problems and exploring new technologies.
+- **Frontend Development:** Building interactive, responsive user interfaces.
+- **Backend Engineering:** Developing APIs, server-side applications, and database-driven systems.
+- **AI and Machine Learning:** Exploring machine learning techniques and practical AI applications.
+- **AI Engineering:** Building AI-powered applications using LLMs, retrieval-augmented generation (RAG), and AI agents.
+- **Software Development:** Practicing problem-solving, exploring tools, and applying engineering concepts to practical projects.
 
 ## Technologies
 
@@ -23,30 +21,28 @@ Technologies vary by project and may include:
 - **Languages:** Python, JavaScript, C++
 - **Frontend:** React, HTML, CSS, Tailwind CSS
 - **Backend:** FastAPI, Node.js, Express
-- **AI and Machine Learning:** NumPy, Pandas, PyTorch, and LLM-based tools
+- **AI/ML:** NumPy, Pandas, PyTorch, and LLM-based tools
 - **Tools:** Git, GitHub, Visual Studio Code
 
 Not every technology listed is used in every project.
 
 ## Repository Structure
 
-Each project or experiment is organized in its own directory, with a dedicated README containing relevant documentation, setup instructions, and usage information.
+Projects are organized by development approach, purpose, or technology. Individual projects may include a dedicated README with an overview, features, technology stack, and setup instructions.
 
 ```text
-dev-journey/
-├── project-name/
-│   └── README.md
-├── another-project/
-│   └── README.md
+development/
+├── README.md
+├── project-category/
+│   ├── project-name/
+│   │   ├── README.md
+│   │   └── ...
+│   └── ...
 └── ...
 ```
 
-The structure may evolve as new projects and technologies are introduced.
+The structure evolves as new projects and experiments are added.
 
 ## Objective
 
-To strengthen my engineering skills through practical development, explore emerging technologies, and build useful, maintainable applications across software development and AI engineering.
-
----
-
-This repository documents my ongoing development journey through building, experimentation, and continuous learning.
+To develop practical engineering skills by building useful applications, exploring technologies, and applying software development and AI concepts to real-world problems.
