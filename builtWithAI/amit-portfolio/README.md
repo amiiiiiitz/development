@@ -52,4 +52,4 @@ npm run build
 
 I am a third-year Computer Science student at IUBAT, building my skills in Python, AI/ML, and React, with a focus on developing practical AI-powered applications.
 
-- **LinkedIn:** https://www.linkedin.com/in/amit-hasan-simanto-301694346/
+- [LinkedIn Profile](<YOUR_LINKEDIN_PROFILE_URL>)
