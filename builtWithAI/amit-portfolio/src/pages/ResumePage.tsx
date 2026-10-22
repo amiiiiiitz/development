@@ -1,0 +1,4 @@
+import PageLayout from '../components/PageLayout'
+import ResumeChapter from '../components/ResumeChapter'
+function ResumePage() { return <PageLayout><main className="min-h-[70vh] py-10 sm:py-16"><header className="section-wrap mb-5"><p className="font-mono text-[9px] uppercase tracking-[.2em] text-cyan">Profile document</p><h1 className="mt-3 font-display text-4xl font-medium tracking-tight text-white sm:text-6xl">Resume</h1><p className="mt-4 max-w-2xl text-sm leading-7 text-slate-200/65">A current summary of education, explored skills, projects, and learning.</p></header><ResumeChapter /></main></PageLayout> }
+export default ResumePage
