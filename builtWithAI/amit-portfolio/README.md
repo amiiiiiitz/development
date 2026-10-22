@@ -30,8 +30,8 @@ Developed through an AI-assisted workflow combining design exploration, implemen
 **Prerequisites:** Node.js and npm.
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
-cd amit-portfolio
+git clone https://github.com/amiiiiiitz/development.git
+cd development/build-with-AI-tools/amit-portfolio
 npm install
 npm run dev
 ```
@@ -46,11 +46,10 @@ npm run build
 
 ## Live Demo
 
-[View Portfolio](<YOUR_LIVE_PORTFOLIO_URL>)
+[View Portfolio](https://amit-hasan-portfolio.vercel.app/)
 
 ## About Me
 
 I am a third-year Computer Science student at IUBAT, building my skills in Python, AI/ML, and React, with a focus on developing practical AI-powered applications.
 
-- **GitHub:** [GitHub Profile](<YOUR_GITHUB_PROFILE_URL>)
-- **LinkedIn:** [LinkedIn Profile](<YOUR_LINKEDIN_PROFILE_URL>)
+- **LinkedIn:** https://www.linkedin.com/in/amit-hasan-simanto-301694346/
