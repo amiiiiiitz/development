@@ -1,21 +1,76 @@
-import { ArrowRight, ArrowUpRight, Award, Compass } from 'lucide-react'
+﻿import { motion } from 'motion/react'
+import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router'
 import projects from '../data/projects'
-import { achievements } from '../data/story'
-import ProjectCard from './ProjectCard'
+import { profile } from '../data/profile'
+
+const featured = projects.filter((project) => project.status === 'Built')
 
 function HomeChapters() {
-  const selectedProjects = projects.slice(0, 2)
-  const selectedAchievement = achievements.find((item) => item.image)
-  return <>
-
-    <section id="projects" aria-labelledby="home-projects-title" className="section-wrap py-16 sm:py-20">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div className="max-w-2xl"><p className="mb-3 font-mono text-[9px] uppercase tracking-[.2em] text-cyan">Selected work / concepts</p><h2 id="home-projects-title" className="font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">Work in progress...</h2><p className="mt-3 text-sm leading-6 text-slate-200/65">A few selected projects from the portfolio and current learning direction.</p></div><Link to="/projects" className="inline-flex items-center gap-2 text-xs text-cyan transition hover:text-white">All projects <ArrowRight size={14} /></Link></div>
-      <div className="grid gap-4 lg:grid-cols-2">{selectedProjects.map((project) => <ProjectCard key={project.slug} project={project} detailsHref={`/projects/${project.slug}`} />)}</div>
-    </section>
-    <section aria-labelledby="home-achievements-title" className="border-y border-white/[.07] py-14 sm:py-16"><div className="section-wrap grid gap-6 sm:grid-cols-[auto_1fr_auto] sm:items-center"><div className="grid h-12 w-12 place-items-center rounded-xl border border-amber-300/20 text-amber-200"><Award size={20} /></div><div><p className="font-mono text-[9px] uppercase tracking-[.18em] text-amber-200/75">Verified recognition</p><h2 id="home-achievements-title" className="mt-2 font-display text-xl font-medium text-white">{selectedAchievement?.title ?? 'Achievements and certificates'}</h2><p className="mt-2 max-w-2xl text-xs leading-5 text-slate-200/65">{selectedAchievement?.description ?? 'See the achievement gallery for verified records.'}</p></div><Link to="/achievements" className="inline-flex items-center gap-2 text-xs text-cyan transition hover:text-white">Achievement gallery <ArrowUpRight size={14} /></Link></div></section>
-    <section aria-labelledby="home-about-title" className="section-wrap grid gap-6 py-16 sm:grid-cols-[1fr_auto] sm:items-end sm:py-20"><div className="max-w-2xl"><p className="font-mono text-[9px] uppercase tracking-[.2em] text-violet-200/75">A little about me</p><h2 id="home-about-title" className="mt-3 font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">Curiosity shapes the work I want to do.</h2></div><Link to="/about" className="inline-flex items-center gap-2 text-xs text-cyan transition hover:text-white">Read my background <Compass size={14} /></Link></section>
-    <section className="section-wrap pb-20 sm:pb-24"><div className="contact-panel flex flex-col gap-5 rounded-2xl border border-white/10 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-9"><div><p className="font-mono text-[9px] uppercase tracking-[.2em] text-cyan">Continue the conversation</p><h2 className="mt-2 font-display text-2xl font-medium text-white">Have a thoughtful problem in mind?</h2></div><Link to="/contact" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-xs font-semibold text-ink transition hover:bg-cyan">Get in touch <ArrowUpRight size={14} /></Link></div></section>
-  </>
+  return <div className="space-y-10">
+    {featured.map((project) => <motion.article key={project.slug} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} className="grid overflow-hidden border border-white/10 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="relative flex min-h-[22rem] flex-col justify-between p-6 sm:p-8 lg:min-h-[28rem] lg:p-12">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[9px] uppercase tracking-[0.34em] text-white/40">Project {project.number}</span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.34em] text-[var(--color-accent)]">{project.category}</span>
+        </div>
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-white/30">{project.subtitle}</p>
+          <h3 className="mt-5 font-display text-[clamp(2.8rem,7vw,6.2rem)] uppercase leading-[0.92] tracking-tight text-white">{project.title}</h3>
+          <p className="mt-6 max-w-lg text-base leading-8 text-white/60">{project.description}</p>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link to={`/projects/${project.slug}`} className="group inline-flex items-center gap-3 border border-white/20 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]">Case Study <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
+            {project.resources?.liveDemo && <a href={project.resources.liveDemo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white/70 transition hover:border-white hover:text-white">Live <ArrowUpRight size={14} /></a>}
+            {project.resources?.sourceCode && <a href={project.resources.sourceCode} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white/70 transition hover:border-white hover:text-white">Source <ArrowUpRight size={14} /></a>}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {project.stack.slice(0, 7).map((tech) => <span key={tech} className="border border-white/10 px-3 py-1 font-mono text-[9px] uppercase tracking-[0.28em] text-white/40">{tech}</span>)}
+        </div>
+      </div>
+      <div className="relative flex items-center justify-center border-t border-white/10 p-6 lg:border-l lg:border-t-0 sm:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(217,181,76,0.09),transparent_72%)]" />
+        <div className="relative w-full max-w-md border border-white/10 p-8 text-center">
+          <p className="font-mono text-[9px] uppercase tracking-[0.42em] text-white/30">Editorial Approach</p>
+          <p className="mt-6 font-display text-[clamp(2rem,4vw,3.8rem)] uppercase leading-[0.95] text-white">Evidence <span className="italic font-[var(--font-serif)] normal-case">over</span> Claims</p>
+          <p className="mt-4 text-sm leading-7 text-white/55">Clear separation between built work, in-progress work, and planned concepts.</p>
+        </div>
+      </div>
+    </motion.article>)}
+    <motion.article initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} className="grid overflow-hidden border border-white/10 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="relative flex items-center justify-center border-b border-white/10 p-6 lg:border-b-0 lg:border-r sm:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(255,255,255,0.03),transparent_72%)]" />
+        <div className="relative w-full max-w-md">
+          <p className="font-mono text-[9px] uppercase tracking-[0.42em] text-[var(--color-accent)]">About</p>
+          <h3 className="mt-4 font-display text-[clamp(2.4rem,5vw,4.6rem)] uppercase leading-[0.94] text-white">{profile.name}</h3>
+          <p className="mt-3 text-[11px] uppercase tracking-[0.36em] text-white/40">{profile.careerDirection}</p>
+          <p className="mt-6 text-base leading-8 text-white/60">{profile.introduction}</p>
+        </div>
+      </div>
+      <div className="flex flex-col justify-between p-6 sm:p-8 lg:p-12">
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-white/30">Interests</p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {profile.appliedAiFocus.slice(0, 8).map((item) => <span key={item} className="border border-white/10 px-3 py-1 text-sm text-white/60">{item}</span>)}
+          </div>
+        </div>
+        <div className="mt-10 flex flex-wrap items-center gap-3">
+          <Link to="/about" className="group inline-flex items-center gap-3 border border-white/20 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]">About <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
+          <Link to="/contact" className="inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white/70 transition hover:border-white hover:text-white">Contact <ArrowUpRight size={14} /></Link>
+        </div>
+      </div>
+    </motion.article>
+    <motion.section initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} className="border border-white/10 p-6 sm:p-10 lg:p-12">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-[var(--color-accent)]">Let&apos;s Build</p>
+          <h3 className="mt-4 font-display text-[clamp(2.6rem,6vw,5rem)] uppercase leading-[0.94] text-white">Open to thoughtful collaboration</h3>
+          <p className="mt-4 max-w-2xl text-base leading-8 text-white/60">Focused on practical AI applications, agent workflows, and reliable software.</p>
+        </div>
+        <Link to="/contact" className="group inline-flex items-center gap-3 border border-[var(--color-accent)] px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-[var(--color-accent)] transition hover:bg-[var(--color-accent)] hover:text-black">Get in Touch <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
+      </div>
+    </motion.section>
+  </div>
 }
+
 export default HomeChapters

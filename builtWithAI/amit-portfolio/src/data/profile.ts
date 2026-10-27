@@ -22,7 +22,7 @@ export const profile = {
   resumePdfUrl: '',
   resumeFileName: 'Amit-Hasan-Simanto-Resume.pdf',
   links: [
-    { label: 'GitHub', href: 'https://github.com/Amit-Verse', footer: true },
+    { label: 'GitHub', href: 'https://github.com/amiiiiiitz', footer: true },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/amit-hasan-simanto-301694346/', footer: true },
     { label: 'Codeforces', href: 'https://codeforces.com/profile/amit.hasan2730', footer: true },
     { label: 'LeetCode Practice — Move Zeroes', href: 'https://leetcode.com/problems/move-zeroes/description/', footer: false },

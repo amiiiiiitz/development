@@ -1,55 +1,32 @@
-# Personal Portfolio — Amit Hasan Simanto
+# React + TypeScript + Vite
 
-A personal portfolio built with React, TypeScript, and Vite to showcase my academic achievements, projects, technical interests, and professional development toward AI engineering.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## Overview
+Currently, two official plugins are available:
 
-This project provides a central place to explore my background, achievements, and projects. I designed it to present information through a structured, interactive experience, making it easier for visitors to navigate my work and understand my technical interests.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Features
+## React Compiler
 
-- **Interactive Achievement Gallery:** Browse academic and programming certificates through dedicated sections and navigation controls.
-- **Project Showcase:** Explore my projects, technical interests, and development journey.
-- **Professional Profile:** Learn about my background, skills, and career direction.
-- **Responsive Design:** Adapts the interface to different screen sizes.
-- **Focused User Experience:** Uses clear content hierarchy and purposeful interactions to organize information.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Tech Stack
+## Expanding the Oxlint configuration
 
-- **Frontend:** React, TypeScript
-- **Build Tool:** Vite
-- **Styling:** CSS
-- **Deployment:** Vercel
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
 
-## Development Approach
-
-Developed through an AI-assisted workflow combining design exploration, implementation, and iterative refinement. AI coding tools helped accelerate development, while requirements-driven feedback guided interface improvements and feature adjustments.
-
-## Getting Started
-
-**Prerequisites:** Node.js and npm.
-
-```bash
-git clone https://github.com/amiiiiiitz/development.git
-cd development/build-with-AI-tools/amit-portfolio
-npm install
-npm run dev
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
 
-Open the local URL displayed in the terminal to view the application.
-
-To create a production build:
-
-```bash
-npm run build
-```
-
-## Live Demo
-
-[View Portfolio](https://amit-hasan-portfolio.vercel.app/)
-
-## About Me
-
-I am a third-year Computer Science student at IUBAT, building my skills in Python, AI/ML, and React, with a focus on developing practical AI-powered applications.
-
-- [LinkedIn Profile](https://www.linkedin.com/in/amit-hasan-simanto-301694346/)
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
