@@ -59,8 +59,8 @@ function SiteHeader() {
   }
   const activeSecondary = secondaryNavigation.some((item) => isActiveRoute(pathname, item.to))
 
-  return <header className="sticky top-0 z-40 mx-auto grid h-[72px] w-full max-w-[82rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-white/[0.06] bg-[#070707]/90 px-3 backdrop-blur-md sm:px-6 lg:px-8">
-    <Link to="/" aria-label="Amit Hasan Simanto, aspiring AI engineer — home" className="group relative z-10 flex min-w-0 shrink-0 items-center gap-3 justify-self-start whitespace-nowrap"><span className="font-display text-xl font-semibold uppercase tracking-[0.28em] text-white">Amit<span className="text-[var(--color-accent)]">.</span></span><span className="hidden border-l border-white/15 pl-3 text-[10px] uppercase tracking-[0.32em] text-white/40 sm:inline">Aspiring AI Engineer</span></Link>
+  return <header className="sticky top-0 z-40 mx-auto grid h-[72px] w-full max-w-[82rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b border-white/[0.06] bg-[#070707]/90 px-3 backdrop-blur-md sm:px-6 lg:px-8 xl:grid-cols-[minmax(0,1.05fr)_auto_minmax(0,0.95fr)]">
+    <Link to="/" aria-label="Amit Hasan Simanto, aspiring AI engineer — home" className="group relative z-10 flex min-w-0 shrink-0 items-center gap-3 justify-self-start whitespace-nowrap"><span className="font-display text-xl font-semibold uppercase tracking-[0.28em] text-white">Amit<span className="text-[var(--color-accent)]">.</span></span><span className="hidden border-l border-white/15 pl-3 text-[9px] uppercase tracking-[0.32em] text-white/40 sm:inline">Aspiring AI Engineer</span></Link>
 
     <nav aria-label="Main navigation" className="hidden min-w-0 items-center justify-self-center gap-2.5 xl:flex">
       {primaryNavigation.map((item) => renderLink(item))}

@@ -1,4 +1,4 @@
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, BookOpen, Code2, ExternalLink } from 'lucide-react'
 import type { Project, ProjectStatus } from '../data/projects'
 import { Link } from 'react-router'
 import TechnologyChips from './TechnologyChips'
@@ -34,6 +34,11 @@ function ProjectCard({ project, detailsHref }: { project: Project; detailsHref?:
       <div className="flex flex-1 flex-col border-t border-white/10 p-6 sm:p-8">
         <p className="flex-1 text-base leading-8 text-white/65">{project.description}</p>
         <TechnologyChips items={project.stack} label={project.technologyStatus === 'Used' ? 'Technologies used' : 'Planned technologies'} className="mt-6" />
+        {project.resources && <div className="mt-6 flex flex-wrap gap-2">
+          {project.resources.liveDemo && <a href={project.resources.liveDemo} target="_blank" rel="noopener noreferrer" aria-label="Live Demo (opens in a new tab)" className="inline-flex min-h-9 shrink-0 items-center gap-2 whitespace-nowrap border border-[var(--color-accent)]/45 px-3 py-2 text-[10px] font-medium text-[var(--color-accent)] transition hover:border-[var(--color-accent)]/75 hover:bg-[var(--color-accent)]/[.06] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]"><ExternalLink size={13} />Live Demo</a>}
+          {project.resources.sourceCode && <a href={project.resources.sourceCode} target="_blank" rel="noopener noreferrer" aria-label="Source Code (opens in a new tab)" className="inline-flex min-h-9 shrink-0 items-center gap-2 whitespace-nowrap border border-white/15 px-3 py-2 text-[10px] text-white/70 transition hover:border-[var(--color-accent)]/60 hover:text-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]"><Code2 size={13} />Source Code</a>}
+          {project.resources.readme && <a href={project.resources.readme} target="_blank" rel="noopener noreferrer" aria-label="README (opens in a new tab)" className="inline-flex min-h-9 shrink-0 items-center gap-2 whitespace-nowrap border border-white/15 px-3 py-2 text-[10px] text-white/70 transition hover:border-[var(--color-accent)]/60 hover:text-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]"><BookOpen size={13} />README</a>}
+        </div>}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
           <span className="text-sm text-white/50">{project.status === 'Planned' ? 'Concept in planning' : project.status === 'Built' ? 'Built project' : 'In development'}</span>
           {detailsHref ? <Link to={detailsHref} className="group/detail inline-flex min-h-10 items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-white/70 transition hover:text-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]">Case study <ArrowUpRight size={14} className="transition-transform group-hover/detail:-translate-y-0.5 group-hover/detail:translate-x-0.5" /></Link> : <ArrowUpRight size={16} className="text-white/30" />}
