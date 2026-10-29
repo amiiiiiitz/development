@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: nofi-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: FRONTEND_ORIGINS
+        sync: false
+      - key: TRUST_PROXY_HOPS
+        value: "1"
+      - key: INFO_RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: INFO_RATE_LIMIT_MAX
+        value: "30"
+      - key: CONVERT_RATE_LIMIT_WINDOW_MS
+        value: "3600000"
+      - key: CONVERT_RATE_LIMIT_MAX
+        value: "5"
+      - key: MAX_CONCURRENT_CONVERSIONS
+        value: "2"

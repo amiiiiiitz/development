@@ -1,0 +1,897 @@
+
+
+ <!-- .divani {
+   margin: 0;
+   padding: 0;
+   width: 2px;
+   height: 2px;
+   background: rgb(227, 9, 9);
+
+   animation-name: amit;
+   animation-duration: 2s;
+   animation-timing-function: ease-out;
+   /* animation-delay: .5s; */
+   animation-iteration-count: 1;
+   animation-fill-mode: backwards;
+ }
+
+ @keyframes amit {
+   from {
+     width: 0%;
+   }
+
+   to {
+     width: 100%;
+   }
+ }
+
+ .rocket {
+   position: fixed;
+   left: 1850px;
+   width: 40px;
+   height: 60px;
+   z-index: 999;
+   animation: rocketMove 5s linear infinite;
+ }
+
+ .rocket img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+ }
+
+ @keyframes rocketMove {
+   0% {
+     bottom: -60px;
+   }
+
+   100% {
+     bottom: 110vh;
+   }
+ }
+
+ body {
+   background: #0e0d0d;
+   margin: 0;
+   padding: 0;
+   font-family: fantasy;
+ }
+
+ .header {
+   background: url("batman.jpg") no-repeat scroll;
+   background-position: center top 50%;
+   border: 2px solid black;
+
+ }
+
+ .header a:hover {
+   color: rgb(170, 18, 18);
+ }
+
+ .navigation>*,
+ .whatsapp,
+ .insta,
+ .fb,
+ .linkedin {
+   transition: transform 0.3s ease;
+ }
+
+ .n1:hover,
+ .n2:hover,
+ .n3:hover,
+ .n4:hover,
+ .n5:hover,
+ .n6:hover,
+ .n7:hover,
+ .whatsapp:hover,
+ .insta:hover,
+ .fb:hover,
+ .linkedin:hover {
+   cursor: pointer;
+   transform: scale(1.1);
+ }
+
+
+ .my_photo {
+   width: 150px;
+   height: 150px;
+   position: relative;
+   left: 837px;
+   top: 170px;
+ }
+
+ .my_photo img {
+   width: 150px;
+   height: 150px;
+   border-radius: 50%;
+   object-fit: cover;
+   border: 2px solid rgb(5, 105, 5);
+   transition: transform .5s ease-in-out;
+ }
+
+ .my_photo img:hover {
+   cursor: pointer;
+   transform: scale(1.5);
+ }
+
+ .circle1 {
+   height: 30px;
+   width: 30px;
+   position: relative;
+   left: 40px;
+   bottom: 80px;
+ }
+
+ .circle1 img {
+   height: 30px;
+   width: 30px;
+   border-radius: 50%;
+   object-fit: cover;
+   border: 2px solid green;
+ }
+
+ .whatsapp,
+ .insta,
+ .fb,
+ .linkedin {
+   height: 20px;
+   width: 150px;
+   position: relative;
+   left: 95px;
+   bottom: 108px;
+   border-radius: 10px;
+
+   border: 2px solid rgb(82, 137, 181);
+   text-align: center;
+   color: rgb(36, 47, 76);
+   font-weight: 100;
+
+ }
+
+
+ .headh1 {
+   position: relative;
+   width: 400px;
+   height: fit-content;
+   left: 730px;
+   bottom: 10px;
+
+   white-space: nowrap;
+   overflow: hidden;
+
+   color: rgb(138, 132, 132);
+   font-family: 'Times New Roman', serif;
+   font-weight: bolder;
+   font-size: 200%;
+
+   animation:
+     hiding 1.5s linear,
+     reveal1 1.5s linear 1.5s;
+   /* animation-iteration-count: infinite; */
+ }
+
+ .t1 {
+   animation: t1anim 3s ease-out 1.5s;
+   /* animation-iteration-count: infinite; */
+ }
+
+ .t2 {
+   opacity: 0;
+   position: absolute;
+   left: 0;
+   right: 0;
+   animation: t2anim 2.5s ease-in 1.5s;
+   /* animation-iteration-count: infinite; */
+ }
+
+ @keyframes hiding {
+   from {
+     width: 400px;
+   }
+
+   to {
+     width: 0px;
+   }
+ }
+
+ @keyframes t1anim {
+
+   0%,
+   60% {
+     opacity: 0;
+   }
+
+   100% {
+     opacity: 1;
+   }
+ }
+
+ @keyframes reveal1 {
+   from {
+     width: 0px;
+   }
+
+   to {
+     width: 400px;
+   }
+ }
+
+ @keyframes t2anim {
+
+   0%,
+   70% {
+     opacity: 1;
+   }
+
+   100% {
+     opacity: 0;
+   }
+ }
+
+
+
+ .navigation nav {
+   text-align: center;
+   display: flex;
+   justify-content: center;
+   gap: 10px;
+
+   /* background: #dbd6d6;
+    height : 40px;
+    padding-top : 20px; */
+
+ }
+
+ .navigation nav .n1,
+ .navigation nav .n2,
+ .navigation nav .n3,
+ .navigation nav .n4,
+ .navigation nav .n5,
+ .navigation nav .n6,
+ .navigation nav .n7 {
+   width: 150px;
+   background-color: #c57171;
+   border-radius: 20px;
+   border: 4px solid rgb(138, 132, 132);
+   /* color: white; */
+ }
+
+ .header a {
+   color: white;
+   text-decoration: none;
+ }
+
+
+
+ .container {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   width: 100%;
+   margin: 40px 0px 0px 0px;
+ }
+
+ .ch4,
+ .eduh,
+ .hobbi,
+ .ah,
+ .fh,
+ .play {
+   transition: transform .4s ease-in-out;
+ }
+
+ .ch4:hover,
+ .eduh:hover,
+ .hobbi:hover,
+ .ah:hover,
+ .fh:hover,
+ .play:hover {
+   transform: scale(1.1);
+   cursor: pointer;
+ }
+
+ .intro {
+   margin-top: 15px;
+   margin-bottom: 15px;
+   padding: 7px;
+   width: 46%;
+   /* vertical-align: top; */
+   /* background: wheat; */
+   text-align: center;
+ }
+
+ .ch4 {
+   display: inline-block;
+   background: #253968;
+   border: 1.5px solid whitesmoke;
+   border-radius: 15px;
+   padding: 3px 0px 0px 0px;
+   height: 25px;
+   width: 160px;
+   text-align: center;
+   color: white;
+
+ }
+
+
+ .intro p {
+   margin-top: 30px;
+   padding-top: 1%;
+   padding-bottom: 1%;
+   /* background: white; */
+   color: white;
+   border-radius: 20px;
+   border: 1px solid blueviolet;
+   font-family: fantasy;
+ }
+
+ .intro a {
+   color: rgb(229, 180, 180);
+   text-decoration: none;
+ }
+
+ .edu {
+   margin: 15px 0px 15px;
+   padding: 7px;
+   width: 46%;
+   vertical-align: top;
+   text-align: center;
+ }
+
+ .eduh {
+   display: inline-block;
+   background: #1d3469;
+   border: 1px solid whitesmoke;
+   border-radius: 20px;
+   padding: 10px 0px 0px 0px;
+   margin: 0px 0px 6px 0px;
+   height: 25px;
+   width: 360px;
+   text-align: center;
+   color: white;
+
+ }
+
+
+ .grid-container {
+   display: grid;
+   grid-template-columns: repeat(5, 1fr);
+   gap: 10px;
+   padding: 10px;
+   border-radius: 8px;
+   margin: 5px 4px 0px 0px;
+ }
+
+ .grid-header {
+   font-weight: bold;
+   color: white;
+   text-align: center;
+   padding: 8px;
+   border-radius: 4px;
+   border: .2px solid blueviolet;
+ }
+
+ .grid-item {
+   background: #2a2a2a;
+   text-align: center;
+   padding: 8px;
+   border-radius: 4px;
+   color: white;
+   border: .2px solid rgb(110, 156, 180);
+ }
+
+
+ #HOBBIES {
+   text-align: center;
+   margin-bottom: 20px;
+   font-size: large;
+ }
+
+ .hobbi {
+   display: inline-block;
+   background: #1d3469;
+   border: 1px solid rgb(192, 191, 191);
+   border-radius: 20px;
+   padding: 9px 0px 5px 0px;
+   margin: 60px 0px 30px 0px;
+   height: 25px;
+   width: 180px;
+   text-align: center;
+   color: white;
+ }
+
+ .HOBBIES {
+   display: flex;
+   gap: 40px;
+   overflow-x: auto;
+   flex-wrap: nowrap;
+   padding-bottom: 10px;
+   scroll-behavior: smooth;
+ }
+
+ .hb {
+   min-width: 300px;
+   height: 50vh;
+   overflow: hidden;
+   text-align: center;
+   display: flex;
+   flex-direction: column;
+   border: .5px solid rgb(2, 82, 2);
+   border-radius: 4%;
+ }
+
+ .hb img {
+   width: 100%;
+   height: 85%;
+   object-fit: cover;
+   border-radius: 4%;
+   display: block;
+   border: 1px solid rgb(64, 94, 164);
+   transition: transform 0.4s ease, filter 0.4s ease;
+ }
+
+ .hb :hover {
+   cursor: pointer;
+   filter: brightness(1.5) contrast(90%);
+   transform: scale(1.8);
+ }
+
+ .caption {
+   margin-top: 8px;
+   font-size: 18px;
+   font-weight: 600;
+   color: white;
+ }
+
+
+ .caption {
+   text-align: center;
+   font-weight: bold;
+   color: white;
+   font-family: fantasy;
+ }
+
+ #GOALS {
+   background: whitesmoke;
+   color: rgb(16, 2, 2);
+   margin: 80px 30px 20px 30px;
+   padding: 10px 10px 10px 10px;
+   border: 2px solid rgb(197, 68, 68);
+   border-radius: 10px;
+ }
+
+ .FA {
+   display: flex;
+   justify-content: space-evenly;
+   height: 800px;
+ }
+
+ .ACHIVEMENTS,
+ .FRIEND {
+   width: 20%;
+   height: 600px;
+   vertical-align: top;
+   border: 2px solid blueviolet;
+   border-radius: 40px;
+   padding: 10px;
+   text-align: START;
+   font-size: 24px;
+   color: white;
+   overflow: scroll;
+
+ }
+
+ .FRIENDS {
+  display: grid;
+  row-gap: 30px;
+  grid-template-rows: auto auto auto auto auto auto auto auto;
+  width: 20%;
+  height: 600px; /* ✅ add a fixed or max height */
+  overflow-y: scroll; /* better than just 'scroll' */
+  
+  text-align: center;
+  vertical-align: top;
+  border: 2px solid blueviolet;
+  border-radius: 40px;
+  padding: 10px;
+  font-size: 24px;
+  color: white;
+  margin: 80px 100px 0px 0px;
+}
+
+.friends {
+  width: 100%;
+  height: 100%;
+  
+  text-align: center;
+}
+ .friends img {
+   width: 100%;
+   height: 92%;
+   border-radius: 2%;
+   border: 1px solid rgb(128, 165, 220);
+   object-fit: cover;
+   transition: transform 0.2s linear;
+ }
+
+.friends a {
+  text-decoration: none;
+  color: white;
+}
+
+.friends img:hover {
+  transform: scale(1.01);
+}
+
+ .ACHIVEMENTS {
+   margin: 80px 0px 0px 100px;
+ }
+
+ 
+
+ .FRIEND {
+   margin: 80px 0px 0px 0px;
+   background: #282828;
+ }
+
+ .ah {
+   display: inline-block;
+   background: #2b488c;
+   border: 1px solid rgb(215, 212, 212);
+   border-radius: 20px;
+   padding: 10px 0px 10px 9px;
+   margin: 10px 0px 6px 35px;
+   height: 25px;
+   width: 290px;
+   text-align: center;
+   color: white;
+ }
+
+ .fh {
+   display: inline-block;
+   background: #2b4584;
+   border: 1px solid rgb(219, 219, 219);
+   border-radius: 20px;
+   padding: 10px 0px 10px 9px;
+   margin: 10px 0px 6px 60px;
+   height: 25px;
+   width: 230px;
+   text-align: center;
+   color: white;
+ }
+
+ #PLAYLIST {
+   margin: 110px 0px 0px 0px;
+ }
+
+ .play {
+   display: inline-block;
+   border: 1px solid rgb(82, 137, 181);
+
+   border-radius: 20px;
+   padding: 15px 0px 10px 9px;
+   margin: 10px 0px 6px 20px;
+   height: 25px;
+   width: 230px;
+   text-align: center;
+   color: white;
+ }
+
+ .song {
+   display: grid;
+   height: 800px;
+   padding: 10px 20px 10px 20px;
+
+   row-gap: 10px;
+   column-gap: 15px;
+   grid-template-columns: repeat(3, 1fr);
+   /* grid-template-rows: auto auto auto auto; */
+   grid-auto-rows: 400px;
+   overflow-y: auto;
+ }
+
+ .song>* {
+   transition: transform 0.4s ease, filter 0.4s ease, opacity 0.4s ease;
+ }
+
+ .song>*:hover {
+   cursor: pointer;
+   opacity: 0.5;
+   filter: contrast(90%);
+   transform: scale(1.05);
+ }
+
+ .song1 iframe,
+ .song2 iframe,
+ .song3 iframe,
+ .song4 iframe,
+ .song5 iframe {
+   margin: -2px -2px -2px -2px;
+   object-fit: cover;
+   height: 99%;
+   width: 100%;
+   border-radius: 5%;
+   border: 1px solid rgb(82, 137, 181);
+
+ }
+
+ .con2 {
+   display: flex;
+   justify-content: center;
+
+ }
+
+ .fake {
+   margin: 200px 20px 20px 200px;
+   height: 500px;
+   width: 80vh;
+   position: relative;
+ }
+
+ .f {
+   border: 1.5px solid blueviolet;
+   border-radius: 30px;
+   height: 80%;
+   width: 112%;
+   top: 2%;
+   margin: 20% 0 0px 0;
+   position: absolute;
+   background: url("bring-night-space-wallpaper-with-glowing-starfield_1017-53512.avif") no-repeat;
+
+ }
+
+ .ann {
+   text-align: center;
+   color: white;
+   border: 1px solid rgb(119, 156, 189);
+   border-radius: 5%;
+   position: absolute;
+   width: 380px;
+   height: 50px;
+   left: 26%;
+   top: 13%;
+   font-size: 2rem;
+   padding: 7px 0px 0px 0px;
+ }
+
+ .rocket1,
+ .rocket2 {
+   height: 15%;
+   width: 12%;
+   position: absolute;
+   z-index: 500;
+ }
+
+ .rocket1 {
+   bottom: 30%;
+   left: -62px;
+   animation: rocketMove1 3s linear infinite;
+   animation-delay: 2s;
+ }
+
+ .rocket2 {
+   bottom: 30%;
+   left: 722px;
+   animation: rocketMove2 3s linear infinite;
+   animation-delay: 2s;
+ }
+
+ .rocket1 img {
+   width: 100%;
+   height: 100%;
+   transform: rotate(90deg);
+ }
+
+ .rocket2 img {
+   width: 100%;
+   height: 100%;
+   transform: rotate(-90deg);
+ }
+
+ /* 🚀 Rocket 1 movement */
+ @keyframes rocketMove1 {
+   0% {
+     left: -62px;
+     opacity: 1;
+   }
+
+   50% {
+     left: 16vw;
+     opacity: 0;
+     /* stays visible while flying */
+   }
+
+   80% {
+     opacity: 0;
+     /* fades out near the end */
+   }
+
+   100% {
+     left: -79px;
+     opacity: 0;
+     /* stays hidden before restarting */
+   }
+ }
+
+ /* 🚀 Rocket 2 movement */
+ @keyframes rocketMove2 {
+   0% {
+     left: 722px;
+     opacity: 1;
+   }
+
+   50% {
+     left: 15vw;
+     opacity: 0;
+   }
+
+   80% {
+     opacity: 0;
+   }
+
+   100% {
+     left: 722px;
+     opacity: 0;
+   }
+ }
+
+ .ear,
+ .eart {
+   background: url("earth.jpg") no-repeat center center;
+   background-size: cover;
+   position: relative;
+   width: 200px;
+   height: 200px;
+   border-radius: 50%;
+   overflow: hidden;
+   display: block;
+   margin: 27% 0px 0px 0px;
+ }
+
+ .ear {
+   left: 16%;
+   z-index: 500;
+ }
+
+ .eart {
+   right: 5px;
+ }
+
+ .blast {
+   position: absolute;
+   margin: 22% 0px 0px 0px;
+   right: 22%;
+   /* background: #794d4d; */
+   width: 200px;
+   /* adjust size as needed */
+   height: 200px;
+   border-radius: 50%;
+   /* optional if you want a circular blast */
+   z-index: 200;
+   /* above rockets & background */
+   opacity: 0;
+   /* initially hidden */
+   animation: blastAnim 3s linear infinite;
+   /* match rocket duration */
+   animation-delay: 2.3s;
+ }
+
+ .blast video {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   z-index: 500;
+ }
+
+ @keyframes blastAnim {
+
+   0%,
+   15% {
+     opacity: 0;
+   }
+
+   /* hidden most of the time */
+   85% {
+     opacity: 1;
+   }
+
+   /* flash visible just before rockets finish */
+   100% {
+     opacity: 0;
+   }
+
+   /* back to hidden at the end */
+ }
+
+
+
+ .myform {
+   background: #212121;
+   color: rgb(138, 149, 207);
+   margin: 80px 100px 20px 100px;
+   border: 1.5px solid blueviolet;
+   border-radius: 40px;
+
+   height: 800px;
+   width: 50vh;
+
+   text-align: center;
+
+ }
+
+ .grid {
+   display: grid;
+   row-gap: 20px;
+   column-gap: 4px;
+   grid-template-columns: 60% auto;
+   margin: 10px;
+
+ }
+
+ .grid1,
+ .grid2 {
+   background: #1E1E1E;
+   color: white;
+   border-radius: 20%;
+   border: 1px solid rgb(1, 100, 1);
+
+ }
+
+ .grid3,
+ .grid4 {
+   background: #1E1E1E;
+   color: white;
+   border-radius: 20%;
+   border: 1px solid rgb(1, 100, 1);
+
+ }
+
+ .grid5,
+ .grid6 {
+   background: #1E1E1E;
+   color: white;
+   border-radius: 20%;
+   border: 1px solid rgb(1, 100, 1);
+
+ }
+
+ .grid2 {
+   font-size: x-small;
+   padding: 7%;
+ }
+
+ .grid4,
+ .grid6 {
+   padding-top: 7%;
+ }
+
+ .footer {
+   width: 100%;
+   overflow: hidden;
+ }
+
+ .foot,
+ .human {
+   color: white;
+   position: relative;
+   white-space: nowrap;
+   animation: slide 8s linear infinite;
+   width: 150px;
+   text-align: center;
+ }
+
+ .foot {
+   border: 2px solid rgb(82, 137, 181);
+   border-radius: 10px;
+ }
+
+ @keyframes slide {
+   0% {
+     transform: translateX(0vw);
+   }
+
+   100% {
+     transform: translateX(100vw);
+   }
+ } 
+  -->

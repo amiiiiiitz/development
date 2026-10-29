@@ -1,0 +1,199 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amit Hasan Simanto | My Website</title>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>Amit Hasan Simanto</h1>
+        <nav>
+            <a href="#intro">Intro</a> |
+            <a href="#media">Media</a> |
+            <a href="#lists">Lists</a> |
+            <a href="#tables">Tables</a> |
+            <a href="#forms">Forms</a> |
+            <a href="#semantic">Semantic</a>
+        </nav>
+        <hr>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- INTRODUCTION -->
+        <section id="intro">
+            <article>
+                <h2>Hello! I'm Amit Hasan</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum magnam repellat totam nam quia, eius vitae aspernatur optio aliquid odit a atque, voluptatibus explicabo provident aliquam maxime, quas maiores. Deserunt.</p>
+                <pre>
+This is a <pre> tag example.
+It shows text exactly as written,
+including spaces and line breaks.
+                </pre>
+                <p>This is <br><small>small text inside paragraph</small></p>
+                <p><b><i>Bold <big>&</big> Italic</i></b></p>
+                <p>Drink water! Chemical formula is H<sub>2</sub>O</p>
+                <p>10<sup>2</sup> = 100</p>
+                <p>Go to <a href="https://www.w3schools.com/html/" target="_blank">W3Schools</a> for symbols.</p>
+            </article>
+        </section>
+
+        <!-- MEDIA -->
+        <section id="media">
+            <article>
+                <h2>Media Examples</h2>
+
+                <h3>Images</h3>
+                <img src="c:\Users\user\OneDrive\Pictures\Saved Pictures\IMG_20250915_182935.png" alt="My Picture" height="200" width="150">
+                <br><br>
+                <a href="https://www.google.com" target="_blank">
+                    <img src="c:\Users\user\OneDrive\Pictures\Saved Pictures\IMG_20250915_182935.png" alt="Clickable Image" width="100">
+                </a>
+
+                <h3>Video</h3>
+                <video src="c:\Users\user\Downloads\AQPZVcxPq.mp4" poster="c:\Users\user\OneDrive\Pictures\Saved Pictures\IMG_20250915_182935.png" controls autoplay muted loop width="250"></video>
+
+                <h3>Embedded YouTube</h3>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/pQN-pnXPaVg" title="YouTube video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </article>
+        </section>
+
+        <!-- LISTS -->
+        <section id="lists">
+            <article>
+                <h2>Lists</h2>
+                <h3>Unordered List</h3>
+                <ul>
+                    <li><a href="#">Apples</a></li>
+                    <li>Bananas</li>
+                    <li>Oranges</li>
+                </ul>
+
+                <h3>Ordered List</h3>
+                <ol>
+                    <li>Apples</li>
+                    <li>Bananas</li>
+                    <li>Oranges</li>
+                </ol>
+
+                <h3>Alphabetical List</h3>
+                <ol type="A">
+                    <li>Apples</li>
+                    <li>Bananas</li>
+                    <li>Oranges</li>
+                </ol>
+
+                <h3>Definition List</h3>
+                <dl>
+                    <dt>Apple</dt>
+                    <dd>→ They taste good</dd>
+                </dl>
+            </article>
+        </section>
+
+        <!-- TABLES -->
+        <section id="tables">
+            <article>
+                <h2>Tables</h2>
+                <table>
+                    <caption>Sample Table</caption>
+                    <thead>
+                        <tr>
+                            <th>Row 1</th>
+                            <th>Row 2</th>
+                            <th>Row 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>One</td>
+                            <td>Two</td>
+                            <td>Three</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Four</td>
+                            <td>Five</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+        </section>
+
+        <!-- FORMS -->
+        <section id="forms">
+            <article>
+                <h2>Forms</h2>
+                <form action="form.php">
+                    <input type="text" placeholder="Enter your name"><br><br>
+                    <input type="password" placeholder="Enter your password"><br><br>
+                    <input type="date"><br><br>
+                    <input type="email" placeholder="Enter your email"><br><br>
+                    <input type="file"><br><br>
+
+                    <p>Select your section:</p>
+                    <label for="sectionida">
+                        <input type="radio" name="section" id="sectionida" value="A"> Section A
+                    </label>
+                    <label for="sectionidb">
+                        <input type="radio" name="section" id="sectionidb" value="B"> Section B
+                    </label>
+                    <label for="sectionidc">
+                        <input type="radio" name="section" id="sectionidc" value="C"> Section C
+                    </label>
+                    <br><br>
+
+                    <p>Choose your hobbies:</p>
+                    <label for="hobby-reading">
+                        <input type="checkbox" id="hobby-reading" name="hobby" value="reading"> Reading
+                    </label>
+                    <label for="hobby-coding">
+                        <input type="checkbox" id="hobby-coding" name="hobby" value="coding"> Coding
+                    </label>
+                    <label for="hobby-sports">
+                        <input type="checkbox" id="hobby-sports" name="hobby" value="sports"> Sports
+                    </label>
+                    <br><br>
+
+                    <label for="sports">Select your favorite sport:</label>
+                    <select name="sports" id="sports">
+                        <option value="" disabled selected>Select your favorite sport</option>
+                        <option value="No sports">No Sports</option>
+                        <option value="cricket">Cricket</option>
+                        <option value="football">Football</option>
+                        <option value="hockey">Hockey</option>
+                    </select>
+                    <br><br>
+
+                    <textarea rows="5" cols="30" placeholder="Enter a paragraph"></textarea>
+                    <br><br>
+
+                    <button type="submit">Submit</button>
+                </form>
+            </article>
+        </section>
+
+        <!-- SEMANTIC -->
+        <section id="semantic">
+            <article>
+                <h2>Semantic Structure Example</h2>
+                <p>Goal: To become a software engineer.</p>
+                <aside>Hobbies: Coding, Reading, Sports</aside>
+            </article>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2025 Amit Hasan Simanto | All rights reserved</p>
+    </footer>
+
+</body>
+
+</html> -->

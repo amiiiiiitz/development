@@ -1,0 +1,1295 @@
+body {
+   /* background: black; */
+   margin: 0;
+   padding: 0;
+   font-family: fantasy;
+   
+}
+
+.upperbox {
+    background:  rgba(37, 37, 37, 0.988);
+    display : inline-flex;
+    gap : 4%;
+    height : 9vh;
+    width : 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+.fblogo {
+  width: 2.8%;
+  height: 67%;
+  background: url("facebook image.jpg") no-repeat;
+  background-size: cover;
+  border-radius: 70%;
+  background-position: center;
+  margin: 12.5px 0px 0px 20px;
+}
+.search {
+    display: inline-flex;
+    align-items: center;
+    gap : 5px;
+    width : 23%;
+    height: 70%;
+    background:  rgba(49, 48, 48, 0.988);
+    border-radius: 40px;
+    margin: 12.4px 0px 0px -63px;
+}
+.srchlogo {
+    width: 7%;
+    height: 88%;
+    background: url("srch logo.png") no-repeat;
+    background-size: contain;
+    margin: 30px 4px 0px 20px;
+}
+.srchLINE {
+    width : 70%;
+    height: 90%;
+    font-size: large;
+    color: rgb(198, 195, 195);
+    margin-top: -2px;
+}
+
+.home, .games, .marketplace, .people, .reels {
+    width : 3%;
+    height: 86%;
+    background-size: contain;
+}
+.home {
+    background: url("fb home.png") no-repeat;
+    margin: 17px 0px 0px -20px;
+    position : relative;
+}
+.reels {
+    background: url("fb reels.png") no-repeat;
+    margin-top : 20px;
+    margin-left: 45px;
+
+}
+.marketplace {
+    background: url("fb market.png") no-repeat;
+    margin-top : 15px;
+    margin-left: 45px;
+}
+.people {
+    background: url("fb ppl-grps.png") no-repeat;
+    margin-top : 18px;
+    margin-left: 45px;
+}
+.games {
+    background: url("fb games.png") no-repeat;
+    margin-top : 19px;
+    margin-left: 45px;
+    position : relative;
+}
+
+.dotsss {
+    width : 3.3%;
+    height: 88%;
+    background-size: contain;
+    background: url("up dots.png") no-repeat;
+    margin-top: 2px;
+    margin-left: 170px;
+    background-position: center bottom 5%;
+    border-radius: 20%;
+    
+}
+.messengerlogo {
+    width : 3.3%;
+    height: 88%;
+    background-size: contain;
+    margin : 6px -50px 0px -70px;
+    background: url("dark msngr logo.png") no-repeat;
+    background-position: center bottom 5%;
+    border-radius: 20%;
+    position : relative;
+}
+.notification {
+    width : 3.3%;
+    height: 88%;
+    background-size: cover;
+    margin : 9px -20px 0px -20px;
+    background: url("notif logo.png") no-repeat;
+    background-position: center bottom 5%;
+    border-radius: 20%;
+    position : relative;
+}
+.image {
+    width : 3%;
+    height: 75%;
+    margin : 13px 0px 0px -47px;
+    background: url("amit.png") no-repeat;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+.noticolor1, .noticolor2, .noticolor3, .noticolor4 {
+    background: red;
+    color : white;
+    border-radius: 50%;
+    font-size: small;
+    text-align: center;
+    padding-top : 3.5%;
+}
+.noticolor1 {
+    margin-top : 2%;
+    margin-left : 56%;
+    width: 13px;
+    height: 10px;
+}
+.noticolor2 {
+    margin-left : 70%;
+    width: 24px;
+    height: 20px;
+}
+.noticolor3 {
+    margin-top : 7%;
+    margin-left : 70%;
+    width: 25px;
+    height: 21px;
+}
+.noticolor4 {
+    margin-top : 7%;
+    margin-left : 70%;
+    width: 24px;
+    height: 20px;
+}
+.one {
+    background:  rgba(37, 37, 37, 0.988);
+    margin-top: 9vh;
+}
+.backgroundph{
+    display: flex;
+    height : 500px;
+    width : 100vw;
+}
+.backgroundphoto {
+    margin : 0px 100px 0px 250px;
+    width : 1400px;
+    height: 500px;
+    background: url("fb cover p.jpg") no-repeat;
+    background-position: center top 56%;
+    background-size: cover;
+    filter: blur(1px);
+
+}
+.editCoverPhoto {
+    position: absolute;
+    background: white;
+    height: 6vh;
+    width : 10vw;
+    right : 16.5%;
+    margin-top : 22%;
+    border-radius: 14px;
+    display: inline-flex;
+}
+.bglogo {
+    background: url("cmra logo.png") no-repeat;
+    width : 18%;
+    height: 70%;
+    background-size: contain;
+    margin: 14px 4px 0px 8px;
+}
+.bgline p{
+    padding-top: 2%;
+    font-weight: 600;
+}
+.profile {
+    display: inline-flex;
+    position: relative;
+    width : 100vw;
+    height: 18vh;
+}
+.pp {
+    width: 12.7%;
+    height: 147.5%;
+    background: url("amit.png") no-repeat;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border : 4px solid rgb(0, 113, 4);
+    position: absolute;
+    left : 15.25%;
+    bottom : 12%;
+}
+.profileCameralogo {
+    position: absolute;
+    
+    background: url("camralogoprfl.png") no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* background: #999090; */
+    left : 25%;
+    bottom : 21%;
+    width : 2.9%;
+    height : 34%;
+    border-radius: 100%;
+}
+.pname {
+    /* background: #bd5151; */
+    position: absolute;
+    width: 11%;
+    left : 30%;
+    /* top : 8%; */
+    bottom : 38%;
+}
+.pname p1 {
+    color :rgb(205, 16, 16);
+    font-size: 2.3rem;
+    font-weight: bolder;
+    width: 100%;
+    line-height: .05;
+}
+.pname p2 {
+    display: block;
+    color: rgb(198, 195, 195);
+    width: 100%;
+    margin-top: 8%;
+    font-weight: bold;
+}
+.addtostory, .editprofile {
+    /* position: absolute; */
+    height: 34%;
+    top : 47%;
+    border-radius: 10px;
+}
+.addtostory {
+    background: #006efd;
+    width: 8.4%;
+    left: 66%;
+    position: relative;
+}
+.addtostory img {
+    position: absolute;
+    width: 14%;
+    height: 55%;
+    top : 17%;
+    left : 10%;
+}
+.addtostory p {
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    padding-left: 19%;
+}
+.editprofile {
+    background:  rgb(57, 57, 57);
+    left : 66.6%;
+    width: 7.8%;
+    position: relative;
+}
+.editprofile img {
+    position: absolute;
+    width: 21%;
+    height: 59%;
+    top : 17%;
+    left : 10%;
+}
+.editprofile p {
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    padding-left: 21%;
+}
+.hr {
+    margin-left: 300px;
+    width: 67vw;
+    height: 4px;
+}
+.post-about-etc {
+    /* background: #b6b0b0; */
+    height: 9vh;
+    width: 67vw;
+    display: inline-flex;
+    margin-left: 300px;
+    gap : 60px;
+    color :rgb(192, 185, 185);
+    font-weight: 600;
+    
+}
+li {
+    list-style : none;
+    margin : 30px 0px 0px 0px;
+}
+li#listone {
+    /* color :rgb(44, 169, 218); */
+    color: rgba(0, 145, 255, 0.8);
+}
+
+.morelogo {
+    position: absolute;
+    
+    background: url("more logo.png") no-repeat;
+    background-size: fill;
+    background-position: center;
+    left : 53%;
+    bottom : 11.5%;
+    width : 2%;
+    height : 3%;
+    border-radius: 15%;
+}
+
+.dotbox {
+    position: absolute;
+    
+    background: url("3dot logo.png") no-repeat;
+    background-size: fill;
+    background-position: center;
+    left : 79%;
+    bottom : 9%;
+    width : 3.8%;
+    height : 6%;
+    border-radius: 15%;
+}
+.scnd {
+    background: #1a1a1a;
+    height: 225vh;
+    
+}
+.intro {
+    /* background: #b32929; */
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: auto auto;
+    row-gap: 26px;
+    /* column-gap: 10px; */
+    height: 38vh;
+    width: 68.5vw;
+    margin : 0px 10px 0px 295px;
+    
+}
+.introbox {
+    grid-row : span 2;
+    grid-column: 1;
+    margin-top: 30px;
+    display: grid;
+    background:  rgba(37, 37, 37, 0.988);
+    width: 30.6vw;
+    height: 100%;
+    gap: 4px;
+    grid-template-rows: auto auto auto auto auto;
+    border-radius: 20px;
+}
+.in, .addbio, .insta, .editdetails, .addfea {
+    margin: 14px 24px 4px 24px;
+    border-radius: 18px;
+}
+
+.addbio, .editdetails, .addfea {
+    background:  rgb(57, 57, 57);
+    text-align: center;
+    color:white;
+    font-size: large;
+    padding-top: 30px ;
+    line-height: .05;
+}
+
+.in {
+    /* background: #302f2f; */
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    padding-top: 25px;
+    line-height: .0009;
+    margin: 1px 20px 4px 25px;
+}
+ .insta {
+    /* background: #302f2f; */
+    color : rgba(0, 145, 255, 0.8);
+    font-size: large;
+    font-weight: bold;
+    padding-top: 23px ;
+    padding-left : 60px;
+    line-height: .1;
+    position: relative;
+    margin: 14px 24px 0px 24px;
+}
+.instaimg {
+    position: absolute;
+    background: url("bw insta logo.png") no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 5.5%;
+    height: 58%;
+    top : 16%;
+    right : 92%;
+    /* border-radius: 80%; */
+    /* background: #b37070; */
+}
+.editdetails{
+    margin: 0px 24px 4px 24px;
+}
+.addfea {
+    margin-bottom : 25px;
+}
+.whatsonurmind{
+    background:  rgba(37, 37, 37, 0.988);
+    grid-column: 2;
+    height: 20vh;
+    width: 35vw;
+    margin-top: 30px;
+    border-radius: 20px;
+    display: grid;
+    grid-template-rows: auto auto;
+}
+
+.WOUNlogoandsrch, .livePhotoLife {
+    /* background: #a35252; */
+    width: 100%;
+    height: 10vh;
+    position: relative;
+    display: flex;
+}
+.WOUMsrch {
+    position: absolute;
+    width : 82.5%;
+    height: 65%;
+    background:  rgb(57, 57, 57);
+    border-radius: 40px;
+    margin : 20px 0px 0px 92px;
+    color : rgb(136, 136, 136);
+}
+.WOUMphoto {
+    width : 9%;
+    height: 67%;
+    margin : 20px 0px 0px 20px;
+    background: url("amit.png") no-repeat;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+.WOUMsrch p {
+    padding-left: 20px;
+    font-size: larger;
+}
+.hrt {
+    margin : 0px 25px 0px 20px;
+    opacity: .2;
+}
+.live, .photo, .life {
+    color : rgb(169, 167, 167);
+    margin-top : 4px;
+    position: absolute;
+    width : 28%;
+    height: 60%;
+    align-items: center;
+    /* gap : 2px; */
+    /* background: #df9393; */
+    font-size: large;
+    border-radius: 10px;
+    display: inline-flex;
+    background:  rgba(37, 37, 37, 0.988);
+}
+.live {
+    left : 4.5%;
+}
+.life {
+    left : 35%;
+}
+.photo {
+    left : 65.5%;
+   
+}
+
+.live p {
+    padding-left: 76px;
+}
+
+.life p {
+    padding-left: 72px;
+}
+.photo p {
+    padding-left: 68px;
+}
+.lplLIVELOGO {
+    position: absolute;
+    background: url("Screenshot 2025-11-15 200228.png") no-repeat;
+    background-size: contain;
+    width : 40px;
+    height : 72%;
+    left : 15%;
+    bottom : 10%;
+}
+.lplLIFELOGO {
+    position: absolute;
+    background: url("Screenshot 2025-11-15 160534.png") no-repeat;
+    background-size: contain;
+    width : 40px;
+    height : 72%;
+    left : 12%;
+    bottom : 14%;
+}
+.lplPHOTOLOGO {
+    position: absolute;
+    background: url("Screenshot 2025-11-15 200029.png") no-repeat;
+    background-size: contain;
+    width : 40px;
+    height : 72%;
+    
+    left : 14%;
+    bottom : 14%;
+}
+
+.post{
+    background:  rgba(37, 37, 37, 0.988);
+    grid-column: 2;
+    height: 16vh;
+    width: 35vw;
+    border-radius: 20px;
+    display: grid;
+    grid-template-rows: auto auto auto;
+}
+.postgrid1 {
+    /* background: #b45a5a; */
+    height: 7.5vh;
+    width: 100%;
+    display: flex;
+    /* position: relative; */
+}
+.postpost {
+    width : 12%;
+    height: 80%;
+    margin : 1.5% 40% .5% 3%;
+}
+.postpost p {
+    color : white;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    /* background: #3b65a1; */
+    margin-top: 10px;
+}
+.pf {
+    background:  rgb(75, 75, 75);
+    width : 18%;
+    height: 80%;
+    left : 60%;
+    margin : 1.5% 1% .5% 0%;
+    border-radius: 10px;
+    display: flex;
+    /* position: relative; */
+}
+.pf p {
+    position: relative;
+    text-align: center;
+    margin-left : 30%;
+    color: white;
+    font-weight: bold;
+    /* background: red; */
+    right: 13%;
+}
+.pfimg {
+    position: relative;
+    background: url("Screenshot 2025-11-16 175706.png") no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 40px;
+    height: 32px;
+    /* background: #006efd; */
+    top : 20%;
+    left : 8%;
+}
+.postm {
+    background:  rgb(52, 52, 52);
+    width : 30%;
+    height: 80%;
+    left : 80%;
+    margin : 1.5% 3% .5% 0%;
+    border-radius: 10px;
+    display: flex;
+}
+.postm p {
+    text-align: center;
+    margin-left : 10%;
+    color: white;
+    font-weight: bold;
+    position: relative;
+}
+.postmimg {
+    position: relative;
+    background: url("Screenshot 2025-11-16 175752.png") no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 40px;
+    height: 32px;
+    /* background: #006efd; */
+    top : 20%;
+    left : 8%;
+}
+
+.posthr {
+    height: 1vh;
+}
+.listgrid {
+    /* background: #a98d8d; */
+    height: 7.5vh;
+    width: 100%;
+    display: flex;
+}
+.list, .grid {
+    display: flex;
+    /* background: #006efd; */
+    height: 80%;
+    width: 49%;
+    margin-top : 6.5px;
+    border-radius: 10px;
+    display: flex;
+}
+.list {
+    margin-right: 12px;
+}
+.listlogo, .gridlogo {
+    width : 30px;
+    height: 30px;
+    background-position: center;
+    background-size: contain;
+    margin: 4% 0% 0% 32.5%;
+}
+.listlogo{
+    background: url("Screenshot 2025-11-16 195203.png") no-repeat;
+}
+.gridlogo {
+    background: url("grid.png") no-repeat;
+}
+.listtext, .gridtext {
+    margin-left : 2%;
+    margin-bottom: 1%;
+    font-size: large;
+    /* font-weight: bold; */
+    color : rgb(203, 203, 203);
+}
+.phANDposts {
+    /* background: #b03e3e; */
+    width : 68.5vw;
+    height : 100vh;
+    margin : 0px 10px 0px 295px;
+    display : grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 30px;;
+    margin-top : 100px;
+}
+.photos, .friends {
+    width: 30.6vw;
+    height: 70vh;
+    background:  rgba(37, 37, 37, 0.988);
+    grid-column: 1;
+    border-radius: 20px;
+}
+.posts {
+    grid-row: span 2;
+    grid-column: 2;
+    width : 35vw;
+    background:  rgba(37, 37, 37, 0.988);
+    margin-right: 27px;
+    border-radius: 20px;
+    margin-top: -40px;
+    overflow-y: scroll;
+}
+.phone {
+    width : 28.6vw;
+    height: 8vh;
+    /* background: #20ab71; */
+    margin-left : 20px;
+    border-radius: 10px;
+    display: flex;
+}
+.ptext1 {
+    position: relative;
+    display: inline-block;
+    margin-left : 1%;
+    margin-top: 1%;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.ptext2 {
+    position: relative; 
+    margin-left: 60%;
+    color : rgba(0, 145, 255, 0.8);
+    margin-top : 3%;
+    font-size: larger;
+}
+.phtwo {
+    margin-left : 20px;
+    margin-top: 12px;
+    width: 28.6vw;
+    height: 58vh;
+    /* background: #000000; */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    row-gap: 5px;
+    column-gap: 5px;
+}
+.two, .three, .four, .five, .six, .seven, .eight, .nine, .ten {
+    /* background: #801d9e; */
+    margin: 1px;
+}
+
+.two {
+    background: url("pic 1.jpg") center/cover no-repeat;
+    border-top-left-radius: 10px;
+}
+
+.three {
+    background: url("pic2.jpg") center/cover no-repeat;
+}
+
+.four {
+    background: url("pic3.jpg") center/cover no-repeat;
+    border-top-right-radius: 10px;
+}
+
+.five {
+    background: url("pic4.jpg") center/cover no-repeat;
+}
+
+.six {
+    background: url("pic5.jpg") center/cover no-repeat;
+}
+
+.seven {
+    background: url("pic6.jpg") center/cover no-repeat;
+}
+
+.eight {
+    background: url("pic7.jpg") center/cover no-repeat;
+    border-bottom-left-radius: 10px;
+}
+
+.nine {
+    background: url("pic8.jpg") no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.ten {
+    background: url("pic9.jpg") no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-bottom-right-radius: 10px;
+}
+/*  */
+.friends {
+    height: 96vh;
+    position : relative;
+}
+.friends .phone {
+    width : 28.6vw;
+    height: 8vh;
+    /* background: #20ab71; */
+    margin-left : 20px;
+    border-radius: 10px;
+    display: flex;
+    margin-bottom: 5%;
+}
+.friends .ptext1 {
+    position: relative;
+    display: inline-block;
+    margin-left : 1%;
+    margin-top: 4%;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.f448 {
+    width : 110%;
+    position: absolute;
+    color:#ccc4c4;
+    font-size: medium;
+    display: inline-block;
+    left : 1%;
+    margin-top: 42%;
+}
+.friends .ptext2 {
+    position: relative; 
+    margin-left: 58.5%;
+    color : rgba(0, 145, 255, 0.8);
+    margin-top : 4%;
+    font-size: larger;
+}
+.friends .phtwo {
+    margin-left : 20px;
+    margin-right: 6px;
+    margin-top: 12px;
+    width: 28.6vw;
+    height: 76vh;
+    /* background: #000000; */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    row-gap: 75px;
+    column-gap: 13px;
+}
+.name1, .name2, .name3, .name4, .name5, .name6, .name7, .name8, .name9 {
+    position : absolute;
+    color : white;
+    font-size: medium;
+    font-weight: bold;
+}
+.name1 {
+    left : 4%;
+    top : 33.5%;
+}
+.name2 {
+    left : 36%;
+    top : 33.5%;
+}
+.name3 {
+    left : 68%;
+    top : 33.5%;
+}
+.name4 {
+    left : 4%;
+    top : 63%;
+}
+.name5 {
+    left : 36%;
+    top : 63%;
+}
+.name6 {
+    left : 68%;
+    top : 63%;
+}
+.name7 {
+    left : 4%;
+    top : 92%;
+}
+.name8 {
+    left : 36%;
+    top : 92%;
+}
+.name9 {
+    left : 68%;
+    top : 92%;
+}
+.friends .two,.friends .three, .friends .four, .friends .five, .friends .six, .friends .seven, .friends .eight, .friends .nine, .friends .ten {
+    /* background: #801d9e; */
+    margin: 1px;
+    border-radius: 20px;
+}
+
+.friends .two {
+    background: url("niloy.jpeg") center/cover no-repeat;
+    border-top-left-radius: 10px;
+}
+
+.friends .three {
+    background: url("ajoy.jpeg") center/cover no-repeat;
+}
+
+.friends .four {
+    background: url("arif.jpeg") center/cover no-repeat;
+    border-top-right-radius: 10px;
+}
+
+.friends .five {
+    background: url("mehedi.jpeg") center/cover no-repeat;
+}
+
+.friends .six {
+    background: url("tamim.jpeg") center/cover no-repeat;
+}
+
+.friends .seven {
+    background: url("nirob.jpeg") center/cover no-repeat;
+}
+
+.friends .eight {
+    background: url("pranto.jpeg") center/cover no-repeat;
+    border-bottom-left-radius: 10px;
+}
+
+.frineds ,.phtwo .nine {
+    background: url("mod.jpeg") no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.friends .ten {
+    background: url("amit.png") no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-bottom-right-radius: 10px;
+}
+/* .gpost {
+  ;  
+
+} */
+.posts1 {
+    width : 35vw;
+    height: 10vh;
+    display: flex;
+    position: relative;
+}
+.posts1pp, .posts1pptext, .posts1pp1h, .posts1pplogo, .posts1text, .post1dot {
+    position: absolute;
+}
+.posts1pp {
+    background: url("amit.png") center/cover no-repeat;
+    border-radius: 50%;
+    width: 64px;
+    height: 62px;
+    margin: 2% 0% 0% 2%;
+}
+.posts1pptext {
+    color:white;
+    margin : 2.5% 0% 0% 13%;
+    font-weight: bold;
+}
+
+.posts1pp1h {
+    color:rgb(167, 167, 167);
+    margin : 6.2% 0% 0% 13%;
+    font-weight: bold;
+    font-size: small;
+}
+.posts1pplogo {
+    background: url("Screenshot 2025-11-17 130056.png") center/cover no-repeat;
+    width: 28px;
+    height: 22px;
+    margin : 5.5% 0% 0% 18%;
+}
+.posts1text {
+    color:white;
+    margin : 13% 0% 0% 2.5%;
+    font-weight: bold;
+    font-size: small;
+}
+.post1dot {
+    background: url("Screenshot 2025-11-17 131018.png") center/cover no-repeat;
+    width: 28px;
+    height: 16px;
+    margin : 5% 0% 0% 91%;
+}
+.posts2 {
+    width : 32.5vw;
+    height: 80vh;
+    /* background: #35ce0f; */
+    margin: 4% 4% 2% 3.5%;
+    border-radius: 20px;
+    border : .6px solid grey;
+}
+.posts2photo {
+    width : 32.5vw;
+    height: 68vh;
+    background: url("batman-superhero-5k-2732x2732-18659.jpg") center/cover no-repeat;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+.posts2id {
+    width : 32.5vw;
+    height: 12vh;
+    display: flex;
+    position: relative;
+}
+.posts2idpp, .posts2idname, .posts2iddate,.posts2idtext, .posts2idlogo{
+    position: absolute;
+}
+.posts2idpp {
+    background: url("batman-superhero-5k-2732x2732-18659.jpg") center/cover no-repeat;
+    border-radius: 50%;
+    width: 64px;
+    height: 62px;
+    margin: 2% 0% 0% 2%;
+    /* background: #2038a2; */
+}
+.posts2idname {
+    color:white;
+    margin : 2.5% 0% 0% 13%;
+    font-weight: bold;
+}
+
+.posts2iddate {
+    color:rgb(167, 167, 167);
+    margin : 6.2% 0% 0% 13%;
+    font-weight: bold;
+    font-size: small;
+}
+.posts2idtext {
+    color:white;
+    margin : 13% 0% 0% 2.5%;
+    font-weight: bold;
+    font-size: small;
+}
+.posts2idlogo {
+    background: url("Screenshot 2025-11-17 140023.png") center/cover no-repeat;
+    width: 22px;
+    height: 18px;
+    margin : 5.7% 0% 0% 33%;
+}
+.raction {
+    /* background: #0e46ae; */
+    width : 32.5vw;
+    height: 3vh;
+    margin: 3% 4% -2% 3.5%;
+    display: flex;
+    position: relative;
+}
+.love {
+    position: absolute;
+    background: url("love emji.png") center/contain no-repeat;
+    width: 30px;
+    height: 28px;
+    border-radius: 10px;
+    margin : .3% 0% 0% 0%; 
+    /* border: 1px solid rgba(37, 37, 37, 0.988); */
+    z-index: 100;
+}
+.sad {
+    position: absolute;
+    background: url("facebook-reactions (4).png") center/cover no-repeat;
+    width: 36px;
+    height: 33px;
+    border-radius: 10px;
+    margin : -0.1% 0% 0% 3.6%; 
+    /* border: 1px solid rgba(37, 37, 37, 0.988); */
+    z-index: 98;
+}
+.haha{
+    position: absolute;
+    background: url("facebook-reactions (2).png") center/cover no-repeat;
+    width: 36px;
+    height: 33px;
+    border-radius: 10px;
+    border: 1px solid rgba(37, 37, 37, 0.988);
+    z-index: 96;
+    margin : -0.3% 0% 0% 7.2%; 
+}
+.namess {
+    color: #a7a7a7;
+    /* background: #cbb6b6; */
+    display: inline-block;
+    position: absolute;
+    width: 290px;
+    height: 20px;
+    margin : 1% 0% 0% 14%; 
+    font-size: large;
+}
+.posts3 {
+    width : 32.5vw;
+    height: 6vh;
+    background: #2f2f2f;
+    display : flex;
+    margin : 6% 0px 0px 25px;
+    border-radius: 20px;
+}
+.posts3like, .posts3comment, .posts3share {
+    width: 33.33333%;
+    height: 100%;
+    display : flex;
+    position : relative;
+    margin-top : 2%;
+    /* margin-bottom : 2%; */
+}
+
+.likelogo {
+    position : absolute;
+    background: url("facebook-reactions (3).png") center/contain no-repeat;
+    width : 40px;
+    height: 35px;
+    top : -5%;
+    left : 2%;
+}
+.liketext {
+    position: absolute;
+    left : 25%;
+    top : 4%;
+    font-size: larger;
+    color :#ccc4c4;
+}
+.cmntlogo {
+    position : absolute;
+    background: url("comment (1).png") center/contain no-repeat;
+    width : 45px;
+    height: 40px;
+    top : -5.5%;
+    left : 17%;
+}
+.cmnttext {
+    position: absolute;
+    left : 40%;
+    top : 7%;
+    font-size: larger;
+    color :#ccc4c4;
+}
+.sharelogo {
+    position: absolute;
+    background: url("share (1).png") center/contain no-repeat;
+    width : 30px;
+    height: 25px;
+    top : 10%;
+    left : 51%;
+}
+.sharetext {
+    position: absolute;
+    left : 69%;
+    top : 9%;
+    font-size: larger;
+    color :#ccc4c4; 
+}
+.posts4 {
+    width : 35vw;
+    height: 8vh;
+    /* background: #c91919; */
+    margin-top: 14px;
+    display : flex;
+    position: relative;
+}
+.posts4pp {
+    position: absolute;
+    background: url("amit.png") center/cover no-repeat;
+    border-radius: 50%;
+    width: 52px;
+    height: 50px;
+    margin: 2% 0% 0% 2%; 
+}
+.posts4morelogo {
+    position: absolute;
+    width : 2px;
+    height: 2px;;
+}
+.posts4search {
+    position: relative;
+    width: 86.5%;
+    height: 82%;
+    background: #2f2f2f;
+    border-radius: 30px;
+    margin-left: 12%;
+    margin-top: 1%;
+}
+.postsstext {
+    position: absolute;
+    color :#a7a7a7;
+    display: inline-block;
+    height: 95%;
+    top : 33%;
+    left : 4%;
+}
+.postssrchemji1, .postssrchemji2, .postssrchemji3, .postssrchemji4, .postssrchemji5 {
+    position :absolute;
+    width : 40px;
+    height: 35px;
+}
+.postssrchemji1 {
+    background: url("Screenshot 2025-11-17 173809.png") center/contain no-repeat;
+    top : 19.5%;
+    left : 67%;
+}
+.postssrchemji2 {
+    background: url("Screenshot 2025-11-17 173830.png") center/contain no-repeat;
+    top : 19%;
+    left : 73%;
+}
+.postssrchemji3 {
+    background: url("Screenshot 2025-11-17 173903.png") center/contain no-repeat;
+    top : 19.5%;
+    left : 79%;
+}
+.postssrchemji4 {
+    background: url("Screenshot 2025-11-17 174043.png") center/contain no-repeat;
+    top : 19%;
+    left : 85%;
+}
+.postssrchemji5 {
+    background: url("Screenshot 2025-11-17 174058.png") center/contain no-repeat;
+    left : 91%;
+    top : 18%;
+}
+/* ---------------------------------- */
+/* GPOST 2 – SPIDER-MAN */
+/* ---------------------------------- */
+.pp2, .ppp2 {
+    background-image: url("amit.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.photo2, .idpp2 {
+    background-image: url("MV5BZWM0OWVmNTEtNWVkOS00MzgyLTkyMzgtMmE2ZTZiNjY4MmFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+/* ---------------------------------- */
+/* GPOST 3 – IRON MAN */
+/* ---------------------------------- */
+.pp3, .ppp3 {
+    background-image: url("amit.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.photo3, .idpp3 {
+    background-image: url("ANTMAN-poster-ironman.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+
+
+/* ---------------------------------- */
+/* GPOST 4 – CAPTAIN AMERICA */
+/* ---------------------------------- */
+.pp4, .ppp4 {
+    background-image: url("amit.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.photo4, .idpp4 {
+    background-image: url("marvel-s-captain-america-1.jpg");
+    background-size: cover;
+    background-position: center  top 20%;
+}
+
+
+
+/* ---------------------------------- */
+/* GPOST 5 – THOR */
+/* ---------------------------------- */
+.pp5, .ppp5 {
+    background-image: url("amit.png") ;
+    background-size: cover;
+    background-position: center;
+}
+
+.photo5, .idpp5 {
+    background-image: url("004tho_ons_mas_mob_04.jpg");
+    background-size: cover;
+    background-position: center;
+}
+
+.right-fixed-box {
+    width: 230px;          /* adjust size */
+    height: 70px;         /* adjust size */
+    background:  rgba(53, 53, 53, 0.988);     /* test color */
+    position: fixed;       /* stays in place */
+    top: 90%;              /* vertical center */
+    right: 2%;              /* stick to the right side */
+    transform: translateY(-50%); /* perfect centering */
+    z-index: 9999;         /* above everything */
+    border-radius: 25px;
+    display: flex;
+}
+.rlogo {
+    background: url("dark\ msngr\ logo.png") center/cover no-repeat;
+    width : 30%;
+    height: 80%;
+    border-radius: 50%;
+    margin-top : 3%;
+    margin-left: 4%;
+    border: 1px solid rgb(76, 130, 211);
+}
+.rtext {
+    width : 79%;
+    height: 80%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color : white;
+    margin-top : 8%;
+    margin-left: 3%;
+}
