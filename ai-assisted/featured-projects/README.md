@@ -1,29 +1,27 @@
 # AI-Assisted Featured Projects
 
-Selected projects built with the assistance of AI-powered development tools, focusing on practical application development, problem-solving, and turning ideas into working software.
+A collection of my most significant projects developed with assistance from AI-powered tools. This section is reserved for projects that demonstrate meaningful functionality, practical engineering skills, and the ability to solve real-world problems.
 
 ## Featured Projects
 
-### 1. Amit Portfolio
+Featured projects will be added here as they meet my criteria for completeness, functionality, and presentation.
 
-A personal developer portfolio showcasing my projects, technical skills, achievements, and learning journey.
+Each project will include:
 
-- **Live Demo:** [View Portfolio](https://amit-hasan-portfolio.vercel.app/)
-- **Source Code:** [View Repository Folder](../learning-projects/amit-portfolio)
+- **Overview:** The problem it addresses and its purpose.
+- **Key Features:** Its main functionality and technical highlights.
+- **Tech Stack:** The technologies and tools used.
+- **Live Demo:** A link to the deployed application, when available.
+- **Source Code:** A link to the project's repository or folder.
+- **Documentation:** A README explaining setup, usage, and implementation.
 
-### 2. YouTube MP3 App
+## Development Approach
 
-A project exploring application development through AI-assisted coding workflows.
+I use AI tools to assist with development, debugging, and problem-solving while focusing on understanding the code, validating implementations, and learning from the development process.
 
-- **Source Code:** [View Repository Folder](../learning-projects/yt-mp3-app)
+## Explore More
 
-## About This Collection
-
-Projects are selected based on their practical implementation, relevance to my development journey, and potential to demonstrate useful engineering skills.
-
-AI tools assist the development process, while implementation, testing, debugging, and learning remain important parts of building each project.
-
-For smaller experiments and practice projects, visit the [Learning Projects](../learning-projects/) directory.
+Browse my [AI-Assisted Learning Projects](../learning-projects/) for smaller projects, experiments, and ongoing practice.
 
 ---
 
