@@ -14,10 +14,18 @@ h1 {
 .choice {
   height: 165px;
   width: 165px;
+  padding: 0;
+  border: none;
+  background: transparent;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.choice:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
 }
 
 .choice:hover {

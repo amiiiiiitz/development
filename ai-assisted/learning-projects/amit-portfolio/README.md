@@ -38,7 +38,7 @@ Built as a multi-page web application, it presents my work through a modern inte
 
 ## Design Approach
 
-The portfolio features a dark visual theme with restrained violet and cyan accents, distinct page layouts, and purposeful motion.
+The portfolio features a dark visual theme with restrained gold accents, distinct page layouts, and purposeful motion.
 
 Key design priorities:
 
@@ -67,7 +67,7 @@ git clone https://github.com/amiiiiiitz/development.git
 **2. Navigate to the portfolio directory**
 
 ```bash
-cd development/build-with-AI-tools/amit-portfolio
+cd ai-assisted/learning-projects/amit-portfolio
 ```
 
 **3. Install dependencies**
@@ -104,8 +104,10 @@ npm run preview
 amit-portfolio/
 ├── public/
 ├── src/
-│   ├── components/
 │   ├── assets/
+│   ├── components/
+│   ├── data/
+│   ├── pages/
 │   ├── App.tsx
 │   └── main.tsx
 ├── index.html
@@ -113,8 +115,6 @@ amit-portfolio/
 ├── vite.config.ts
 └── README.md
 ```
-
-*This is a representative structure; adjust it to match the actual repository.*
 
 ## Deployment
 

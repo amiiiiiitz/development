@@ -28,6 +28,7 @@ const TRUST_PROXY_HOPS = readInteger(
   process.env.NODE_ENV === "production" ? 1 : 0,
   0
 );
+app.set("trust proxy", TRUST_PROXY_HOPS);
 const INFO_RATE_LIMIT_WINDOW_MS = readInteger("INFO_RATE_LIMIT_WINDOW_MS", 15 * 60 * 1000);
 const INFO_RATE_LIMIT_MAX = readInteger("INFO_RATE_LIMIT_MAX", 30);
 const CONVERT_RATE_LIMIT_WINDOW_MS = readInteger("CONVERT_RATE_LIMIT_WINDOW_MS", 60 * 60 * 1000);

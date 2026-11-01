@@ -18,27 +18,27 @@
       <h2>Currency Converter</h2>
       <form>
         <div class="amount">
-          <p>Enter Amount</p>
-          <input value="1" type="text" />
+          <label for="amount">Enter Amount</label>
+          <input id="amount" value="1" type="number" min="1" step="any" />
         </div>
         <div class="dropdown">
           <div class="from">
-            <p>From</p>
+            <label for="from-currency">From</label>
             <div class="select-container">
-              <img src="https://flagsapi.com/US/flat/64.png" />
-              <select name="from"></select>
+              <img src="https://flagsapi.com/US/flat/64.png" alt="" />
+              <select id="from-currency" name="from"></select>
             </div>
           </div>
           <i class="fa-solid fa-arrow-right-arrow-left"></i>
           <div class="to">
-            <p>To</p>
+            <label for="to-currency">To</label>
             <div class="select-container">
-              <img src="https://flagsapi.com/IN/flat/64.png" />
-              <select name="to"></select>
+              <img src="https://flagsapi.com/IN/flat/64.png" alt="" />
+              <select id="to-currency" name="to"></select>
             </div>
           </div>
         </div>
-        <div class="msg">1USD = 80INR</div>
+        <div class="msg" role="status" aria-live="polite">1USD = 80INR</div>
         <button>Get Exchange Rate</button>
       </form>
     </div>

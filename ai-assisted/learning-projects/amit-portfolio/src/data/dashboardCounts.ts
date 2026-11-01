@@ -20,13 +20,13 @@ export function calculateDashboardCounts({ projects, publications, endorsements,
     return true
   }).length
 
-  const certificateCount = getUniqueEarnedAchievements(achievements).length
+  const awardsAndCertificates = getUniqueEarnedAchievements(achievements).length
 
   return {
     completedProjects: projects.filter((project) => project.status === 'Built').length,
     inProgress: projects.filter((project) => project.status === 'In Progress').length,
     publishedPapers: publications.filter((publication) => publication.verified && publication.status === 'published').length,
     endorsements: publicEndorsementCount,
-    certifications: certificateCount,
+    awardsAndCertificates,
   }
 }

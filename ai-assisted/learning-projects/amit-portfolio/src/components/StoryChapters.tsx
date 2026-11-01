@@ -1,7 +1,9 @@
-﻿import { ArrowUpRight, Mail } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
+import { ArrowUpRight, Mail } from 'lucide-react'
 import { profile } from '../data/profile'
 
 function ContactChapter() {
+  const prefersReducedMotion = useReducedMotion()
   const links = [
     { label: 'LinkedIn', href: profile.links.find((item) => item.label === 'LinkedIn')?.href },
     { label: 'GitHub', href: profile.links.find((item) => item.label === 'GitHub')?.href },
@@ -21,31 +23,37 @@ function ContactChapter() {
           <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>}
       </div>
-      <div className="border border-white/10">
+      <motion.div
+        initial={prefersReducedMotion ? false : 'hidden'}
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+        className="border border-white/10"
+      >
         <div className="border-b border-white/10 p-6">
           <p className="font-mono text-[9px] uppercase tracking-[0.36em] text-white/40">Channels</p>
         </div>
         <div className="divide-y divide-white/10">
-          {profile.email && <a href={`mailto:${profile.email}`} className="group flex items-center justify-between p-6 transition hover:bg-white/[0.02]">
+          {profile.email && <motion.a href={`mailto:${profile.email}`} variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }} className="group flex items-center justify-between border-l-2 border-l-transparent p-6 transition hover:border-l-[var(--color-accent)] hover:bg-white/[0.02]">
             <div>
               <p className="text-lg text-white">Email</p>
               <p className="mt-1 text-sm text-white/50">{profile.email}</p>
             </div>
             <ArrowUpRight size={16} className="text-white/40 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--color-accent)]" />
-          </a>}
-          {profile.whatsappUrl && <a href={profile.whatsappUrl} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-6 transition hover:bg-white/[0.02]">
+          </motion.a>}
+          {profile.whatsappUrl && <motion.a href={profile.whatsappUrl} target="_blank" rel="noopener noreferrer" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }} className="group flex items-center justify-between border-l-2 border-l-transparent p-6 transition hover:border-l-[var(--color-accent)] hover:bg-white/[0.02]">
             <div>
               <p className="text-lg text-white">WhatsApp</p>
               <p className="mt-1 text-sm text-white/50">Message directly</p>
             </div>
             <ArrowUpRight size={16} className="text-white/40 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--color-accent)]" />
-          </a>}
-          {links.map((item) => item.href && <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between p-6 transition hover:bg-white/[0.02]">
+          </motion.a>}
+          {links.map((item) => item.href && <motion.a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }} className="group flex items-center justify-between border-l-2 border-l-transparent p-6 transition hover:border-l-[var(--color-accent)] hover:bg-white/[0.02]">
             <p className="text-lg text-white">{item.label}</p>
             <ArrowUpRight size={16} className="text-white/40 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--color-accent)]" />
-          </a>)}
+          </motion.a>)}
         </div>
-      </div>
+      </motion.div>
     </div>
   </section>
 }

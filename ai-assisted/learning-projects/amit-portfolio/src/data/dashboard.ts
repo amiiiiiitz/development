@@ -11,5 +11,5 @@ export const dashboardMetrics = [
   { label: 'In Progress', value: counts.inProgress, href: '/projects' },
   { label: 'Published Papers', value: counts.publishedPapers, href: '/publications' },
   { label: 'Endorsements', value: counts.endorsements, href: '/endorsements' },
-  { label: 'Certifications', value: counts.certifications, href: '/achievements' },
+  { label: 'Awards & Certificates', value: counts.awardsAndCertificates, href: '/achievements' },
 ] as const

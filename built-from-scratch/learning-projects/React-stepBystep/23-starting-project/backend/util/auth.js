@@ -2,7 +2,10 @@ const { sign, verify } = require('jsonwebtoken');
 const { compare } = require('bcryptjs');
 const { NotAuthError } = require('./errors');
 
-const KEY = 'supersecret';
+const KEY = process.env.JWT_SECRET;
+if (!KEY || KEY.length < 32) {
+  throw new Error('JWT_SECRET must be set to a secret with at least 32 characters.');
+}
 
 function createJSONToken(email) {
   return sign({ email }, KEY, { expiresIn: '1h' });
