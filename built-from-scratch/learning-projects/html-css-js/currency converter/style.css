@@ -32,17 +32,6 @@ input {
   border-radius: 0.75rem;
 }
 
-form select:focus-visible,
-form input:focus-visible,
-form button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-form label {
-  display: block;
-}
-
 form input {
   border: 1px solid lightgray;
   font-size: 1rem;

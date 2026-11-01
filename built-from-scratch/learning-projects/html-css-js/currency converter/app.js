@@ -26,27 +26,19 @@ for (let select of dropdowns) {
 }
 
 const updateExchangeRate = async () => {
-  const amount = document.querySelector(".amount input");
-  const amountValue = Number(amount.value);
-  if (!Number.isFinite(amountValue) || amountValue < 1) {
-    msg.innerText = "Enter a valid amount of at least 1.";
-    return;
+  let amount = document.querySelector(".amount input");
+  let amtVal = amount.value;
+  if (amtVal === "" || amtVal < 1) {
+    amtVal = 1;
+    amount.value = "1";
   }
   const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}/${toCurr.value.toLowerCase()}.json`;
-  msg.innerText = "Getting the latest exchange rate...";
-  try {
-    const response = await fetch(URL);
-    if (!response.ok) throw new Error(`Exchange-rate request failed: ${response.status}`);
-    const data = await response.json();
-    const rate = data[toCurr.value.toLowerCase()];
-    if (!Number.isFinite(rate) || rate <= 0) throw new Error("Exchange rate unavailable.");
+  let response = await fetch(URL);
+  let data = await response.json();
+  let rate = data[toCurr.value.toLowerCase()];
 
-    const finalAmount = amountValue * rate;
-    if (!Number.isFinite(finalAmount)) throw new Error("Converted amount is invalid.");
-    msg.innerText = `${amountValue} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
-  } catch {
-    msg.innerText = "Could not get the exchange rate. Please try again.";
-  }
+  let finalAmount = amtVal * rate;
+  msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmount} ${toCurr.value}`;
 };
 
 const updateFlag = (element) => {

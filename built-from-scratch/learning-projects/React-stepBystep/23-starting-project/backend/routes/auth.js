@@ -46,12 +46,17 @@ router.post('/login', async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  console.log("Login attempt for email:", email);
   let user;
   try {
     user = await get(email);
+    console.log("User found:", user);
   } catch (error) {
     return res.status(401).json({ message: 'Authentication failed.' });
   }
+  console.log("Comparing provided password with stored password for email:", email);
+  console.log("Provided password:", password);
+  console.log("Stored hashed password:", user.password);
   const pwIsValid = await isValidPassword(password, user.password);
 
   console.log("Password valid:", pwIsValid);

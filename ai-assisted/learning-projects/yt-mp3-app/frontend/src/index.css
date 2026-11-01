@@ -54,10 +54,10 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
 .url-entry:focus-within { border-color: #829c55; box-shadow: 0 0 0 3px rgba(198,242,119,.07); }
 .url-icon { flex: none; color: #83857c; }
 .url-entry input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: #f2f3ee; font-size: 12px; }
-.url-entry input::placeholder { color: #a6a79f; }
+.url-entry input::placeholder { color: #5e6058; }
 .inspect-button, .download-button { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 8px; min-height: 39px; border: 0; border-radius: 7px; padding: 0 14px; background: #c6f277; color: #171b10; font-size: 11px; font-weight: 800; transition: transform .15s, background .15s; }
 .inspect-button:hover, .download-button:hover { transform: translateY(-1px); background: #d4fa93; }
-.input-hint { margin: 9px 0 0; color: #a6a79f; font-size: 10px; }
+.input-hint { margin: 9px 0 0; color: #686a62; font-size: 10px; }
 .privacy-note { display: flex; align-items: center; gap: 12px; margin-top: 28px; border-top: 1px solid #292a26; padding-top: 20px; }
 .privacy-icon, .empty-icon { display: grid; flex: none; width: 36px; height: 36px; place-items: center; border: 1px solid #33362c; border-radius: 10px; background: #20231c; color: #c6f277; }
 .privacy-note p { margin: 0; color: #85877e; font-size: 10px; line-height: 1.8; }
