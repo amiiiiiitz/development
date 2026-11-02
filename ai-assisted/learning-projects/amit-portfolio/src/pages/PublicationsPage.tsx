@@ -24,7 +24,7 @@ function PublicationsPage() {
             {item.authors && <p className="mt-2 text-sm text-white/50">{item.authors.join(', ')}</p>}
             {(item.venue || item.date) && <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">{[item.venue, item.date].filter(Boolean).join(' / ')}</p>}
             {item.summary && <p className="mt-4 max-w-3xl text-base leading-8 text-white/65">{item.summary}</p>}
-            {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-9 items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-white/70 transition hover:text-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]">View record <ArrowUpRight size={14} /></a>}
+            {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" className="ui-button mt-6 min-h-9 px-4 py-2 text-[10px] uppercase tracking-[0.16em]">View record <ArrowUpRight size={14} /></a>}
           </article>)}
         </div>}
       </section>

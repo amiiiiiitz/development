@@ -12,7 +12,7 @@ export const profile = {
   cgpa: '',
   portrait: portraitImage,
   introduction: 'I started with programming and problem-solving, then explored frontend development and gained some exposure to backend development and APIs. Now I am building my AI and machine-learning foundations. What excites me is the engineering work of bringing models, software, data, APIs, and tools together to make useful systems.',
-  exploredTechnologies: ['C', 'C++', 'Python', 'JavaScript', 'React.js'],
+  exploredTechnologies: ['C', 'C++', 'Python', 'NumPy', 'pandas', 'Matplotlib', 'Seaborn', 'Plotly', 'JavaScript', 'React.js'],
   currentProgram: 'AI & Machine Learning Engineering program (underway)',
   currentStudies: ['Python for AI', 'Data analysis', 'Machine learning'],
   nextLearning: ['Deep learning', 'NLP', 'PyTorch', 'Backend development', 'LLMs', 'RAG', 'Vector databases', 'LangChain', 'LangGraph', 'AI agents', 'MCP', 'LLMOps'],

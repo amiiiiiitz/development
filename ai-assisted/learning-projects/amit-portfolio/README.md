@@ -116,6 +116,10 @@ amit-portfolio/
 └── README.md
 ```
 
+## Resume Download
+
+To enable the homepage's **Download Resume** button, add the PDF to the `public/` directory and set `resumePdfUrl` in `src/data/profile.ts` to its public path (for example, `/Amit-Hasan-Simanto-Resume.pdf`). The configured `resumeFileName` is used as the downloaded filename. Until a resume URL is configured, the homepage button displays a “will be added soon” message when clicked.
+
 ## Deployment
 
 The portfolio is deployed on Vercel. When the Git repository is connected to the project, pushing changes to the configured deployment branch can trigger automatic deployments.

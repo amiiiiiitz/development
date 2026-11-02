@@ -51,6 +51,81 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
 }
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgb(255 255 255 / 6%), rgb(255 255 255 / 2%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+  color: rgb(255 255 255 / 82%);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.ui-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgb(217 181 76 / 48%);
+  background: linear-gradient(135deg, rgb(217 181 76 / 11%), rgb(255 255 255 / 3%));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 22%), inset 0 1px 0 rgb(255 255 255 / 6%);
+  color: var(--color-accent);
+}
+.ui-button:active:not(:disabled) { transform: translateY(0) scale(.985); }
+.ui-button:disabled { cursor: not-allowed; opacity: .4; }
+.ui-button--accent {
+  border-color: rgb(217 181 76 / 34%);
+  background: linear-gradient(135deg, rgb(217 181 76 / 12%), rgb(217 181 76 / 5%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+  color: #d7bd77;
+}
+.ui-button--accent:hover:not(:disabled) {
+  border-color: rgb(217 181 76 / 52%);
+  background: linear-gradient(135deg, rgb(217 181 76 / 17%), rgb(217 181 76 / 8%));
+  box-shadow: 0 8px 22px rgb(0 0 0 / 24%), inset 0 1px 0 rgb(255 255 255 / 4%);
+  color: #e0c985;
+}
+.ui-button--filter[aria-pressed='true'] {
+  border-color: rgb(217 181 76 / 52%);
+  background: rgb(217 181 76 / 10%);
+  color: var(--color-accent);
+}
+.ui-icon-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: .8rem;
+  background: linear-gradient(135deg, rgb(255 255 255 / 6%), rgb(255 255 255 / 2%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+  color: rgb(255 255 255 / 82%);
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.ui-icon-button:hover { border-color: rgb(217 181 76 / 48%); background: rgb(217 181 76 / 10%); color: var(--color-accent); }
+.touch-feedback { -webkit-tap-highlight-color: transparent; }
+@media (hover: none) and (pointer: coarse) {
+  .touch-feedback:active {
+    transform: scale(.99);
+    border-color: rgb(217 181 76 / 34%);
+    background-color: rgb(217 181 76 / 5%);
+  }
+}
+.certificate-image-trigger {
+  border-radius: .75rem;
+  transition: box-shadow .2s ease, background .2s ease;
+}
+.certificate-image-trigger:hover { box-shadow: 0 0 0 1px rgb(217 181 76 / 20%); }
+.about-panel {
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 1rem;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgb(217 181 76 / 5%), transparent 48%),
+    linear-gradient(145deg, rgb(255 255 255 / 3%), transparent 55%),
+    #0b0b0b;
+  box-shadow: 0 18px 52px rgb(0 0 0 / 16%);
+}
 section[id], [id^='case-study-'] { scroll-margin-top: 6rem; }
 ::selection { color: #080808; background: var(--color-accent); }
 
@@ -67,7 +142,12 @@ section[id], [id^='case-study-'] { scroll-margin-top: 6rem; }
   background: linear-gradient(120deg, rgb(255 255 255 / 2%), transparent 50%), var(--color-panel);
 }
 .project-case-study[open] { border-color: var(--color-border-strong); }
-.project-case-study > summary { cursor: pointer; }
+.project-case-study > summary {
+  cursor: pointer;
+  background: linear-gradient(110deg, rgb(217 181 76 / 4%), transparent 58%);
+}
+.project-case-study > summary:hover { background-color: rgb(255 255 255 / 2%); }
+.project-case-study[open] > summary { background-color: rgb(255 255 255 / 2%); }
 .project-case-study > summary::-webkit-details-marker { display: none; }
 .project-case-study > summary::marker { content: ''; }
 .project-case-study > div { border-color: var(--color-border-cool); }
@@ -102,11 +182,14 @@ section[id], [id^='case-study-'] { scroll-margin-top: 6rem; }
   width: 2.5rem;
   height: 2.5rem;
   place-items: center;
-  border: 1px solid var(--color-border-strong);
-  background: #151515;
-  color: white;
+  border: 1px solid rgb(255 255 255 / 13%);
+  border-radius: .8rem;
+  background: linear-gradient(135deg, #191919, #0d0d0d);
+  color: rgb(255 255 255 / 82%);
   cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
 }
+.certificate-dialog-close:hover { border-color: rgb(217 181 76 / 48%); background: rgb(217 181 76 / 10%); color: var(--color-accent); }
 .resume-panel {
   border-color: var(--color-border-cool);
   background: linear-gradient(120deg, rgb(217 181 76 / 5%), transparent 48%), var(--color-panel);

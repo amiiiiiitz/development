@@ -27,7 +27,7 @@ function EndorsementsPage() {
               {(item.role || item.organization || item.relationship) && <p className="mt-1 text-sm text-white/50">{[item.role, item.organization, item.relationship].filter(Boolean).join(' · ')}</p>}
               <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
                 {item.date && <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/35">{item.date}</p>}
-                {item.linkedinUrl && <a href={item.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-[0.24em] text-[var(--color-accent)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]">Reference link<span className="sr-only"> (opens in a new tab)</span></a>}
+                {item.linkedinUrl && <a href={item.linkedinUrl} target="_blank" rel="noopener noreferrer" className="ui-button px-3 py-1.5 text-[9px] uppercase tracking-[0.14em]">Reference link<span className="sr-only"> (opens in a new tab)</span></a>}
               </div>
             </div>
           </article>)}

@@ -18,8 +18,8 @@ function ProjectsPage() {
         <h1 id="projects-title" className="mt-4 font-display text-[clamp(3.6rem,10vw,9rem)] uppercase leading-[0.92] tracking-tight text-white">Projects</h1>
         <p className="mt-6 max-w-2xl text-base leading-8 text-white/60">A record of built work, work in progress, and planned concepts. Each entry separates evidence from intention.</p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <a href="#project-categories" className="group inline-flex items-center gap-3 border border-white/20 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]">Browse <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></a>
-          <Link to="/" className="inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white/70 transition hover:border-white hover:text-white"><ArrowLeft size={14} /> Home</Link>
+          <a href="#project-categories" className="ui-button ui-button--accent group px-6 py-3 text-[11px] uppercase tracking-[0.2em]">Browse <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></a>
+          <Link to="/" className="ui-button px-6 py-3 text-[11px] uppercase tracking-[0.2em]"><ArrowLeft size={14} /> Home</Link>
         </div>
         <p className="mt-10 flex flex-wrap gap-x-3 gap-y-2 border-t border-white/10 pt-6 font-mono text-[9px] uppercase tracking-[0.32em] text-white/40">
           <span>{String(projects.length).padStart(2, '0')} total</span>

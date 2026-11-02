@@ -56,8 +56,8 @@ const projects: Project[] = [
     accent: 'violet', visual: 'portfolio',
     resources: {
       liveDemo: 'https://amit-hasan-portfolio.vercel.app/',
-      sourceCode: 'https://github.com/amiiiiiitz/development/tree/main/builtWithAI/amit-portfolio',
-      readme: 'https://github.com/amiiiiiitz/development/blob/main/builtWithAI/amit-portfolio/README.md',
+      sourceCode: 'https://github.com/amiiiiiitz/development/tree/main/ai-assisted/learning-projects/amit-portfolio',
+      readme: 'https://github.com/amiiiiiitz/development/blob/main/ai-assisted/learning-projects/amit-portfolio/README.md',
     },
     caseStudy: {
       story: 'The portfolio is intended to present an early-career developer’s direction and evidence as one connected story, rather than imply expertise through a long skills list. The brief established a cinematic dark editorial direction and a clear path through experience, projects, recognition, personal background, and contact.',

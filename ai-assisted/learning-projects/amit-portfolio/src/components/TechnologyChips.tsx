@@ -3,6 +3,11 @@ import cppIcon from '../assets/cplusplus.svg'
 import javascriptIcon from '../assets/javascript.svg'
 import pythonIcon from '../assets/python.svg'
 import reactIcon from '../assets/react.svg'
+import numpyIcon from '../assets/numpy.svg'
+import pandasIcon from '../assets/pandas.svg'
+import matplotlibIcon from '../assets/matplotlib.svg'
+import seabornIcon from '../assets/seaborn.svg'
+import plotlyIcon from '../assets/plotly.svg'
 
 type TechnologyChipsProps = {
   items: string[]
@@ -17,6 +22,11 @@ const technologyIcons: Record<string, string> = {
   Python: pythonIcon,
   JavaScript: javascriptIcon,
   'React.js': reactIcon,
+  NumPy: numpyIcon,
+  pandas: pandasIcon,
+  Matplotlib: matplotlibIcon,
+  Seaborn: seabornIcon,
+  Plotly: plotlyIcon,
 }
 
 function TechnologyChips({ items, label, className = '', showIcons = false }: TechnologyChipsProps) {

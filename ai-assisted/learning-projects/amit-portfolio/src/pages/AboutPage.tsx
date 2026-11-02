@@ -28,8 +28,9 @@ function AboutPage() {
           }}
           className="relative mt-8 w-full max-w-sm"
         >
-          <div className="flex min-h-64 items-center justify-center border border-white/10 p-2">
-            {profile.portrait && !portraitUnavailable ? <img src={profile.portrait} alt={`Portrait of ${profile.name}`} onError={() => setPortraitUnavailable(true)} loading="lazy" decoding="async" className="block h-auto max-h-[34rem] w-auto max-w-full object-contain" /> : <div className="grid min-h-64 w-full place-items-center text-white/30"><UserRound size={28} /><span className="sr-only">Portrait unavailable</span></div>}
+          <div className="about-panel relative flex min-h-64 items-center justify-center overflow-hidden p-3">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,rgba(217,181,76,0.08),transparent_65%)]" />
+            {profile.portrait && !portraitUnavailable ? <img src={profile.portrait} alt={`Portrait of ${profile.name}`} onError={() => setPortraitUnavailable(true)} loading="lazy" decoding="async" className="relative block h-auto max-h-[34rem] w-auto max-w-full rounded-lg object-contain shadow-[0_16px_40px_rgba(0,0,0,0.4)]" /> : <div className="relative grid min-h-64 w-full place-items-center text-white/30"><UserRound size={28} /><span className="sr-only">Portrait unavailable</span></div>}
           </div>
           <div className="mt-4 grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-start sm:gap-4">
             <span className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.34em] text-white/40">Portrait</span>
@@ -41,7 +42,7 @@ function AboutPage() {
       </section>
       <AboutChapter />
       <div className="section-wrap pb-16">
-        <Link to="/contact" className="group inline-flex items-center gap-3 border border-white/20 px-6 py-3 text-[11px] uppercase tracking-[0.32em] text-white transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]">Get in touch <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
+        <Link to="/contact" className="ui-button group px-6 py-3 text-[11px] uppercase tracking-[0.2em]">Get in touch <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></Link>
       </div>
     </main>
   </PageLayout>
