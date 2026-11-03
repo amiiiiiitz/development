@@ -3,7 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#050506" />
+    <meta name="theme-color" content="#070707" />
+    <script>
+      try {
+        const theme = localStorage.getItem('amit-portfolio-theme') === 'light' ? 'light' : 'dark'
+        document.documentElement.dataset.theme = theme
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'light' ? '#f7f6f1' : '#070707')
+      } catch (error) {
+        console.error('Unable to restore the saved theme preference.', error)
+      }
+    </script>
     <meta name="description" content="Amit Hasan Simanto — aspiring AI Engineer exploring practical AI applications, RAG, AI agents and applied software engineering." />
     <title>Amit Hasan Simanto — Aspiring AI Engineer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

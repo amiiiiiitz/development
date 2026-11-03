@@ -1,7 +1,7 @@
-export type ProjectCategory = 'Built with AI Tools' | 'Built from Scratch'
+export type ProjectCategory = 'Built with AI Tools' | 'Independent Concepts'
 export type ProjectStatus = 'Built' | 'In Progress' | 'Planned'
 
-export const projectCategories: ProjectCategory[] = ['Built with AI Tools', 'Built from Scratch']
+export const projectCategories: ProjectCategory[] = ['Built with AI Tools', 'Independent Concepts']
 
 type CaseStudy = {
   story?: string
@@ -109,7 +109,7 @@ const projects: Project[] = [
   {
     number: '03', slug: 'ai-agent-system', title: 'AI Agent System', subtitle: 'TOOL USE & TASKS',
     description: 'A planned application concept exploring how an agent could interpret a task, select a tool, and make its actions understandable.',
-    status: 'Planned', category: 'Built from Scratch', stack: ['Python', 'LLMs', 'Tools'], technologyStatus: 'Planned',
+    status: 'Planned', category: 'Independent Concepts', stack: ['Python', 'LLMs', 'Tools'], technologyStatus: 'Planned',
     learning: 'Explore task decomposition, tool orchestration, validation, and clear boundaries around agent actions.',
     accent: 'violet', visual: 'agent',
     caseStudy: {
@@ -123,7 +123,7 @@ const projects: Project[] = [
   {
     number: '04', slug: 'rag-knowledge-assistant', title: 'RAG Knowledge Assistant', subtitle: 'RETRIEVAL & CONTEXT',
     description: 'A planned knowledge assistant concept focused on retrieving relevant source material to ground answers in context.',
-    status: 'Planned', category: 'Built from Scratch', stack: ['Python', 'RAG', 'Embeddings'], technologyStatus: 'Planned',
+    status: 'Planned', category: 'Independent Concepts', stack: ['Python', 'RAG', 'Embeddings'], technologyStatus: 'Planned',
     learning: 'Study document handling, retrieval quality, source grounding, and how to evaluate answers against their references.',
     accent: 'cyan', visual: 'rag',
     caseStudy: {

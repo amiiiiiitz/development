@@ -17,7 +17,7 @@ function HomePage() {
     <section aria-labelledby="hero-title" className="relative mx-auto grid min-h-[min(880px,calc(100svh-82px))] w-full max-w-[86rem] items-center gap-12 px-4 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.15fr_.85fr] lg:gap-16 lg:px-10">
       <div aria-hidden="true" className="pointer-events-none absolute -left-32 top-16 block h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(217,181,76,0.1),transparent_70%)] blur-3xl sm:-left-40 sm:top-24 sm:h-[360px] sm:w-[360px] lg:h-[420px] lg:w-[420px]" />
       <motion.div initial="hidden" animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: .09 } } }} className="relative z-[1]">
-        <motion.p variants={motionIn} className="mb-6 font-mono text-[9px] uppercase tracking-[0.42em] text-[var(--color-accent)]">Aspiring AI Engineer / CSE Student</motion.p>
+        <motion.p variants={motionIn} className="mb-6 font-mono text-[9px] uppercase tracking-[0.42em] text-[var(--color-accent)]">Aspiring AI Engineer / Third-year CSE student at IUBAT</motion.p>
         <h1
           id="hero-title"
           aria-label="Amit Hasan Simanto"
