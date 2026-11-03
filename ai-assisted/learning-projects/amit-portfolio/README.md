@@ -1,27 +1,27 @@
 # Amit Hasan Simanto — Personal Portfolio
 
-A personal portfolio showcasing my projects, technical skills, academic achievements, and journey toward becoming an AI Engineer.
+A personal portfolio website showcasing my background, development projects, technical interests, academic achievements, and journey toward becoming an AI Engineer.
 
 **Live Portfolio:** [amit-hasan-portfolio.vercel.app](https://amit-hasan-portfolio.vercel.app/)
 
 ## Overview
 
-This portfolio is my professional presence on the web, bringing together my background in Computer Science, software development projects, technical interests, and ongoing learning journey.
+This project is my personal portfolio, built to present my work, academic background, and ongoing development as a Computer Science and Engineering student.
 
-Built as a multi-page web application, it presents my work through a modern interface, interactive experiences, and dedicated sections for projects, achievements, and professional information.
+It is a multi-page web application featuring dedicated sections for projects, achievements, experience, research interests, and professional information.
 
 ## Features
 
-- **Home** — An introduction to my background, technical interests, and career direction.
-- **Projects** — A showcase of development work, project objectives, and technical implementation.
+- **Home** — Introduction, technical interests, and career direction.
+- **Projects** — Development projects with their objectives and implementation details.
 - **Achievements** — Academic recognition and programming contest achievements.
-- **About** — My background, learning journey, and interest in applied AI engineering.
+- **About** — Academic background, learning journey, and technical interests.
 - **Experience** — Relevant experience and practical work.
-- **Resume** — Access to my professional résumé.
-- **Publications** — A dedicated section for research and publications as applicable.
+- **Resume** — Resume access and download functionality.
+- **Publications** — A dedicated section for research and publications.
 - **Contact** — Professional profiles and contact information.
-- **Responsive Design** — Layouts designed for different screen sizes.
-- **Interactive UI** — Page transitions, motion effects, and reusable interface components.
+- **Responsive Design** — Layouts adapted for different screen sizes.
+- **Interactive UI** — Page transitions, motion effects, and reusable components.
 
 ## Tech Stack
 
@@ -38,14 +38,14 @@ Built as a multi-page web application, it presents my work through a modern inte
 
 ## Design Approach
 
-The portfolio features a dark visual theme with restrained gold accents, distinct page layouts, and purposeful motion.
+The portfolio uses a dark visual theme with restrained gold accents, minimal layouts, and purposeful motion.
 
-Key design priorities:
+Development priorities include:
 
 - Clear content hierarchy and readable typography.
-- Consistent navigation across pages.
-- Reusable components and maintainable frontend code.
-- Responsive layouts for different screen sizes.
+- Consistent navigation and visual identity.
+- Reusable components and maintainable code.
+- Responsive layouts across screen sizes.
 - Meaningful animations with consideration for reduced-motion preferences.
 
 ## Getting Started
@@ -54,7 +54,7 @@ Key design priorities:
 
 - [Node.js](https://nodejs.org/)
 - [Git](https://git-scm.com/)
-- npm, included with Node.js
+- npm (included with Node.js)
 
 ### Installation
 
@@ -67,7 +67,7 @@ git clone https://github.com/amiiiiiitz/development.git
 **2. Navigate to the portfolio directory**
 
 ```bash
-cd ai-assisted/learning-projects/amit-portfolio
+cd development/ai-assisted/learning-projects/amit-portfolio
 ```
 
 **3. Install dependencies**
@@ -82,7 +82,7 @@ npm install
 npm run dev
 ```
 
-Open the local URL displayed in your terminal to view the application.
+Open the local URL displayed in your terminal.
 
 ### Production Build
 
@@ -116,13 +116,17 @@ amit-portfolio/
 └── README.md
 ```
 
-## Resume Download
+## Resume
 
-To enable the homepage's **Download Resume** button, add the PDF to the `public/` directory and set `resumePdfUrl` in `src/data/profile.ts` to its public path (for example, `/Amit-Hasan-Simanto-Resume.pdf`). The configured `resumeFileName` is used as the downloaded filename. Until a resume URL is configured, the homepage button displays a “will be added soon” message when clicked.
+The homepage includes a resume download feature. The PDF can be configured through `resumePdfUrl` in `src/data/profile.ts`, with the file stored in the `public/` directory.
+
+Until a resume is configured, the button displays a notification that it will be available soon.
 
 ## Deployment
 
-The portfolio is deployed on Vercel. When the Git repository is connected to the project, pushing changes to the configured deployment branch can trigger automatic deployments.
+The application is deployed on Vercel.
+
+When connected to the GitHub repository, pushing changes to the configured deployment branch can trigger automatic deployments.
 
 ## Connect With Me
 
