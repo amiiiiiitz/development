@@ -27,11 +27,11 @@ function DashboardMetrics() {
       </div>
       <span className="mb-1 text-right font-mono text-[8px] uppercase tracking-[0.2em] text-white/35">Counted from<br />verified data</span>
     </div>
-    <motion.div initial={prefersReducedMotion ? false : 'hidden'} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: prefersReducedMotion ? 0 : .12, delayChildren: prefersReducedMotion ? 0 : .16 } } }} className="grid gap-2">
-      {dashboardMetrics.map((metric, index) => <motion.div key={metric.label} variants={{ hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : .42, ease: 'easeOut' }}>
-        <Link to={metric.href} className="touch-feedback group relative grid min-h-[4.25rem] grid-cols-[2.5rem_1fr_auto] items-center gap-3 overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-r from-white/[0.045] via-white/[0.025] to-transparent px-3 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/30 hover:from-[var(--color-accent)]/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-4 sm:px-4">
+    <motion.div initial={prefersReducedMotion ? false : 'hidden'} animate="visible" variants={{ hidden: {}, visible: { transition: { staggerChildren: prefersReducedMotion ? 0 : .12, delayChildren: prefersReducedMotion ? 0 : .16 } } }} className="grid min-w-0 gap-2">
+      {dashboardMetrics.map((metric, index) => <motion.div key={metric.label} variants={{ hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 10 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: prefersReducedMotion ? 0 : .42, ease: 'easeOut' }} className="min-w-0">
+        <Link to={metric.href} className="touch-feedback group relative grid min-h-[4.25rem] min-w-0 grid-cols-[2.5rem_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-xl border border-white/[0.08] bg-gradient-to-r from-white/[0.045] via-white/[0.025] to-transparent px-3 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--color-accent)]/30 hover:from-[var(--color-accent)]/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] focus-visible:outline-offset-2 sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:gap-4 sm:px-4">
           <span className="grid h-8 w-8 place-items-center rounded-lg border border-white/[0.08] bg-black/20 font-mono text-[9px] text-[var(--color-accent)]/75 transition-colors group-hover:border-[var(--color-accent)]/25 group-hover:text-[var(--color-accent)]">0{index + 1}</span>
-          <span className="text-[11px] uppercase tracking-[0.14em] text-white/65 transition-colors group-hover:text-white sm:text-xs">
+          <span className="min-w-0 text-[11px] uppercase tracking-[0.14em] text-white/65 transition-colors group-hover:text-white sm:text-xs">
             <span className="sr-only">{metric.label}</span>
             <TypedText text={metric.label} delay={index * 0.12} />
           </span>

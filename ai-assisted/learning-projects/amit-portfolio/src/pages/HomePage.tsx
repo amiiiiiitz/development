@@ -21,7 +21,7 @@ function HomePage() {
         <h1
           id="hero-title"
           aria-label="Amit Hasan Simanto"
-          className="font-display text-[clamp(2.2rem,7.2vw,6.4rem)] uppercase leading-[0.86] tracking-[-0.02em] text-white"
+          className="font-display text-[clamp(1.5rem,7.2vw,6.4rem)] uppercase leading-[0.86] tracking-[-0.02em] text-white"
         >
           <span className="block whitespace-nowrap">
             Amit Hasan
@@ -37,13 +37,13 @@ function HomePage() {
             {resumeUnavailableMessage && <p id="resume-unavailable-message" role="status" className="absolute left-0 top-full mt-2 whitespace-nowrap font-mono text-[10px] text-white/60">My resume will be added soon.</p>}
           </div>
         </motion.div>
-        <motion.div variants={motionIn} className="mt-12 flex items-center gap-4 font-mono text-[9px] uppercase tracking-[0.36em] text-white/30">
+        <motion.div variants={motionIn} className="mt-12 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[9px] uppercase tracking-[0.36em] text-white/30">
           <span>Applied AI</span>
-          <span className="h-px w-10 bg-white/10" />
+          <span aria-hidden="true" className="hidden h-px w-10 bg-white/10 sm:block" />
           <span>RAG</span>
-          <span className="h-px w-10 bg-white/10" />
+          <span aria-hidden="true" className="hidden h-px w-10 bg-white/10 sm:block" />
           <span>AI Agents</span>
-          <span className="h-px w-10 bg-white/10" />
+          <span aria-hidden="true" className="hidden h-px w-10 bg-white/10 sm:block" />
           <span>Python</span>
         </motion.div>
       </motion.div>

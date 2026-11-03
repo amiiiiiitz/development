@@ -31,7 +31,7 @@ export function ProfileChapter() {
 }
 
 function AboutChapter() {
-  return <div className="section-wrap pt-0 pb-10 sm:pb-14">
+  return <div className="section-wrap space-y-4 pt-0 pb-10 sm:pb-14">
 
     <section aria-labelledby="direction-title" className="about-panel grid gap-6 p-5 sm:p-7 md:grid-cols-[minmax(18rem,.8fr)_1.2fr] md:gap-12 md:p-9">
       <div>

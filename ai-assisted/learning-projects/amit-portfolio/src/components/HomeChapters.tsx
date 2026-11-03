@@ -34,7 +34,7 @@ function HomeChapters() {
       </div>
       <div className="space-y-10">
       {featured.map((project) => <motion.article key={project.slug} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} className="touch-feedback group grid overflow-hidden rounded-2xl border border-white/[0.09] bg-[linear-gradient(145deg,rgba(255,255,255,0.035),transparent_42%),#0b0b0b] shadow-[0_24px_70px_rgba(0,0,0,0.25)] lg:grid-cols-[1.1fr_0.9fr]">
-      <div className="relative flex min-h-[22rem] flex-col justify-between p-6 sm:p-8 lg:min-h-[28rem] lg:p-12">
+      <div className="relative flex min-h-[22rem] flex-col gap-8 p-6 sm:p-8 lg:min-h-[28rem] lg:p-12">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-white/55"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300/70" />Project {project.number} / Built</span>
           <span className="rounded-full border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/[0.06] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--color-accent)]">{project.category}</span>
