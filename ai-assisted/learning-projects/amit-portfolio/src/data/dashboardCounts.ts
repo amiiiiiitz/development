@@ -1,18 +1,19 @@
 import { getUniqueEarnedAchievements } from './achievementSequence'
 
-type ProjectRecord = { status: 'Built' | 'In Progress' | 'Planned' }
+type ProjectRecord = { status: 'completed' | 'in-progress' }
 type PublicationRecord = { status: 'published' | 'preprint' | 'submitted' | 'under-review' | 'in-progress'; verified: boolean }
 type EndorsementRecord = { id: string; quote: string; visible: boolean }
 type AchievementRecord = { id: string; credentialKey?: string; credentialType?: 'award' | 'participation' | 'certificate' | 'certification' | 'education'; verified?: boolean }
 
 export type DashboardCountInput = {
   projects: readonly ProjectRecord[]
+  featuredProjects: readonly ProjectRecord[]
   publications: readonly PublicationRecord[]
   endorsements: readonly EndorsementRecord[]
   achievements: readonly AchievementRecord[]
 }
 
-export function calculateDashboardCounts({ projects, publications, endorsements, achievements }: DashboardCountInput) {
+export function calculateDashboardCounts({ projects, featuredProjects, publications, endorsements, achievements }: DashboardCountInput) {
   const visibleEndorsementIds = new Set<string>()
   const publicEndorsementCount = endorsements.filter((endorsement) => {
     if (!endorsement.visible || !endorsement.quote.trim() || visibleEndorsementIds.has(endorsement.id)) return false
@@ -23,8 +24,8 @@ export function calculateDashboardCounts({ projects, publications, endorsements,
   const awardsAndCertificates = getUniqueEarnedAchievements(achievements).length
 
   return {
-    completedProjects: projects.filter((project) => project.status === 'Built').length,
-    inProgress: projects.filter((project) => project.status === 'In Progress').length,
+    featuredProjects: featuredProjects.length,
+    inProgress: projects.filter((project) => project.status === 'in-progress').length,
     publishedPapers: publications.filter((publication) => publication.verified && publication.status === 'published').length,
     endorsements: publicEndorsementCount,
     awardsAndCertificates,

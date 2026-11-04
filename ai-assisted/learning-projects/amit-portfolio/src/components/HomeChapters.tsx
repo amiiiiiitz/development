@@ -1,11 +1,11 @@
 ﻿import { motion } from 'motion/react'
 import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router'
-import projects from '../data/projects'
+import { featuredProjects, projectCategoryLabels, projectStatusLabels } from '../data/projects'
 import { profile } from '../data/profile'
 import terminalArtwork from '../assets/terminal.svg'
 
-const featured = projects.filter((project) => project.status === 'Built')
+const featured = featuredProjects
 
 function HomeChapters() {
   return <div className="section-wrap space-y-16 pb-16 sm:space-y-24 sm:pb-24">
@@ -36,8 +36,8 @@ function HomeChapters() {
       {featured.map((project) => <motion.article key={project.slug} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} className="touch-feedback group grid overflow-hidden rounded-2xl border border-white/[0.09] bg-[linear-gradient(145deg,rgba(255,255,255,0.035),transparent_42%),#0b0b0b] shadow-[0_24px_70px_rgba(0,0,0,0.25)] lg:grid-cols-[1.1fr_0.9fr]">
       <div className="relative flex min-h-[22rem] flex-col gap-8 p-6 sm:p-8 lg:min-h-[28rem] lg:p-12">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-white/55"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300/70" />Project {project.number} / Built</span>
-          <span className="rounded-full border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/[0.06] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--color-accent)]">{project.category}</span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-white/55"><span className={`h-1.5 w-1.5 rounded-full ${project.status === 'completed' ? 'bg-emerald-300/70' : 'bg-[var(--color-accent)]'}`} />Project {project.number} / {projectStatusLabels[project.status]}</span>
+          <span className="rounded-full border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/[0.06] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--color-accent)]">{projectCategoryLabels[project.category]}</span>
         </div>
         <div>
           <p className="font-mono text-[9px] uppercase tracking-[0.4em] text-white/30">{project.subtitle}</p>
@@ -65,8 +65,8 @@ function HomeChapters() {
             <div className="min-w-0"><p className="truncate text-sm font-medium text-white">{project.title}</p><p className="mt-1 truncate font-mono text-[9px] uppercase tracking-[0.16em] text-white/40">{project.subtitle}</p></div>
           </div>
           <div className="mt-6 space-y-3">
-            <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.14em]"><span className="text-white/40">Build status</span><span className="text-emerald-200/75">Complete</span></div>
-            <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]"><div className="h-full w-full rounded-full bg-gradient-to-r from-[#9e8555] to-[#b39a69]" /></div>
+            <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.14em]"><span className="text-white/40">Build status</span><span className={project.status === 'completed' ? 'text-emerald-200/75' : 'text-[var(--color-accent)]'}>{projectStatusLabels[project.status]}</span></div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]"><div className={`h-full rounded-full bg-gradient-to-r from-[#9e8555] to-[#b39a69] ${project.status === 'completed' ? 'w-full' : 'w-1/2'}`} /></div>
           </div>
           <div className="mt-6 flex items-end justify-between border-t border-white/[0.07] pt-4">
             <span className="font-mono text-[9px] uppercase leading-5 tracking-[0.12em] text-white/35">Illustrative<br />project card</span>
