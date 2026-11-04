@@ -14,11 +14,11 @@ function ProjectCard({ project, detailsHref }: { project: Project; detailsHref?:
     <article className="touch-feedback group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-white/[0.09] bg-[linear-gradient(145deg,rgba(255,255,255,0.035),transparent_42%),#0b0b0b] shadow-[0_20px_60px_rgba(0,0,0,0.2)] transition duration-300 hover:-translate-y-1 hover:border-[var(--color-accent)]/30 hover:shadow-[0_26px_70px_rgba(0,0,0,0.35)]">
       <div className="relative flex min-h-[16rem] flex-col justify-between overflow-hidden border-b border-white/[0.07] bg-[radial-gradient(ellipse_at_75%_35%,rgba(217,181,76,0.12),transparent_42%),linear-gradient(120deg,rgba(255,255,255,0.025),transparent_55%)] p-6 sm:min-h-[18rem] sm:p-8">
         <span aria-hidden="true" className="pointer-events-none absolute -right-2 -top-8 select-none font-display text-[13rem] leading-none text-white/[0.035] transition-colors duration-500 group-hover:text-[var(--color-accent)]/[0.09] sm:text-[15rem]">{project.number}</span>
-        <div className="relative flex items-start justify-between gap-4">
-          <div>
+        <div className="relative flex items-start gap-4">
+          <div className="flex flex-col items-start gap-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-white/55"><span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" /> Project {project.number}</span>
+            <span className={`rounded-full border bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] ${statusStyles[project.status]}`}>{project.status}</span>
           </div>
-          <span className={`shrink-0 rounded-full border bg-black/25 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] ${statusStyles[project.status]}`}>{project.status}</span>
         </div>
         <div className="relative mt-8">
           <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-[var(--color-accent)]/75">{project.category}</p>

@@ -369,6 +369,59 @@ html[data-theme='light'] .certificate-image-trigger [class~='bg-black/65'] {
 html[data-theme='light'] .project-case-study > div[class*='bg-white/'] {
   background-color: rgb(0 0 0 / 5%) !important;
 }
+html[data-theme='light'] header nav[aria-label='Main navigation'] a[aria-current='page']:not(.ui-button),
+html[data-theme='light'] header nav[aria-label='Main navigation'] button[data-active='true'] {
+  border-color: rgb(134 97 0 / 42%);
+  background-color: rgb(134 97 0 / 13%);
+  box-shadow: inset 0 -2px #705100;
+  color: #513900 !important;
+  font-weight: 700;
+}
+html[data-theme='light'] header nav[aria-label='Main navigation'] a:not(.ui-button),
+html[data-theme='light'] header nav[aria-label='Main navigation'] button {
+  transition: color .18s ease, background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+html[data-theme='light'] header nav[aria-label='Main navigation'] a:not(.ui-button):hover,
+html[data-theme='light'] header nav[aria-label='Main navigation'] a:not(.ui-button):focus-visible,
+html[data-theme='light'] header nav[aria-label='Main navigation'] button:hover,
+html[data-theme='light'] header nav[aria-label='Main navigation'] button:focus-visible {
+  border-color: rgb(134 97 0 / 35%);
+  background-color: rgb(134 97 0 / 12%);
+  color: #513900 !important;
+  transform: translateY(-1px);
+}
+html[data-theme='light'] .footer-nav-link,
+html[data-theme='light'] .footer-social-link {
+  border-radius: .375rem;
+  transition: color .18s ease, background-color .18s ease, transform .18s ease;
+}
+html[data-theme='light'] .footer-nav-link {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  margin-inline: -.5rem;
+  padding-inline: .5rem;
+}
+html[data-theme='light'] .footer-nav-link:hover,
+html[data-theme='light'] .footer-nav-link:focus-visible,
+html[data-theme='light'] .footer-social-link:hover,
+html[data-theme='light'] .footer-social-link:focus-visible {
+  background-color: rgb(134 97 0 / 12%);
+  color: #513900 !important;
+  transform: translateY(-1px);
+}
+html[data-theme='light'] .live-snapshot .snapshot-card {
+  background-color: #fff;
+  background-image: none;
+}
+html[data-theme='light'] .live-snapshot .snapshot-card:hover {
+  background-image: linear-gradient(90deg, rgb(134 97 0 / 8%), transparent);
+}
+html[data-theme='light'] .live-snapshot .snapshot-index,
+html[data-theme='light'] .live-snapshot .snapshot-value,
+html[data-theme='light'] .live-snapshot .snapshot-link-icon {
+  background-color: #fff;
+}
 
 @media (min-width: 640px) {
   .section-wrap { width: min(100% - 4rem, 86rem); }

@@ -54,7 +54,7 @@ function SiteHeader() {
   const contactClass = `ui-button min-h-10 px-4 py-2 text-[10px] uppercase tracking-[0.18em] ${pathname === '/contact' ? 'ui-button--accent' : ''}`
   const renderLink = (item: (typeof allNavigation)[number], mobile = false) => {
     const active = isActiveRoute(pathname, item.to)
-    return <Link key={item.to} to={item.to} aria-current={active ? 'page' : undefined} onClick={() => { setMobileMenuPath(null); setMoreOpenPath(null) }} className={mobile ? `flex min-h-11 items-center rounded-lg border px-3 py-2 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] ${active ? 'border-[var(--color-accent)]/20 bg-[var(--color-accent)]/[0.08] text-[var(--color-accent)]' : 'border-transparent text-white/65 hover:bg-white/[0.05] hover:text-white'}` : linkClass(active)}>
+    return <Link key={item.to} to={item.to} aria-current={active ? 'page' : undefined} data-active={active || undefined} onClick={() => { setMobileMenuPath(null); setMoreOpenPath(null) }} className={mobile ? `flex min-h-11 items-center rounded-lg border px-3 py-2 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)] ${active ? 'border-[var(--color-accent)]/20 bg-[var(--color-accent)]/[0.08] text-[var(--color-accent)]' : 'border-transparent text-white/65 hover:bg-white/[0.05] hover:text-white'}` : linkClass(active)}>
       {item.label}
     </Link>
   }
@@ -78,7 +78,7 @@ function SiteHeader() {
     <nav aria-label="Main navigation" className="hidden min-w-0 items-center justify-self-center gap-0.5 rounded-full border border-white/[0.08] bg-white/[0.025] p-1 xl:flex">
       {primaryNavigation.map((item) => renderLink(item))}
       <div ref={moreRef} className="relative">
-        <button type="button" aria-haspopup="true" aria-expanded={moreOpen} aria-controls="more-pages-navigation" onClick={() => setMoreOpenPath(moreOpen ? null : pathname)} className={`${linkClass(activeSecondary)} gap-2 ${moreOpen ? 'text-white' : ''}`}><span className="relative z-10">More <ChevronDown size={12} className={`inline transition-transform ${moreOpen ? 'rotate-180' : ''}`} /></span></button>
+        <button type="button" aria-haspopup="true" aria-expanded={moreOpen} aria-controls="more-pages-navigation" data-active={activeSecondary || undefined} onClick={() => setMoreOpenPath(moreOpen ? null : pathname)} className={`${linkClass(activeSecondary)} gap-2 ${moreOpen ? 'text-white' : ''}`}><span className="relative z-10">More <ChevronDown size={12} className={`inline transition-transform ${moreOpen ? 'rotate-180' : ''}`} /></span></button>
         <nav id="more-pages-navigation" aria-label="More pages" hidden={!moreOpen} className={`absolute right-0 top-[calc(100%+0.8rem)] z-30 w-56 flex-col gap-1 rounded-xl border border-white/10 bg-[#101010]/95 p-2 shadow-[0_24px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl ${moreOpen ? 'flex' : 'hidden'}`}>{secondaryNavigation.map((item) => renderLink(item, true))}</nav>
       </div>
     </nav>
