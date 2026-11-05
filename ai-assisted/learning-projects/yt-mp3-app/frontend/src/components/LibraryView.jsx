@@ -30,6 +30,7 @@ export default function LibraryView({ library, filters, forms, playback, actions
     activeFolder,
     unfiledCount,
     searchTerms,
+    storageInfo,
   } = library;
   const { searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly } = filters;
   const {
@@ -44,6 +45,7 @@ export default function LibraryView({ library, filters, forms, playback, actions
     renameTrackId,
     renameDraft,
     setRenameDraft,
+    pendingImport,
   } = forms;
   const {
     currentTrack,
@@ -74,6 +76,12 @@ export default function LibraryView({ library, filters, forms, playback, actions
     onRemoveTrack,
     onRemoveFolder,
     onGoToConverter,
+    onExportLibrary,
+    onImportLibrary,
+    onDownloadTrack,
+    onReDownloadTrack,
+    onApplyImport,
+    onCancelImport,
   } = actions;
 
   return (
@@ -86,8 +94,26 @@ export default function LibraryView({ library, filters, forms, playback, actions
         <span className="library-total">{tracks.length} {tracks.length === 1 ? "TRACK" : "TRACKS"}</span>
       </div>
 
+      <div className="library-toolbar">
+        <button type="button" onClick={onExportLibrary}>Export library</button>
+        <button type="button" onClick={onImportLibrary}>Import library</button>
+      </div>
+      {storageInfo?.supported && (
+        <div className="storage-panel">
+          <span>Storage: {((storageInfo.usage || 0) / 1024 / 1024).toFixed(1)} MB used of {((storageInfo.quota || 0) / 1024 / 1024).toFixed(0)} MB</span>
+          <span>Persistent: {storageInfo.persistent ? "Yes" : "No"}</span>
+          {!storageInfo.persistent && <span className="storage-warning">Browser may delete songs. Export a backup.</span>}
+        </div>
+      )}
+      {pendingImport && (
+        <div className="import-panel">
+          <span>Import {pendingImport.tracks.length} tracks and {pendingImport.folders.length} folders?</span>
+          <button type="button" onClick={() => onApplyImport("replace")}>Replace</button>
+          <button type="button" onClick={() => onApplyImport("merge")}>Merge</button>
+          <button type="button" onClick={onCancelImport}>Cancel</button>
+        </div>
+      )}
       <div className="library-search-tools">
-        {tracks.length > 0 && (
           <>
             <div className="library-search">
               <Search size={16} aria-hidden="true" />
@@ -388,6 +414,14 @@ export default function LibraryView({ library, filters, forms, playback, actions
                 >
                   <Pencil size={15} />
                 </button>
+                <button className="icon-button" onClick={() => onDownloadTrack(track)} aria-label={`Download ${title}`}>
+                  ⬇
+                </button>
+                {track.downloaded === false && (
+                  <button className="icon-button" onClick={() => onReDownloadTrack(track)} aria-label={`Re-download ${title}`}>
+                    ↻
+                  </button>
+                )}
                 <button className="icon-button remove-button" onClick={() => onRemoveTrack(track)} aria-label={`Remove ${title}`}>
                   <Trash2 size={17} />
                 </button>

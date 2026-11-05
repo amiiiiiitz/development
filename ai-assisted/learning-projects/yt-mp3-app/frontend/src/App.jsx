@@ -62,6 +62,9 @@ export default function App() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [audioSource, setAudioSource] = useState(null);
+  const [storageInfo, setStorageInfo] = useState({ supported: false, persistent: null, usage: 0, quota: 0 });
+  const [pendingImport, setPendingImport] = useState(null);
+  const importInputRef = useRef(null);
   const audioRef = useRef(null);
   const currentTimeRef = useRef(0);
   const playerProgressRef = useRef(null);
@@ -462,6 +465,33 @@ export default function App() {
   }, [refreshLibrary]);
 
   useEffect(() => {
+    const loadStorage = async () => {
+      if (!navigator.storage) {
+        return;
+      }
+      try {
+        if (navigator.storage.persist) {
+          const persisted = await navigator.storage.persist();
+          setStorageInfo((info) => ({ ...info, supported: true, persistent: persisted }));
+        }
+        if (navigator.storage.estimate) {
+          const estimate = await navigator.storage.estimate();
+          setStorageInfo((info) => ({
+            ...info,
+            supported: true,
+            usage: estimate.usage || 0,
+            quota: estimate.quota || 0,
+            persistent: info.persistent ?? null,
+          }));
+        }
+      } catch (storageError) {
+        setError("Could not read storage information.");
+      }
+    };
+    void loadStorage();
+  }, []);
+
+  useEffect(() => {
     if (!currentTrack) {
       setIsPreparingAudio(false);
       setAudioSource(null);
@@ -754,6 +784,136 @@ export default function App() {
     };
   }, [currentTrack, tracks, isShuffle, repeatMode, activeFolderId, favoritesOnly]);
 
+  const exportLibrary = () => {
+    const data = { version: 1, exportedAt: Date.now(), tracks, folders };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "nofi-library-backup.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setNotice("Library exported.");
+  };
+
+  const isAudioCached = async (trackId) => {
+    try {
+      const cache = await caches.open(AUDIO_CACHE_NAME);
+      const response = await cache.match(new Request(new URL(`/offline-audio/${encodeURIComponent(trackId)}`, window.location.origin)));
+      return Boolean(response && response.ok);
+    } catch {
+      return false;
+    }
+  };
+
+  const downloadTrackFile = async (track) => {
+    try {
+      const cache = await caches.open(AUDIO_CACHE_NAME);
+      const response = await cache.match(new Request(new URL(`/offline-audio/${encodeURIComponent(track.id)}`, window.location.origin)));
+      if (!response) {
+        setError("This song is not saved offline.");
+        return;
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${cleanTrackTitle(track.title)}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (downloadError) {
+      setError(downloadError.message || "Could not download this song.");
+    }
+  };
+
+  const handleImportFile = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data || typeof data !== "object" || data.version !== 1) {
+        throw new Error("This backup file is not supported.");
+      }
+      if (!Array.isArray(data.tracks) || !Array.isArray(data.folders)) {
+        throw new Error("This backup file is missing library data.");
+      }
+      setPendingImport(data);
+    } catch (importError) {
+      setError(importError.message || "Could not read this backup file.");
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  const applyImport = async (mode) => {
+    if (!pendingImport) {
+      return;
+    }
+    setError("");
+    try {
+      const importedTracks = pendingImport.tracks;
+      const importedFolders = pendingImport.folders;
+
+      if (mode === "replace") {
+        const existingTracks = await getAllTracksMetadata();
+        await Promise.all(existingTracks.map((track) => deleteTrackMetadata(track.id)));
+        const existingFolders = await getAllFolders();
+        await Promise.all(existingFolders.map((folder) => deleteFolderFromDB(folder.id)));
+      }
+
+      await Promise.all(importedFolders.map((folder) => saveFolder(folder)));
+      await Promise.all(importedTracks.map((track) => saveTrackMetadata({ ...track, downloaded: undefined })));
+
+      // mark downloaded status
+      const tracksWithStatus = await Promise.all(importedTracks.map(async (track) => {
+        const cached = await isAudioCached(track.id);
+        return { ...track, downloaded: cached };
+      }));
+      await Promise.all(tracksWithStatus.map((track) => saveTrackMetadata(track)));
+
+      await refreshLibrary();
+      setPendingImport(null);
+      setNotice(mode === "replace" ? "Library replaced from backup." : "Library merged from backup.");
+    } catch (importError) {
+      setError(importError.message || "Could not import this library.");
+    }
+  };
+
+  const reDownloadTrack = async (track) => {
+    if (!track?.videoId) {
+      setError("This track has no video ID to re-download.");
+      return;
+    }
+    setError("");
+    setIsConverting(true);
+    try {
+      const audioBlob = await convertVideoToAudio(`https://www.youtube.com/watch?v=${track.videoId}`);
+      if (!audioBlob.size) {
+        throw new Error("The converted audio file was empty.");
+      }
+      const cache = await caches.open(AUDIO_CACHE_NAME);
+      const audioRequest = new Request(new URL(`/offline-audio/${encodeURIComponent(track.id)}`, window.location.origin));
+      await cache.put(audioRequest, new Response(audioBlob, { headers: { "Content-Type": audioBlob.type || "audio/mpeg", "Content-Length": String(audioBlob.size) } }));
+      await updateTrackMetadata(track.id, { downloaded: true });
+      await refreshLibrary();
+      setNotice("Track re-downloaded.");
+    } catch (reDownloadError) {
+      if (!navigator.onLine) {
+        setNotice("You're offline. Reconnect to download this track.");
+      } else {
+        setError(reDownloadError.message || "Re-download failed.");
+      }
+    } finally {
+      setIsConverting(false);
+    }
+  };
   const removeTrack = async (track) => {
     setError("");
     try {
@@ -872,9 +1032,9 @@ export default function App() {
             />
           ) : (
             <LibraryView
-              library={{ tracks, visibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms }}
+              library={{ tracks, visibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms, storageInfo }}
               filters={{ searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly }}
-              forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, signatureName, isEditingSignature, signatureDraft, setSignatureDraft, renameTrackId, renameDraft, setRenameDraft }}
+              forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, signatureName, isEditingSignature, signatureDraft, setSignatureDraft, renameTrackId, renameDraft, setRenameDraft, pendingImport }}
               playback={{ currentTrack, isPlaying, isPreparingAudio, currentTime, duration, pendingStatsRef, inlineProgressRef, inlineCurrentTimeRef, inlineDurationRef, onPlayTrack: playTrack, onSeekTrack: seekTrack }}
               actions={{
                 onCreateFolder: createFolder,
@@ -892,6 +1052,12 @@ export default function App() {
                 onRemoveTrack: removeTrack,
                 onRemoveFolder: removeFolder,
                 onGoToConverter: resetConverter,
+                onExportLibrary: exportLibrary,
+                onImportLibrary: () => importInputRef.current?.click(),
+                onDownloadTrack: downloadTrackFile,
+                onReDownloadTrack: reDownloadTrack,
+                onApplyImport: applyImport,
+                onCancelImport: () => setPendingImport(null),
               }}
             />
           )}
@@ -902,6 +1068,8 @@ export default function App() {
           <span>Audio you’re authorized to use.</span>
         </footer>
       </main>
+
+      <input ref={importInputRef} type="file" accept="application/json" hidden onChange={handleImportFile} />
 
       <PlayerDock
         player={{
