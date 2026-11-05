@@ -1038,7 +1038,7 @@ export default function App() {
       return false;
     }
     const searchableText = normalizeSearchText(
-      `${track.title} ${track.uploader || ""} ${track.videoId || ""}`
+      `${track.title || ""} ${track.uploader || ""} ${track.videoId || ""}`
     );
     return searchTerms.every((term) => searchableText.includes(term));
   });
@@ -1051,7 +1051,7 @@ export default function App() {
       return (b.playCount || 0) - (a.playCount || 0);
     }
     if (sortBy === "az") {
-      return cleanTrackTitle(a.title).localeCompare(cleanTrackTitle(b.title));
+      return cleanTrackTitle(a.title || "").localeCompare(cleanTrackTitle(b.title || ""));
     }
     if (sortBy === "durationAsc") {
       return (a.duration || 0) - (b.duration || 0);
