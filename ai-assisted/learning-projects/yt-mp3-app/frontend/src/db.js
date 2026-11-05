@@ -1,7 +1,8 @@
 const DATABASE_NAME = "sonora-offline-library";
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 3;
 const TRACKS_STORE = "tracks";
 const FOLDERS_STORE = "folders";
+const APP_STATE_STORE = "appState";
 
 let databasePromise;
 
@@ -28,6 +29,9 @@ export function initDB() {
         }
         if (!database.objectStoreNames.contains(FOLDERS_STORE)) {
           database.createObjectStore(FOLDERS_STORE, { keyPath: "id" });
+        }
+        if (!database.objectStoreNames.contains(APP_STATE_STORE)) {
+          database.createObjectStore(APP_STATE_STORE, { keyPath: "id" });
         }
       };
 
@@ -170,15 +174,57 @@ export async function saveFolder(folder) {
   });
 }
 
+export async function saveResumePosition(trackId, time) {
+  const database = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(APP_STATE_STORE, "readwrite");
+    const store = transaction.objectStore(APP_STATE_STORE);
+    const request = store.put({ id: "resume", trackId, time: time || 0, savedAt: Date.now() });
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function getResumePosition() {
+  const database = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(APP_STATE_STORE, "readonly");
+    const store = transaction.objectStore(APP_STATE_STORE);
+    const request = store.get("resume");
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function saveQueue(ids) {
+  const database = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(APP_STATE_STORE, "readwrite");
+    const store = transaction.objectStore(APP_STATE_STORE);
+    const request = store.put({ id: "queue", ids: ids || [], savedAt: Date.now() });
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function getQueue() {
+  const database = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(APP_STATE_STORE, "readonly");
+    const store = transaction.objectStore(APP_STATE_STORE);
+    const request = store.get("queue");
+    request.onsuccess = () => resolve(request.result?.ids || []);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 export async function deleteFolder(folderId) {
   const database = await initDB();
-
   return new Promise((resolve, reject) => {
     const transaction = database.transaction([FOLDERS_STORE, TRACKS_STORE], "readwrite");
     const folders = transaction.objectStore(FOLDERS_STORE);
     const tracks = transaction.objectStore(TRACKS_STORE);
     const request = tracks.getAll();
-
     request.onsuccess = () => {
       request.result.forEach((track) => {
         if (track.folderId === folderId) {
@@ -196,3 +242,4 @@ export async function deleteFolder(folderId) {
     transaction.onabort = () => reject(transaction.error || new Error("Deleting this folder was cancelled."));
   });
 }
+

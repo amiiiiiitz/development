@@ -239,8 +239,60 @@ app.post("/api/playlist", infoRateLimit, async (req, res) => {
   }
 });
 
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
+let ytDlpReady = false;
+let ytDlpVersion = null;
+let ytDlpCheckPromise = null;
+let ytDlpRetryTimer = null;
+
+const checkYtDlp = async () => {
+  if (ytDlpCheckPromise) {
+    return ytDlpCheckPromise;
+  }
+  ytDlpCheckPromise = (async () => {
+    try {
+      const { stdout } = await execFileAsync("yt-dlp", ["--version"], { timeout: 10_000 });
+      ytDlpVersion = stdout.trim();
+      ytDlpReady = true;
+      if (ytDlpRetryTimer) {
+        clearTimeout(ytDlpRetryTimer);
+        ytDlpRetryTimer = null;
+      }
+    } catch (error) {
+      ytDlpVersion = null;
+      ytDlpReady = false;
+      if (!ytDlpRetryTimer) {
+        ytDlpRetryTimer = setTimeout(() => {
+          ytDlpRetryTimer = null;
+          ytDlpCheckPromise = null;
+          void checkYtDlp();
+        }, 30_000);
+      }
+    }
+    return ytDlpReady;
+  })();
+  return ytDlpCheckPromise;
+};
+
+process.on("SIGTERM", () => {
+  if (ytDlpRetryTimer) {
+    clearTimeout(ytDlpRetryTimer);
+  }
+});
+process.on("SIGINT", () => {
+  if (ytDlpRetryTimer) {
+    clearTimeout(ytDlpRetryTimer);
+  }
+});
+
+app.get("/api/health", async (_req, res) => {
+  if (!ytDlpReady) {
+    await checkYtDlp();
+  }
+  if (ytDlpReady) {
+    res.json({ status: "ok", ytDlpVersion });
+  } else {
+    res.status(503).json({ status: "not_ready", error: "yt-dlp is unavailable." });
+  }
 });
 
 app.use((error, _req, res, next) => {
@@ -260,4 +312,5 @@ app.use((error, _req, res, next) => {
 
 app.listen(PORT, HOST, () => {
   console.log(`YouTube MP3 API listening on http://${HOST}:${PORT}`);
+  void checkYtDlp();
 });

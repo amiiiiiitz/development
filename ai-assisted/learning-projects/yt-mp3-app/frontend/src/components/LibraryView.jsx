@@ -60,6 +60,7 @@ export default function LibraryView({ library, filters, forms, playback, actions
     inlineCurrentTimeRef,
     inlineDurationRef,
     onPlayTrack,
+    onAddToQueue,
     onSeekTrack,
   } = playback;
   const {

@@ -12,8 +12,12 @@ import {
   deleteFolder as deleteFolderFromDB,
   getAllFolders,
   getAllTracksMetadata,
+  getQueue,
+  getResumePosition,
   incrementTrackStats,
   saveFolder,
+  saveQueue,
+  saveResumePosition,
   saveTrackMetadata,
   updateTrackMetadata,
 } from "./db.js";
@@ -30,6 +34,7 @@ import LibraryView from "./components/LibraryView.jsx";
 import PlayerDock from "./components/PlayerDock.jsx";
 
   const COVER_CACHE_NAME = "nofi-cover-cache-v1";
+  const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
   const fetchMissingCovers = async () => {
     if (!navigator.onLine) {
       setNotice("You're offline. Reconnect to fetch covers.");
@@ -99,6 +104,13 @@ export default function App() {
     }
   }, [sortBy]);
   const [audioSource, setAudioSource] = useState(null);
+  const [backendReady, setBackendReady] = useState(true);
+  const [queueIds, setQueueIds] = useState([]);
+  const transitionGuardRef = useRef(false);
+  const [showQueue, setShowQueue] = useState(false);
+  const [queueIndex, setQueueIndex] = useState(-1);
+  const queueLoadedRef = useRef(false);
+  const resumeRestoredRef = useRef(false);
   const [storageInfo, setStorageInfo] = useState({ supported: false, persistent: null, usage: 0, quota: 0 });
   const [pendingImport, setPendingImport] = useState(null);
   const importInputRef = useRef(null);
@@ -307,6 +319,48 @@ export default function App() {
   };
 
   const playRelativeTrack = (direction, { wrap = false } = {}) => {
+    if (queueIds.length) {
+      if (direction > 0) {
+        let nextIndex = -1;
+        if (isShuffle && queueIds.length > 1) {
+          const candidates = queueIds.map((_, index) => index).filter((index) => index !== queueIndex);
+          nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
+        } else {
+          nextIndex = queueIndex + 1;
+          if (nextIndex >= queueIds.length) {
+            if (repeatMode === "all") {
+              nextIndex = 0;
+            } else {
+              return;
+            }
+          }
+        }
+        const nextTrack = tracks.find((track) => track.id === queueIds[nextIndex]);
+        if (nextTrack) {
+          setQueueIndex(nextIndex);
+          selectTrack(nextTrack);
+        }
+        return;
+      }
+
+      if (queueIndex > 0) {
+        const previousTrack = tracks.find((track) => track.id === queueIds[queueIndex - 1]);
+        if (previousTrack) {
+          setQueueIndex(queueIndex - 1);
+          selectTrack(previousTrack);
+        }
+        return;
+      }
+
+      if (currentTrack) {
+        const audio = audioRef.current;
+        if (audio) {
+          audio.currentTime = 0;
+        }
+      }
+      return;
+    }
+
     const playlist = activeFolderId === "all"
       ? tracks
       : tracks.filter((track) => (track.folderId || "unfiled") === activeFolderId);
@@ -333,6 +387,13 @@ export default function App() {
   };
 
   const handleTrackEnded = () => {
+    if (transitionGuardRef.current) {
+      return;
+    }
+    transitionGuardRef.current = true;
+    window.setTimeout(() => {
+      transitionGuardRef.current = false;
+    }, 0);
     void flushTrackStats();
     playSessionCountedRef.current = false;
     setIsPlaying(false);
@@ -349,6 +410,31 @@ export default function App() {
           setError(playError.message || "Could not replay this track.");
         });
       }
+      return;
+    }
+
+    if (queueIds.length) {
+      let nextIndex = -1;
+      if (isShuffle && queueIds.length > 1) {
+        const candidates = queueIds.map((_, index) => index).filter((index) => index !== queueIndex);
+        nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
+      } else {
+        nextIndex = queueIndex + 1;
+        if (nextIndex >= queueIds.length && repeatMode === "all") {
+          nextIndex = 0;
+        } else if (nextIndex >= queueIds.length) {
+          nextIndex = -1;
+        }
+      }
+      if (nextIndex >= 0 && nextIndex < queueIds.length) {
+        const nextTrack = tracks.find((track) => track.id === queueIds[nextIndex]);
+        if (nextTrack) {
+          setQueueIndex(nextIndex);
+          selectTrack(nextTrack, true);
+          return;
+        }
+      }
+      setIsPlaying(false);
       return;
     }
 
@@ -482,6 +568,121 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    if (queueLoadedRef.current || !tracks.length) {
+      return;
+    }
+    queueLoadedRef.current = true;
+    getQueue()
+      .then((ids) => {
+        if (Array.isArray(ids)) {
+          setQueueIds(ids.filter((id) => tracks.some((track) => track.id === id)));
+        }
+      })
+      .catch(() => {});
+  }, [tracks]);
+
+  useEffect(() => {
+    void saveQueue(queueIds);
+  }, [queueIds]);
+
+  useEffect(() => {
+    setQueueIds((ids) => ids.filter((id) => tracks.some((track) => track.id === id)));
+  }, [tracks]);
+
+  const addToQueue = (song) => {
+    if (!song?.id) {
+      return;
+    }
+    setQueueIds((ids) => (ids.includes(song.id) ? ids : [...ids, song.id]));
+  };
+
+  const removeFromQueue = (songId) => {
+    if (!songId) {
+      return;
+    }
+    setQueueIds((ids) => {
+      const index = ids.indexOf(songId);
+      if (index === -1) {
+        return ids;
+      }
+      const next = ids.filter((_, itemIndex) => itemIndex !== index);
+      if (index === queueIndex) {
+        if (next.length && index < next.length) {
+          const nextTrack = tracks.find((track) => track.id === next[index]);
+          if (nextTrack) {
+            setQueueIndex(index);
+            selectTrack(nextTrack, true);
+          } else {
+            setQueueIndex(-1);
+          }
+        } else if (next.length) {
+          setQueueIndex(Math.max(0, index - 1));
+        } else {
+          setQueueIndex(-1);
+        }
+      } else if (index < queueIndex) {
+        setQueueIndex((value) => Math.max(0, value - 1));
+      }
+      return next;
+    });
+  };
+
+  const clearQueue = () => {
+    setQueueIds([]);
+  };
+
+  useEffect(() => {
+    setQueueIndex((index) => {
+      if (queueIds.length === 0) {
+        return -1;
+      }
+      if (index < 0) {
+        return -1;
+      }
+      if (index >= queueIds.length) {
+        return queueIds.length - 1;
+      }
+      return index;
+    });
+  }, [queueIds]);
+  useEffect(() => {
+    let cancelled = false;
+    const checkHealth = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:3001"}/api/health`);
+        if (response.ok) {
+          if (!cancelled) {
+            setBackendReady(true);
+          }
+          return true;
+        }
+      } catch {
+        // Backend may be waking up.
+      }
+      if (!cancelled) {
+        setBackendReady(false);
+      }
+      return false;
+    };
+
+    void checkHealth().then((ready) => {
+      if (ready || cancelled) {
+        return;
+      }
+      const interval = window.setInterval(async () => {
+        const nextReady = await checkHealth();
+        if (nextReady) {
+          window.clearInterval(interval);
+        }
+      }, 3000);
+      return () => window.clearInterval(interval);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const refreshLibrary = useCallback(async () => {
     try {
       const [savedTracks, savedFolders] = await Promise.all([getAllTracksMetadata(), getAllFolders()]);
@@ -646,6 +847,10 @@ export default function App() {
   };
 
   const convertAndSave = async () => {
+    if (!backendReady) {
+      setError("Waking up the server, please wait...");
+      return;
+    }
     if (isConverting) {
       return;
     }
@@ -1119,6 +1324,46 @@ export default function App() {
           </div>
 
           {error && <div className="status-message error-message" role="alert">{error}</div>}
+
+          {!backendReady && <div className="status-message">Waking up the server, please wait…</div>}
+
+          <button type="button" className="tab-button" onClick={() => setShowQueue((value) => !value)}>
+            Queue ({queueIds.length})
+          </button>
+
+          {showQueue && (
+            <div className="queue-panel">
+              <div className="queue-header">
+                <strong>Queue ({queueIds.length})</strong>
+                <button type="button" onClick={clearQueue}>Clear</button>
+              </div>
+              {queueIds.length === 0 && <p>No songs in queue.</p>}
+              {queueIds.map((id, index) => {
+                const track = tracks.find((item) => item.id === id);
+                if (!track) {
+                  return null;
+                }
+                return (
+                  <div key={`${id}-${index}`} className={index === queueIndex ? "queue-row active" : "queue-row"}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const selectedTrack = tracks.find((item) => item.id === id);
+                        if (selectedTrack) {
+                          setQueueIndex(index);
+                          selectTrack(selectedTrack, true);
+                        }
+                      }}
+                    >
+                      {track.title || "Untitled"}
+                    </button>
+                    <button type="button" onClick={() => removeFromQueue(id)}>Remove</button>
+                  </div>
+                );
+              })}
+              {currentTrack && <button type="button" onClick={() => addToQueue(currentTrack)}>Add current song</button>}
+            </div>
+          )}
 
           {activeTab === "convert" ? (
             <ConverterView
