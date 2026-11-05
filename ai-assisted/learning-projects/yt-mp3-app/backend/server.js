@@ -211,6 +211,34 @@ app.post("/api/convert", convertRateLimit, limitConcurrentConversions, async (re
   }
 });
 
+app.post("/api/playlist", infoRateLimit, async (req, res) => {
+  const url = typeof req.body?.url === "string" ? req.body.url.trim() : "";
+  if (!url) {
+    return sendError(res, 400, "Enter a valid playlist URL.");
+  }
+
+  try {
+    const { stdout } = await execFileAsync(
+      "yt-dlp",
+      ["--flat-playlist", "--dump-json", "--no-warnings", url],
+      { timeout: 120_000, maxBuffer: 50 * 1024 * 1024 }
+    );
+    const lines = stdout.trim().split(/\r?\n/).filter(Boolean);
+    const videos = lines.slice(0, 100).map((line) => {
+      const details = JSON.parse(line);
+      return {
+        id: details.id,
+        title: details.title || "Untitled video",
+        duration: Number.isFinite(details.duration) ? details.duration : null,
+      };
+    });
+    return res.json({ videos, total: lines.length, limited: lines.length > 100 });
+  } catch (error) {
+    console.error("Unable to retrieve playlist:", error.message);
+    return sendError(res, 502, "Could not retrieve playlist. Check the URL and try again.");
+  }
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
