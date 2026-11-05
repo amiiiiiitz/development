@@ -125,6 +125,7 @@ export default function LibraryView({ library, filters, forms, playback, actions
         </div>
       )}
       <div className="library-search-tools">
+        {tracks.length > 0 && (
           <>
             <div className="library-search">
               <Search size={16} aria-hidden="true" />
