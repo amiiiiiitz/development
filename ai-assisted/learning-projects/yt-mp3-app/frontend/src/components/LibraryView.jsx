@@ -31,6 +31,8 @@ export default function LibraryView({ library, filters, forms, playback, actions
     unfiledCount,
     searchTerms,
     storageInfo,
+    sortBy,
+    setSortBy,
   } = library;
   const { searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly } = filters;
   const {
@@ -82,6 +84,7 @@ export default function LibraryView({ library, filters, forms, playback, actions
     onReDownloadTrack,
     onApplyImport,
     onCancelImport,
+    onFetchMissingCovers,
   } = actions;
 
   return (
@@ -97,6 +100,14 @@ export default function LibraryView({ library, filters, forms, playback, actions
       <div className="library-toolbar">
         <button type="button" onClick={onExportLibrary}>Export library</button>
         <button type="button" onClick={onImportLibrary}>Import library</button>
+        <button type="button" onClick={onFetchMissingCovers}>Fetch missing covers</button>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort songs">
+          <option value="recent">Recently added</option>
+          <option value="mostPlayed">Most played</option>
+          <option value="az">A to Z</option>
+          <option value="durationAsc">Duration short to long</option>
+          <option value="durationDesc">Duration long to short</option>
+        </select>
       </div>
       {storageInfo?.supported && (
         <div className="storage-panel">

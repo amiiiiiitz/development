@@ -29,7 +29,36 @@ import ConverterView from "./components/ConverterView.jsx";
 import LibraryView from "./components/LibraryView.jsx";
 import PlayerDock from "./components/PlayerDock.jsx";
 
-const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
+  const COVER_CACHE_NAME = "nofi-cover-cache-v1";
+  const fetchMissingCovers = async () => {
+    if (!navigator.onLine) {
+      setNotice("You're offline. Reconnect to fetch covers.");
+      return;
+    }
+    setError("");
+    let updated = 0;
+    for (const track of tracks) {
+      if (!track.thumbnail) {
+        continue;
+      }
+      try {
+        const cache = await caches.open(COVER_CACHE_NAME);
+        const request = new Request(new URL(`/cover/${encodeURIComponent(track.id)}`, window.location.origin));
+        const existing = await cache.match(request);
+        if (existing) {
+          continue;
+        }
+        const response = await fetch(track.thumbnail);
+        if (response.ok) {
+          await cache.put(request, response.clone());
+          updated += 1;
+        }
+      } catch {
+        // Ignore individual failures.
+      }
+    }
+    setNotice(updated ? `Fetched ${updated} cover(s).` : "No new covers to fetch.");
+  };
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("convert");
@@ -61,7 +90,14 @@ export default function App() {
   const [isPreparingAudio, setIsPreparingAudio] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const [audioSource, setAudioSource] = useState(null);
+  const [sortBy, setSortBy] = useState(() => window.localStorage.getItem("nofi-sort") || "recent");
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("nofi-sort", sortBy);
+    } catch {
+      // Ignore storage errors.
+    }
+  }, [sortBy]);
   const [storageInfo, setStorageInfo] = useState({ supported: false, persistent: null, usage: 0, quota: 0 });
   const [pendingImport, setPendingImport] = useState(null);
   const importInputRef = useRef(null);
@@ -1006,6 +1042,25 @@ export default function App() {
     );
     return searchTerms.every((term) => searchableText.includes(term));
   });
+
+  const sortedVisibleTracks = [...visibleTracks].sort((a, b) => {
+    if (sortBy === "recent") {
+      return (b.savedAt || 0) - (a.savedAt || 0);
+    }
+    if (sortBy === "mostPlayed") {
+      return (b.playCount || 0) - (a.playCount || 0);
+    }
+    if (sortBy === "az") {
+      return cleanTrackTitle(a.title).localeCompare(cleanTrackTitle(b.title));
+    }
+    if (sortBy === "durationAsc") {
+      return (a.duration || 0) - (b.duration || 0);
+    }
+    if (sortBy === "durationDesc") {
+      return (b.duration || 0) - (a.duration || 0);
+    }
+    return 0;
+  });
   const activeFolder = folders.find((folder) => folder.id === activeFolderId);
   const unfiledCount = tracks.filter((track) => !track.folderId).length;
 
@@ -1082,7 +1137,7 @@ export default function App() {
             />
           ) : (
             <LibraryView
-              library={{ tracks, visibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms, storageInfo }}
+              library={{ tracks, visibleTracks: sortedVisibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms, storageInfo, sortBy, setSortBy }}
               filters={{ searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly }}
               forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, signatureName, isEditingSignature, signatureDraft, setSignatureDraft, renameTrackId, renameDraft, setRenameDraft, pendingImport }}
               playback={{ currentTrack, isPlaying, isPreparingAudio, currentTime, duration, pendingStatsRef, inlineProgressRef, inlineCurrentTimeRef, inlineDurationRef, onPlayTrack: playTrack, onSeekTrack: seekTrack }}
@@ -1108,6 +1163,7 @@ export default function App() {
                 onReDownloadTrack: reDownloadTrack,
                 onApplyImport: applyImport,
                 onCancelImport: () => setPendingImport(null),
+                onFetchMissingCovers: fetchMissingCovers,
               }}
             />
           )}

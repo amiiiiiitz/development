@@ -162,19 +162,21 @@ app.post("/api/convert", convertRateLimit, limitConcurrentConversions, async (re
   try {
     await fs.promises.mkdir(DOWNLOADS_DIR, { recursive: true });
     await execFileAsync(
-      "yt-dlp",
-      [
-        "--no-warnings",
-        "--no-playlist",
-        "-x",
-        "--audio-format",
-        "mp3",
-        "--audio-quality",
-        "192K",
-        "-o",
-        outputTemplate,
-        req.body.url.trim(),
-      ],
+       "yt-dlp",
+       [
+         "--no-warnings",
+         "--no-playlist",
+         "-x",
+         "--audio-format",
+         "mp3",
+         "--audio-quality",
+         "192K",
+         "--add-metadata",
+         "--embed-thumbnail",
+         "-o",
+         outputTemplate,
+         req.body.url.trim(),
+       ],
       {
         timeout: 10 * 60_000,
         maxBuffer: 10 * 1024 * 1024,
