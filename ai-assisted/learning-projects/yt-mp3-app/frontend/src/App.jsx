@@ -98,6 +98,7 @@ export default function App() {
       // Ignore storage errors.
     }
   }, [sortBy]);
+  const [audioSource, setAudioSource] = useState(null);
   const [storageInfo, setStorageInfo] = useState({ supported: false, persistent: null, usage: 0, quota: 0 });
   const [pendingImport, setPendingImport] = useState(null);
   const importInputRef = useRef(null);
