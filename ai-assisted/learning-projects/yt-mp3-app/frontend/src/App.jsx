@@ -760,7 +760,7 @@ export default function App() {
         artist: currentTrack.uploader || "Offline track",
         album: "NoFi Offline Library",
         ...(currentTrack.thumbnail
-          ? { artwork: [{ src: currentTrack.thumbnail, sizes: "512x512" }] }
+          ? { artwork: [{ src: currentTrack.thumbnail, sizes: "512x512", type: "image/jpeg" }] }
           : {}),
       });
     } else {
@@ -768,21 +768,71 @@ export default function App() {
     }
 
     const actions = {
-      play: () => audioRef.current?.play().catch((playError) => {
-        setError(playError.message || "Could not play this track.");
-      }),
+      play: () => audioRef.current?.play().catch((playError) => { setError(playError.message || "Could not play this track."); }),
       pause: () => audioRef.current?.pause(),
       previoustrack: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
       nexttrack: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+      seekto: (details) => {
+        if (audioRef.current && Number.isFinite(details.seekTime)) {
+          audioRef.current.currentTime = details.seekTime;
+          lastPlaybackPositionRef.current = details.seekTime;
+          updatePlaybackDisplay(details.seekTime);
+        }
+      },
+      seekbackward: (details) => {
+        if (audioRef.current) {
+          const offset = details.seekOffset || 10;
+          const next = Math.max(0, audioRef.current.currentTime - offset);
+          audioRef.current.currentTime = next;
+          lastPlaybackPositionRef.current = next;
+          updatePlaybackDisplay(next);
+        }
+      },
+      seekforward: (details) => {
+        if (audioRef.current) {
+          const offset = details.seekOffset || 10;
+          const durationValue = duration || currentTrack?.duration || 0;
+          const next = Math.min(durationValue, audioRef.current.currentTime + offset);
+          audioRef.current.currentTime = next;
+          lastPlaybackPositionRef.current = next;
+          updatePlaybackDisplay(next);
+        }
+      },
     };
+
     Object.entries(actions).forEach(([action, handler]) => {
-      session.setActionHandler(action, currentTrack ? handler : null);
+      try {
+        session.setActionHandler(action, currentTrack ? handler : null);
+      } catch {
+        // Some browsers do not support every action.
+      }
     });
 
     return () => {
-      Object.keys(actions).forEach((action) => session.setActionHandler(action, null));
+      Object.keys(actions).forEach((action) => {
+        try {
+          session.setActionHandler(action, null);
+        } catch {
+          // Ignore unsupported cleanup.
+        }
+      });
     };
-  }, [currentTrack, tracks, isShuffle, repeatMode, activeFolderId, favoritesOnly]);
+  }, [currentTrack, tracks, isShuffle, repeatMode, activeFolderId, favoritesOnly, duration]);
+
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || !currentTrack) {
+      return;
+    }
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: duration || currentTrack.duration || 0,
+        playbackRate: playbackRate || 1,
+        position: Math.min(currentTimeRef.current, duration || currentTrack.duration || 0),
+      });
+    } catch {
+      // Ignore browsers without position state support.
+    }
+  }, [currentTrack, duration, playbackRate, currentTime]);
 
   const exportLibrary = () => {
     const data = { version: 1, exportedAt: Date.now(), tracks, folders };
