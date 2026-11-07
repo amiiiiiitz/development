@@ -1,0 +1,14 @@
+/* One background per page. Set with <PageShell page="..."> -> data-page. */
+[data-page="home"]   { background: radial-gradient(var(--paper-dot) 1.2px, transparent 1.6px) 0 0/10px 10px, var(--paper); }                       /* ivory + halftone */
+[data-page="library"]{ background: repeating-linear-gradient(135deg, #FFE9A8 0 18px, #FFDD7E 18px 36px); }                                          /* brass stripes (record sleeve) */
+[data-page="playing"]{ background: repeating-radial-gradient(circle at 50% 30%, #C4F2E6 0 14px, #A3E6D6 14px 28px); }                              /* teal vinyl grooves */
+[data-page="add"]    { /* sheet-music staff: 5 lines repeating every 120px */
+  background:
+    linear-gradient(rgba(20,17,15,.17) 2px, transparent 2px) 0 0/100% 120px,
+    linear-gradient(rgba(20,17,15,.17) 2px, transparent 2px) 0 14px/100% 120px,
+    linear-gradient(rgba(20,17,15,.17) 2px, transparent 2px) 0 28px/100% 120px,
+    linear-gradient(rgba(20,17,15,.17) 2px, transparent 2px) 0 42px/100% 120px,
+    linear-gradient(rgba(20,17,15,.17) 2px, transparent 2px) 0 56px/100% 120px,
+    #FFDCB4; }
+/* New page? Add [data-page="storage"] here + a PLACEMENTS entry in stickers.jsx. */
+[data-page="library"] .page-title{background:linear-gradient(transparent 62%,var(--amber) 62%)}

@@ -1,74 +1,80 @@
-import { ArrowDownToLine, ChevronRight, LoaderCircle, Music2, WifiOff, Youtube } from "lucide-react";
+import { ArrowDownToLine, ChevronRight, LoaderCircle, Link2, WifiOff, Youtube } from "lucide-react";
 import { formatDuration } from "../utils/trackFormatting.js";
+import { CassetteTape, MiniCassette } from "./RemixAssets.jsx";
 
 export default function ConverterView({
-  url,
-  onUrlChange,
-  onPreview,
-  onSaveOffline,
-  video,
-  isOnline,
-  isLoadingInfo,
-  isConverting,
+  url, onUrlChange, onPreview, onSaveOffline, video, isOnline, isLoadingInfo, isConverting,
 }) {
   return (
-    <div className="convert-view">
-      <div className="section-heading">
-        <div>
-          <span className="eyebrow">START WITH A LINK</span>
-          <h2>Bring the audio with you.</h2>
-        </div>
-        <div className="heading-note"><span className="pulse-dot" /> MP3 · 192 KBPS</div>
-      </div>
-      <form onSubmit={onPreview}>
-        <label className="input-label" htmlFor="youtube-url">YouTube video URL</label>
-        <div className="url-entry">
-          <Youtube className="url-icon" size={19} />
-          <input
-            id="youtube-url"
-            type="url"
-            value={url}
-            onChange={onUrlChange}
-            placeholder="https://www.youtube.com/watch?v=..."
-            required
-            disabled={isLoadingInfo || isConverting}
-          />
-          <button className="inspect-button" type="submit" disabled={isLoadingInfo || !url.trim()}>
-            {isLoadingInfo ? <LoaderCircle className="spin" size={17} /> : <>Preview <ChevronRight size={16} /></>}
+    <div className="rx-page rx-enter rx-convert">
+      <header className="rx-convert-header">
+        <h1 className="B rx-lib-title-main" style={{ backgroundImage: "linear-gradient(transparent 62%, #FFD93D 62%)" }}>add a song</h1>
+        <p className="H rx-lib-submain">paste a youtube link, we do the rest</p>
+      </header>
+
+      <form className="bd rx-convert-card" onSubmit={onPreview}>
+        <p className="B rx-card-kicker">YOUTUBE LINK</p>
+        <label className="sr-only" htmlFor="youtube-url">YouTube video URL</label>
+        <div className="rx-url-row">
+          <div className="rx-url-field">
+            <Link2 size={18} aria-hidden="true" />
+            <input id="youtube-url" type="url" value={url} onChange={onUrlChange} placeholder="paste link here" required disabled={isLoadingInfo || isConverting} />
+          </div>
+          <button type="submit" className="ch rx-paste-btn" disabled={isLoadingInfo || !url.trim()}>
+            {isLoadingInfo ? <LoaderCircle className="spin" size={16} /> : "preview"}
           </button>
         </div>
-        <p className="input-hint">Only convert content you own or are authorized to download.</p>
+        <button type="button" className="rx-convert-cta rx-cv" onClick={onSaveOffline} disabled={isConverting || !video}>
+          {isConverting ? <><LoaderCircle className="spin" size={20} /> saving…</> : <><ArrowDownToLine size={20} /> convert to mp3</>}
+        </button>
+        <p className="rx-muted" style={{ marginTop: 10 }}>Only convert content you own or are authorized to download.</p>
       </form>
 
+      <div className="rx-steps" aria-label="How it works">
+        {[{ n: 1, c: "#FFD93D", t: "paste" }, { n: 2, c: "#F28C38", t: "convert" }, { n: 3, c: "#3EE0A0", t: "play offline" }].map((s) => (
+          <div key={s.n} className="rx-step"><div className="bd rx-step-num" style={{ background: s.c }}>{s.n}</div><p>{s.t}</p></div>
+        ))}
+      </div>
+
       {!isOnline && (
-        <div className="offline-callout">
-          <WifiOff size={17} />
-          <span>You’re offline. Your saved tracks are ready to play; reconnect to preview or download new tracks.</span>
-        </div>
+        <div className="bd rx-panel" style={{ background: "#fff" }}><p style={{ display: "flex", gap: 8, alignItems: "center", margin: 0 }}><WifiOff size={17} /> You’re offline. Your saved tracks are ready; reconnect to preview or download.</p></div>
       )}
 
       {video && (
-        <div className="video-preview">
-          <div className="preview-image">
-            {video.thumbnail ? <img src={video.thumbnail} alt="" /> : <Music2 size={28} />}
-            <span className="duration-tag">{formatDuration(video.duration)}</span>
-          </div>
-          <div className="preview-copy">
-            <span className="eyebrow">VIDEO FOUND</span>
-            <h3>{video.title}</h3>
-            <p>{video.uploader}</p>
-          </div>
-          <button className="download-button" onClick={onSaveOffline} disabled={isConverting}>
-            {isConverting
-              ? <><LoaderCircle className="spin" size={17} /> Saving…</>
-              : <><ArrowDownToLine size={17} /> Save offline</>}
-          </button>
-        </div>
+        <section aria-label="Preview">
+          <p className="B rx-section-kicker">READY TO SAVE</p>
+          <article className="bd rx-preview-card">
+            <div className="rx-preview-art">
+              {video.thumbnail ? <img src={video.thumbnail} alt="" /> : <CassetteTape width={120} label="track" />}
+              <span className="ch rx-duration-tag" style={{ minHeight: 28, padding: "0 10px", fontSize: 12 }}>{formatDuration(video.duration)}</span>
+            </div>
+            <div className="rx-preview-copy">
+              <span className="rx-card-kicker B" style={{ color: "var(--rx-violet)" }}>VIDEO FOUND</span>
+              <h2 className="B" style={{ margin: "4px 0", fontSize: 20, lineHeight: 1.1 }}>{video.title}</h2>
+              <p style={{ margin: 0, opacity: .75 }}>{video.uploader}</p>
+            </div>
+            <button type="button" className="library-action-primary" onClick={onSaveOffline} disabled={isConverting} style={{ width: "100%", marginTop: 12 }}>
+              {isConverting ? <><LoaderCircle className="spin" size={17} /> Saving…</> : <><ArrowDownToLine size={17} /> Save offline <ChevronRight size={16} /></>}
+            </button>
+          </article>
+        </section>
       )}
 
-      <div className="privacy-note">
-        <div className="privacy-icon"><WifiOff size={17} /></div>
-        <p><strong>Made for offline listening.</strong><br />Your downloaded audio stays on this device, in your browser storage.</p>
+      {isConverting && (
+        <section aria-label="In progress">
+          <p className="B rx-section-kicker">IN PROGRESS</p>
+          <div className="bd rx-progress-card">
+            <MiniCassette stripe="#F28C38" />
+            <div style={{ flex: 1 }}><p style={{ margin: 0, fontWeight: 700 }}>{video?.title || "Saving track"}</p><p style={{ margin: 0, fontSize: 12 }}>converting…</p>
+              <div className="rx-progress-bar"><div className="rx-st" style={{ width: "62%", height: "100%" }} /></div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <div className="bd rx-panel rx-privacy">
+        <WifiOff size={18} />
+        <p style={{ margin: 0 }}><strong>Made for offline listening.</strong><br />Your downloaded audio stays on this device, in your browser storage.</p>
       </div>
     </div>
   );

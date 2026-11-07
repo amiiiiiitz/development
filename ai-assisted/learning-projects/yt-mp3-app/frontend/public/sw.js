@@ -1,5 +1,5 @@
 const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
-const APP_CACHE_NAME = "nofi-app-shell-v1";
+const APP_CACHE_NAME = "nofi-app-shell-v2-remix";
 
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {

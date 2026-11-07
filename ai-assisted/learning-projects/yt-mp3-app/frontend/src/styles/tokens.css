@@ -1,0 +1,23 @@
+/* NoFi "Remix" design tokens. Import this file first. */
+:root {
+  /* Palette: colors that belong to music. NO PINK anywhere. */
+  --ink: #14110F;        /* outlines, text, vinyl black */
+  --paper: #F6ECD8;      /* ivory paper (piano keys) */
+  --ivory: #FBF3DF;      /* cassette label */
+  --paper-dot: #E4D3AE;  /* halftone dots */
+  --brass: #FFD93D;      /* trumpet / cymbal: active states, play button, highlighter */
+  --amber: #F28C38;      /* guitar / violin wood: accents, tiles */
+  --teal: #3EE0A0;       /* vintage amp: "saved", success */
+  --violet: #6B4EFF;     /* progress, playing row, signature ink */
+  --velvet: #E0393E;     /* stage curtain: like-heart, drum only */
+
+  --bd: 3px solid var(--ink);
+  --shadow: 4px 4px 0 var(--ink);   /* hard shadow, never blurred */
+  --radius: 16px;
+
+  --font-display: "Bowlby One", sans-serif;                 /* titles, logo */
+  --font-body: "Space Grotesk", system-ui, sans-serif;      /* UI text */
+  --font-hand: "Caveat", cursive;                           /* handwritten notes */
+
+  --dock-h: 68px;
+}

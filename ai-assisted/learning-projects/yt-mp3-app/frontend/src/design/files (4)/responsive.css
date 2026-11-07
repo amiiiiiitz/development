@@ -1,0 +1,67 @@
+/* ===== responsive.css: import LAST (after motion.css) =====
+   Mobile  <640   : what base.css already does (single column, bottom dock)
+   Tablet  640-1023: roomier single column, 2-column song list, bottom dock
+   Desktop >=1024 : left sidebar + bottom player bar + multi-column pages */
+
+.sidebar,.player-bar,.queue,.song-head{display:none}
+.song__channel,.song__dur{display:none}
+.app__main{min-width:0}
+
+@media (min-width:640px){
+  .page__inner{max-width:720px;padding:28px 32px 0}
+  .sticker-layer{max-width:720px}
+  .song-list{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
+  .tape-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .polaroid{width:260px}.polaroid__art{height:150px}
+  .bento{height:170px}
+}
+
+@media (min-width:1024px){
+  .app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100dvh}
+  .dock{display:none}
+
+  /* sidebar (replaces the dock) */
+  .sidebar{display:flex;flex-direction:column;gap:8px;position:sticky;top:0;height:100dvh;padding:26px 16px;background:var(--ink);color:var(--paper);z-index:5}
+  .sidebar__logo{font:400 42px/1 var(--font-display);color:var(--brass)}
+  .sidebar__tag{font:700 22px var(--font-hand);margin:2px 0 22px}
+  .sidebar__nav{display:flex;flex-direction:column;gap:8px}
+  .nav-item{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 18px;border:0;border-radius:30px;background:transparent;color:var(--paper);font:600 15px var(--font-body);cursor:pointer;text-align:left}
+  .nav-item.is-active{background:var(--brass);color:var(--ink)}
+  .nav-item.is-active svg{animation:bn 1.5s ease-in-out infinite}
+  .sidebar .sig-tag{margin-top:auto;width:200px;box-shadow:3px 3px 0 var(--paper)}
+
+  /* persistent player bar (hidden on the Now Playing page) */
+  .player-bar{display:flex;align-items:center;gap:24px;position:fixed;left:232px;right:0;bottom:0;height:88px;padding:0 32px;background:var(--ink);color:var(--paper);border-top:3px solid var(--brass);z-index:5}
+  .player-bar .eq i{background:var(--brass)}
+  .player-bar__info{width:200px;min-width:0}
+  .player-bar__mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .player-bar__mid .seek{max-width:520px}
+
+  /* page frame */
+  .page{padding-bottom:124px}
+  .page__inner{max-width:1100px;padding:28px 32px 0}
+  .sticker-layer{max-width:none;left:0;right:0;margin:0}
+
+  /* Home */
+  .home-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:24px;align-items:stretch}
+  .home-grid .bento{flex-direction:column;height:auto;margin-top:22px}
+  .tape-grid{grid-template-columns:repeat(5,1fr)}
+  .polaroid{width:auto}
+
+  /* Library: song rows become table rows */
+  .song-list{display:block}
+  .song-head,.song{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr) 70px 100px 44px;gap:12px;align-items:center}
+  .song-head{padding:0 8px 8px 14px;font:400 12px var(--font-display);letter-spacing:.08em}
+  .song__sub{display:none}
+  .song__channel,.song__dur{display:block}
+  .lib-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+  .lib-head .search{width:380px}
+
+  /* Now Playing: art + controls left, queue right */
+  .np-split{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+  .queue{display:block;padding:16px 18px;margin-top:26px}
+
+  /* Add Song: form left, jobs right */
+  .add-split{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:32px;align-items:start}
+}
+@media (min-width:1440px){.page__inner{max-width:1180px}}

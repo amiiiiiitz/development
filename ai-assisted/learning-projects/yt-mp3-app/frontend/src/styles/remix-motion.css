@@ -1,0 +1,92 @@
+/* Remix v2 motion + illustration helpers (extracted/adapted from design mockups) */
+.rx-page {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow: visible;
+}
+.rx-bg-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+.rx-notes {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.rx-note {
+  position: absolute;
+  top: 0;
+  opacity: 0;
+  animation: rx-rise 3.6s ease-in infinite;
+}
+
+/* Animation primitives from mockups */
+.rx-sp { transform-box: fill-box; transform-origin: center; animation: rx-sp 3s linear infinite; }
+.rx-tape-reel--reverse.rx-sp { animation-direction: reverse; }
+.rx-eq i { transform-origin: bottom; animation: rx-eq 0.9s ease-in-out infinite; }
+.rx-eq i:nth-child(2) { animation-delay: 0.2s; }
+.rx-eq i:nth-child(3) { animation-delay: 0.4s; }
+.rx-eq i:nth-child(4) { animation-delay: 0.1s; }
+.rx-wg { animation: rx-wg 3s ease-in-out infinite; }
+.rx-pl { animation: rx-pl 1.6s ease-out infinite; }
+.rx-mq-track { display: inline-block; white-space: nowrap; animation: rx-mq 14s linear infinite; }
+.rx-st { background: repeating-linear-gradient(45deg, #6b4eff 0 10px, #8b73ff 10px 20px); animation: rx-st 1s linear infinite; }
+.rx-sg { stroke-dasharray: 420; animation: rx-dw 2.4s ease-out both; }
+.rx-fl { transform-box: fill-box; transform-origin: center; animation: rx-fl 7s ease-in-out infinite; }
+.rx-bob { transform-box: fill-box; transform-origin: center; animation: rx-bob 2.6s ease-in-out infinite; }
+.rx-wb { transform-box: fill-box; transform-origin: center; animation: rx-wb 3s ease-in-out infinite; }
+.rx-tw { transform-box: fill-box; transform-origin: center; animation: rx-tw 2.4s ease-in-out infinite; }
+.rx-kp { transform-box: fill-box; transform-origin: top; animation: rx-kp 1.2s ease-in-out infinite; }
+.rx-hit { transform-box: fill-box; transform-origin: 50% 100%; animation: rx-hit 0.7s ease-in-out infinite; }
+.rx-rg { transform-box: fill-box; transform-origin: center; animation: rx-rg 1.8s ease-out infinite; }
+.rx-pls { transform-box: fill-box; transform-origin: center; animation: rx-pls 0.8s ease-in-out infinite; }
+
+/* Entrance + interaction */
+.rx-enter > :not(.rx-bg-svg):not(.rx-notes):not(.dock):not(.app-rail):not(.player-dock) {
+  animation: rx-up 0.6s ease-out both;
+}
+.rx-enter > :nth-child(2) { animation-delay: 0.08s; }
+.rx-enter > :nth-child(3) { animation-delay: 0.16s; }
+.rx-enter > :nth-child(4) { animation-delay: 0.24s; }
+.rx-enter > :nth-child(5) { animation-delay: 0.32s; }
+.rx-enter > :nth-child(6) { animation-delay: 0.4s; }
+.rx-press:active { translate: 3px 3px; box-shadow: 0 0 0 var(--rx-ink) !important; }
+.rx-cv { position: relative; overflow: hidden; }
+.rx-cv::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  animation: rx-sh 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes rx-sp { to { transform: rotate(360deg); } }
+@keyframes rx-eq { 0%,100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes rx-mq { to { transform: translateX(-50%); } }
+@keyframes rx-wg { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes rx-pl { 0% { box-shadow: 0 0 0 0 rgba(107,78,255,.55); } 100% { box-shadow: 0 0 0 20px rgba(107,78,255,0); } }
+@keyframes rx-st { to { background-position: 28px 0; } }
+@keyframes rx-dw { from { stroke-dashoffset: 420; } to { stroke-dashoffset: 0; } }
+@keyframes rx-fl { 0%,100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-12px) rotate(calc(var(--r, 0deg) + 4deg)); } }
+@keyframes rx-up { from { opacity: 0; translate: 0 18px; } }
+@keyframes rx-rise { 0% { opacity: 0; transform: translateY(0) rotate(-8deg); } 15% { opacity: .95; } 100% { opacity: 0; transform: translateY(-80px) translateX(16px) rotate(14deg); } }
+@keyframes rx-sh { to { left: 130%; } }
+@keyframes rx-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes rx-wb { 0%,100% { transform: rotate(-9deg); } 50% { transform: rotate(9deg); } }
+@keyframes rx-tw { 0%,100% { transform: scale(.6); opacity: .5; } 50% { transform: scale(1.15); opacity: 1; } }
+@keyframes rx-kp { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(.82); } }
+@keyframes rx-hit { 0%,100% { transform: rotate(-12deg); } 50% { transform: rotate(10deg); } }
+@keyframes rx-rg { 0% { transform: scale(.5); opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
+@keyframes rx-pls { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rx-sp,.rx-eq i,.rx-wg,.rx-pl,.rx-mq-track,.rx-st,.rx-sg,.rx-fl,.rx-bob,.rx-wb,.rx-tw,.rx-kp,.rx-hit,.rx-rg,.rx-pls,.rx-note,.rx-cv::after,
+  .rx-enter > :not(.rx-bg-svg):not(.rx-notes):not(.dock):not(.app-rail):not(.player-dock) { animation: none !important; }
+  .rx-press:active { translate: none; }
+}

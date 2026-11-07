@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Disc3,
-  Headphones,
+  ListMusic,
   Music2,
-  Radio,
   X,
-  Youtube,
 } from "lucide-react";
+import { AppShell } from "./design/files (4)/AppShell.jsx";
+import { PageShell, useAudioPlaying } from "./design/files (4)/ui.jsx";
 import {
   deleteTrackMetadata,
   deleteFolder as deleteFolderFromDB,
@@ -30,43 +29,33 @@ import {
   normalizeSearchText,
 } from "./utils/trackFormatting.js";
 import ConverterView from "./components/ConverterView.jsx";
+import HomeView from "./components/HomeView.jsx";
 import LibraryView from "./components/LibraryView.jsx";
+import NowPlayingView from "./components/NowPlayingView.jsx";
+import PersonalizationModal from "./components/PersonalizationModal.jsx";
 import PlayerDock from "./components/PlayerDock.jsx";
+import QueueDrawer from "./components/QueueDrawer.jsx";
+import SettingsView from "./components/SettingsView.jsx";
 
-  const COVER_CACHE_NAME = "nofi-cover-cache-v1";
-  const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
-  const fetchMissingCovers = async () => {
-    if (!navigator.onLine) {
-      setNotice("You're offline. Reconnect to fetch covers.");
-      return;
-    }
-    setError("");
-    let updated = 0;
-    for (const track of tracks) {
-      if (!track.thumbnail) {
-        continue;
-      }
-      try {
-        const cache = await caches.open(COVER_CACHE_NAME);
-        const request = new Request(new URL(`/cover/${encodeURIComponent(track.id)}`, window.location.origin));
-        const existing = await cache.match(request);
-        if (existing) {
-          continue;
-        }
-        const response = await fetch(track.thumbnail);
-        if (response.ok) {
-          await cache.put(request, response.clone());
-          updated += 1;
-        }
-      } catch {
-        // Ignore individual failures.
-      }
-    }
-    setNotice(updated ? `Fetched ${updated} cover(s).` : "No new covers to fetch.");
-  };
+const PERSONALIZATION_NAME_KEY = "nofi-personalization-name";
+const PERSONALIZATION_STATUS_KEY = "nofi-personalization-status";
+const LEGACY_SIGNATURE_KEY = "nofi-library-signature";
+const MAX_PERSONALIZATION_NAME_LENGTH = 32;
+
+function normalizePersonalizationName(value) {
+  if (typeof value !== "string") {
+    return "";
+  }
+  return Array.from(value.trim().replace(/\s+/gu, " "))
+    .slice(0, MAX_PERSONALIZATION_NAME_LENGTH)
+    .join("");
+}
+
+const COVER_CACHE_NAME = "nofi-cover-cache-v1";
+const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("convert");
+  const [activeTab, setActiveTab] = useState("home");
   const [url, setUrl] = useState("");
   const [video, setVideo] = useState(null);
   const [tracks, setTracks] = useState([]);
@@ -74,8 +63,9 @@ export default function App() {
   const [renameTrackId, setRenameTrackId] = useState(null);
   const [renameDraft, setRenameDraft] = useState("");
   const [signatureName, setSignatureName] = useState("");
-  const [signatureDraft, setSignatureDraft] = useState("");
-  const [isEditingSignature, setIsEditingSignature] = useState(false);
+  const [isPersonalizationReady, setIsPersonalizationReady] = useState(false);
+  const [hasCompletedPersonalization, setHasCompletedPersonalization] = useState(false);
+  const [showPersonalization, setShowPersonalization] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [repeatMode, setRepeatMode] = useState("off");
@@ -108,6 +98,7 @@ export default function App() {
   const [queueIds, setQueueIds] = useState([]);
   const transitionGuardRef = useRef(false);
   const [showQueue, setShowQueue] = useState(false);
+  const [showQueueDrawer, setShowQueueDrawer] = useState(false);
   const [queueIndex, setQueueIndex] = useState(-1);
   const queueLoadedRef = useRef(false);
   const resumeRestoredRef = useRef(false);
@@ -115,6 +106,10 @@ export default function App() {
   const [pendingImport, setPendingImport] = useState(null);
   const importInputRef = useRef(null);
   const audioRef = useRef(null);
+  const playerBarProgressRef = useRef(null);
+  const playerBarCurrentTimeRef = useRef(null);
+  const playerBarDurationRef = useRef(null);
+  const playing = useAudioPlaying(audioRef);
   const currentTimeRef = useRef(0);
   const playerProgressRef = useRef(null);
   const playerCurrentTimeRef = useRef(null);
@@ -145,6 +140,16 @@ export default function App() {
     }
     if (playerRemainingTimeRef.current) {
       playerRemainingTimeRef.current.textContent = `−${formatDuration(remainingTime)}`;
+    }
+    if (playerBarProgressRef.current) {
+      playerBarProgressRef.current.value = String(progress);
+      playerBarProgressRef.current.style.setProperty("--p", `${progress}%`);
+    }
+    if (playerBarCurrentTimeRef.current) {
+      playerBarCurrentTimeRef.current.textContent = formatDuration(playbackPosition);
+    }
+    if (playerBarDurationRef.current) {
+      playerBarDurationRef.current.textContent = formatDuration(trackDuration);
     }
     if (inlineProgressRef.current) {
       inlineProgressRef.current.value = String(Math.min(playbackPosition, trackDuration));
@@ -236,21 +241,39 @@ export default function App() {
     }
   };
 
-  const saveSignature = (event) => {
-    event.preventDefault();
-    const name = signatureDraft.trim().replace(/\s+/g, " ").slice(0, 32);
+  const savePersonalization = (value) => {
+    const name = normalizePersonalizationName(value);
+    if (!name) {
+      setError("Enter a name for your signature.");
+      return false;
+    }
     try {
-      if (name) {
-        window.localStorage.setItem("nofi-library-signature", name);
-      } else {
-        window.localStorage.removeItem("nofi-library-signature");
-      }
+      window.localStorage.setItem(PERSONALIZATION_NAME_KEY, name);
+      window.localStorage.setItem(PERSONALIZATION_STATUS_KEY, "personalized");
       setSignatureName(name);
-      setIsEditingSignature(false);
+      setHasCompletedPersonalization(true);
       setError("");
-      setNotice(name ? "Your sign has been updated." : "Your sign has been removed.");
+      setNotice("Your signature has been saved.");
+      return true;
     } catch (storageError) {
-      setError("Could not save your signature in this browser.");
+      setError(storageError.message || "Could not save your signature in this browser.");
+      return false;
+    }
+  };
+
+  const clearPersonalization = () => {
+    try {
+      window.localStorage.removeItem(PERSONALIZATION_NAME_KEY);
+      window.localStorage.removeItem(LEGACY_SIGNATURE_KEY);
+      window.localStorage.setItem(PERSONALIZATION_STATUS_KEY, "skipped");
+      setSignatureName("");
+      setHasCompletedPersonalization(true);
+      setError("");
+      setNotice("Your default signature has been restored.");
+      return true;
+    } catch (storageError) {
+      setError(storageError.message || "Could not clear your saved signature.");
+      return false;
     }
   };
 
@@ -262,17 +285,27 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [notice]);
 
-  const deleteSignature = () => {
+  const skipPersonalization = () => {
     try {
-      window.localStorage.removeItem("nofi-library-signature");
+      window.localStorage.setItem(PERSONALIZATION_STATUS_KEY, "skipped");
+      window.localStorage.removeItem(PERSONALIZATION_NAME_KEY);
+      window.localStorage.removeItem(LEGACY_SIGNATURE_KEY);
       setSignatureName("");
-      setSignatureDraft("");
-      setIsEditingSignature(false);
+      setHasCompletedPersonalization(true);
       setError("");
-      setNotice("Your sign has been deleted.");
+      setShowPersonalization(false);
     } catch (storageError) {
-      setError("Could not delete your signature from this browser.");
+      setError(storageError.message || "Could not save your personalization preference.");
     }
+  };
+
+  const closePersonalization = () => {
+    setShowPersonalization(false);
+  };
+
+  const openPersonalization = () => {
+    setError("");
+    setShowPersonalization(true);
   };
 
   const recordTrackPlay = (trackId) => {
@@ -491,6 +524,8 @@ export default function App() {
     setVideo(null);
     setError("");
     setNotice("");
+    setShowQueue(false);
+    setShowQueueDrawer(false);
     setActiveTab("convert");
   };
 
@@ -696,9 +731,32 @@ export default function App() {
   useEffect(() => {
     refreshLibrary();
     try {
-      setSignatureName(window.localStorage.getItem("nofi-library-signature") || "");
+      const status = window.localStorage.getItem(PERSONALIZATION_STATUS_KEY);
+      const currentName = window.localStorage.getItem(PERSONALIZATION_NAME_KEY);
+      const legacyName = currentName === null
+        ? window.localStorage.getItem(LEGACY_SIGNATURE_KEY)
+        : null;
+      const savedName = normalizePersonalizationName(currentName ?? legacyName);
+      const hasSavedChoice = status === "personalized" || status === "skipped";
+
+      setSignatureName(status === "skipped" ? "" : savedName);
+      if (hasSavedChoice) {
+        if (status === "personalized" && currentName !== savedName) {
+          window.localStorage.setItem(PERSONALIZATION_NAME_KEY, savedName);
+        }
+        setHasCompletedPersonalization(true);
+      } else if (savedName) {
+        window.localStorage.setItem(PERSONALIZATION_NAME_KEY, savedName);
+        window.localStorage.setItem(PERSONALIZATION_STATUS_KEY, "personalized");
+        setHasCompletedPersonalization(true);
+      } else {
+        setShowPersonalization(true);
+      }
     } catch (storageError) {
-      setError("Could not read your saved library signature from this browser.");
+      setError(storageError.message || "Could not read your saved personalization from this browser.");
+      setShowPersonalization(true);
+    } finally {
+      setIsPersonalizationReady(true);
     }
   }, [refreshLibrary]);
 
@@ -1206,6 +1264,37 @@ export default function App() {
       setIsConverting(false);
     }
   };
+
+  const fetchMissingCovers = useCallback(async () => {
+    if (!navigator.onLine) {
+      setNotice("You're offline. Reconnect to fetch covers.");
+      return;
+    }
+    setError("");
+    setNotice("Fetching missing covers…");
+    let updated = 0;
+    for (const track of tracks) {
+      if (!track.thumbnail) {
+        continue;
+      }
+      try {
+        const cache = await caches.open(COVER_CACHE_NAME);
+        const request = new Request(new URL(`/cover/${encodeURIComponent(track.id)}`, window.location.origin));
+        const existing = await cache.match(request);
+        if (existing) {
+          continue;
+        }
+        const response = await fetch(track.thumbnail);
+        if (response.ok) {
+          await cache.put(request, response.clone());
+          updated += 1;
+        }
+      } catch {
+        // Ignore individual failures.
+      }
+    }
+    setNotice(updated ? `Fetched ${updated} cover${updated === 1 ? "" : "s"}.` : "No new covers to fetch.");
+  }, [tracks]);
   const removeTrack = async (track) => {
     setError("");
     try {
@@ -1269,9 +1358,89 @@ export default function App() {
   });
   const activeFolder = folders.find((folder) => folder.id === activeFolderId);
   const unfiledCount = tracks.filter((track) => !track.folderId).length;
+  const homeQueue = queueIds
+    .map((id, index) => ({ track: tracks.find((track) => track.id === id), index }))
+    .filter(({ track }) => Boolean(track));
+  const openLibrary = (showFavorites = false) => {
+    setActiveTab("library");
+    setFavoritesOnly(showFavorites);
+    setSearchQuery("");
+    setShowQueue(false);
+    setShowQueueDrawer(false);
+    setError("");
+    setNotice("");
+    void refreshLibrary();
+  };
+  const openLibraryTools = () => {
+    setActiveTab("settings");
+    setError("");
+    setShowQueue(false);
+    setShowQueueDrawer(false);
+  };
+  const openHome = () => {
+    setActiveTab("home");
+    setError("");
+    setShowQueue(false);
+    setShowQueueDrawer(false);
+  };
+
+  const toggleInlineQueue = () => {
+    setShowQueueDrawer(false);
+    setShowQueue((isOpen) => !isOpen);
+  };
+
+  const toggleQueueDrawer = () => {
+    setShowQueue(false);
+    setShowQueueDrawer((isOpen) => !isOpen);
+  };
+
+  const navigateShell = (tab) => {
+    if (tab === "home") {
+      openHome();
+    } else if (tab === "library") {
+      openLibrary();
+    } else if (tab === "add") {
+      resetConverter();
+    } else if (tab === "playing") {
+      setActiveTab("playing");
+      setShowQueue(false);
+      setShowQueueDrawer(false);
+    }
+  };
+  const shellActive = activeTab === "convert" ? "add" : activeTab;
+  const shellPage = activeTab === "convert" ? "add" : activeTab;
 
   return (
-    <div className="app-shell min-h-screen bg-ink text-white">
+    <AppShell
+      active={shellActive}
+      onNavigate={navigateShell}
+      signature={signatureName}
+      onEditSignature={openPersonalization}
+      onSettings={openLibraryTools}
+      settingsActive={activeTab === "settings"}
+      player={{
+        song: currentTrack
+          ? {
+              title: cleanTrackTitle(currentTrack.title),
+              channel: currentTrack.uploader || currentTrack.artist || "Offline track",
+            }
+          : null,
+        playing,
+        percent: duration ? Math.min(100, (currentTime / duration) * 100) : 0,
+        current: currentTime,
+        duration,
+        onToggle: togglePlayback,
+        onPrev: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
+        onNext: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+        onSeek: (percent) => {
+          const trackDuration = duration || currentTrack?.duration || 0;
+          seekTo({ target: { value: String((trackDuration * percent) / 100) } });
+        },
+        progressRef: playerBarProgressRef,
+        currentTimeRef: playerBarCurrentTimeRef,
+        durationRef: playerBarDurationRef,
+      }}
+    >
       {notice && (
         <div className="duplicate-toast" role="status">
           <span className="duplicate-toast-icon"><Music2 size={17} /></span>
@@ -1285,147 +1454,192 @@ export default function App() {
           </button>
         </div>
       )}
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-6 sm:px-8">
-        <a className="brand-mark" href="#" aria-label="NoFi home">
-          <span className="brand-icon"><Radio size={20} strokeWidth={2.3} /></span>
-          <span>NoFi<span className="brand-dot">.</span></span>
-        </a>
-      </header>
 
-      <main className="mx-auto w-full max-w-6xl px-5 pb-40 sm:px-8">
-        <section className="hero-section">
-          <div className="hero-kicker"><span className="kicker-line" /> YOUR JAM, ANYWHERE</div>
-          <h1>Good sound.<br /><span>Wherever you go.</span></h1>
-          <p>Save audio you have permission to use, then take your listening offline.</p>
-          <div className="hero-orb orb-one" />
-          <div className="hero-orb orb-two" />
-          <div className="hero-disc"><Disc3 size={172} strokeWidth={0.65} /></div>
-        </section>
-
-        <section className="workspace-card">
-          <div className="tabs" role="tablist" aria-label="Music tools">
-            <button
-              className={`tab-button ${activeTab === "convert" ? "active" : ""}`}
-              onClick={resetConverter}
-              role="tab"
-              aria-selected={activeTab === "convert"}
-            >
-              <Youtube size={17} /> Convert
-            </button>
-            <button
-              className={`tab-button ${activeTab === "library" ? "active" : ""}`}
-              onClick={() => { setActiveTab("library"); setError(""); setNotice(""); refreshLibrary(); }}
-              role="tab"
-              aria-selected={activeTab === "library"}
-            >
-              <Headphones size={17} /> Offline Library
-              <span className="tab-count">{tracks.length}</span>
-            </button>
-          </div>
-
-          {error && <div className="status-message error-message" role="alert">{error}</div>}
-
-          {!backendReady && <div className="status-message">Waking up the server, please wait…</div>}
-
-          <button type="button" className="tab-button" onClick={() => setShowQueue((value) => !value)}>
-            Queue ({queueIds.length})
-          </button>
-
-          {showQueue && (
-            <div className="queue-panel">
-              <div className="queue-header">
-                <strong>Queue ({queueIds.length})</strong>
-                <button type="button" onClick={clearQueue}>Clear</button>
-              </div>
-              {queueIds.length === 0 && <p>No songs in queue.</p>}
-              {queueIds.map((id, index) => {
-                const track = tracks.find((item) => item.id === id);
-                if (!track) {
-                  return null;
+      <PageShell page={shellPage} playing={playing}>
+        {error && <div className="page-status error-message" role="alert">{error}</div>}
+        {!backendReady && activeTab === "convert" && (
+          <div className="page-status" role="status">Waking up the server, please wait…</div>
+        )}
+        {activeTab === "home" ? (
+          <HomeView
+            home={{
+              tracks,
+              currentTrack,
+              currentTime,
+              duration,
+              isPlaying,
+              isPreparingAudio,
+              isShuffle,
+              repeatMode,
+              queue: homeQueue,
+              queueIndex,
+              signatureName,
+              showQueue,
+            }}
+            actions={{
+              onEditSignature: openPersonalization,
+              onNavigate: (tab) => {
+                if (tab === "convert") {
+                  resetConverter();
+                } else if (tab === "settings") {
+                  openLibraryTools();
+                } else {
+                  openLibrary();
                 }
-                return (
-                  <div key={`${id}-${index}`} className={index === queueIndex ? "queue-row active" : "queue-row"}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const selectedTrack = tracks.find((item) => item.id === id);
-                        if (selectedTrack) {
-                          setQueueIndex(index);
-                          selectTrack(selectedTrack, true);
-                        }
-                      }}
-                    >
-                      {track.title || "Untitled"}
-                    </button>
-                    <button type="button" onClick={() => removeFromQueue(id)}>Remove</button>
-                  </div>
-                );
-              })}
-              {currentTrack && <button type="button" onClick={() => addToQueue(currentTrack)}>Add current song</button>}
-            </div>
-          )}
-
-          {activeTab === "convert" ? (
-            <ConverterView
-              url={url}
-              onUrlChange={(event) => {
-                setUrl(event.target.value);
-                setVideo(null);
-                setError("");
-                setNotice("");
-              }}
-              onPreview={loadVideoInfo}
-              onSaveOffline={convertAndSave}
-              video={video}
-              isOnline={isOnline}
-              isLoadingInfo={isLoadingInfo}
-              isConverting={isConverting}
-            />
-          ) : (
-            <LibraryView
-              library={{ tracks, visibleTracks: sortedVisibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms, storageInfo, sortBy, setSortBy }}
-              filters={{ searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly }}
-              forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, signatureName, isEditingSignature, signatureDraft, setSignatureDraft, renameTrackId, renameDraft, setRenameDraft, pendingImport }}
-              playback={{ currentTrack, isPlaying, isPreparingAudio, currentTime, duration, pendingStatsRef, inlineProgressRef, inlineCurrentTimeRef, inlineDurationRef, onPlayTrack: playTrack, onSeekTrack: seekTrack }}
-              actions={{
-                onCreateFolder: createFolder,
-                onToggleCreateFolder: () => { setIsCreatingFolder((open) => !open); setNewFolderName(""); setError(""); },
-                onToggleSignature: () => { setSignatureDraft(signatureName); setIsEditingSignature((editing) => !editing); setError(""); },
-                onSaveSignature: saveSignature,
-                onDeleteSignature: deleteSignature,
-                onCancelSignature: () => setIsEditingSignature(false),
-                onRenameTrack: renameTrack,
-                onBeginRenameTrack: beginRenameTrack,
-                onCancelRenameTrack: () => { setRenameTrackId(null); setRenameDraft(""); },
-                onUpdatePlayCountLimit: updatePlayCountLimit,
-                onToggleFavorite: toggleFavorite,
-                onMoveTrackToFolder: moveTrackToFolder,
-                onRemoveTrack: removeTrack,
-                onRemoveFolder: removeFolder,
-                onGoToConverter: resetConverter,
-                onExportLibrary: exportLibrary,
-                onImportLibrary: () => importInputRef.current?.click(),
-                onDownloadTrack: downloadTrackFile,
-                onReDownloadTrack: reDownloadTrack,
-                onApplyImport: applyImport,
-                onCancelImport: () => setPendingImport(null),
-                onFetchMissingCovers: fetchMissingCovers,
-              }}
-            />
-          )}
-        </section>
+              },
+              onPlayTrack: playTrack,
+              onPlayQueueTrack: (track, index) => { setQueueIndex(index); selectTrack(track, true); },
+              onTogglePlayback: togglePlayback,
+              onPreviousTrack: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
+              onNextTrack: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+              onToggleShuffle: () => setIsShuffle((shuffle) => !shuffle),
+              onCycleRepeatMode: cycleRepeatMode,
+              onSeek: seekTo,
+              onToggleFavorite: toggleFavorite,
+              onAddToQueue: addToQueue,
+              onToggleQueue: toggleInlineQueue,
+              onRemoveFromQueue: removeFromQueue,
+              onClearQueue: clearQueue,
+            }}
+          />
+        ) : activeTab === "playing" ? (
+          <NowPlayingView
+            player={{ currentTrack, currentTime, duration, isPlaying, isPreparingAudio, isShuffle, repeatMode, queueIndex }}
+            queue={homeQueue}
+            actions={{
+              onBack: openHome,
+              onTogglePlayback: togglePlayback,
+              onPreviousTrack: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
+              onNextTrack: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+              onToggleShuffle: () => setIsShuffle((shuffle) => !shuffle),
+              onCycleRepeatMode: cycleRepeatMode,
+              onSeek: seekTo,
+              onToggleFavorite: toggleFavorite,
+              onPlayQueueTrack: (track, index) => { setQueueIndex(index); selectTrack(track, true); },
+              onDownloadTrack: downloadTrackFile,
+              onOpenPlaylists: openLibrary,
+            }}
+          />
+        ) : activeTab === "settings" ? (
+          <SettingsView
+            settings={{ storageInfo, tracksLength: tracks.length, signatureName, pendingImport }}
+            actions={{
+              onExportLibrary: exportLibrary,
+              onImportLibrary: () => importInputRef.current?.click(),
+              onFetchMissingCovers: fetchMissingCovers,
+              onOpenPersonalization: openPersonalization,
+              onApplyImport: applyImport,
+              onCancelImport: () => setPendingImport(null),
+            }}
+          />
+        ) : (
+          <section className={`workspace-card non-home-workspace${activeTab === "library" ? " non-home-library" : ""}`}>
+            {activeTab === "convert" && (
+              <div className="rx-convert-toolbar">
+                <button type="button" className="ch" onClick={toggleInlineQueue} aria-expanded={showQueue} style={showQueue ? { background: "#FFD93D" } : undefined}>
+                  <ListMusic size={16} /> Queue <small>{queueIds.length}</small>
+                </button>
+              </div>
+            )}
+            {activeTab === "convert" && showQueue && (
+              <div className="bd rx-panel rx-inline-queue">
+                <div className="rx-panel-head">
+                  <h2 className="B">queue ({queueIds.length})</h2>
+                  <button type="button" className="rx-link" onClick={clearQueue}>Clear</button>
+                </div>
+                {queueIds.length === 0 && <p className="rx-muted">No songs in queue.</p>}
+                <div className="rx-queue-expanded">
+                  {queueIds.map((id, index) => {
+                    const track = tracks.find((item) => item.id === id);
+                    if (!track) return null;
+                    return (
+                      <div key={`${id}-${index}`} className={`rx-queue-row ${index === queueIndex ? "is-current" : ""}`}>
+                        <button type="button" className="rx-queue-play" onClick={() => { setQueueIndex(index); selectTrack(track, true); }}>
+                          <span><strong>{cleanTrackTitle(track.title)}</strong><small>{track.uploader || "Offline track"}</small></span>
+                        </button>
+                        <button type="button" className="ib rx-queue-x" onClick={() => removeFromQueue(id)} aria-label="Remove"><X size={14} /></button>
+                      </div>
+                    );
+                  })}
+                </div>
+                {currentTrack && <button type="button" className="ch" style={{ marginTop: 10 }} onClick={() => addToQueue(currentTrack)}>Add current song</button>}
+              </div>
+            )}
+            {activeTab === "convert" ? (
+              <ConverterView
+                url={url}
+                onUrlChange={(event) => {
+                  setUrl(event.target.value);
+                  setVideo(null);
+                  setError("");
+                  setNotice("");
+                }}
+                onPreview={loadVideoInfo}
+                onSaveOffline={convertAndSave}
+                video={video}
+                isOnline={isOnline}
+                isLoadingInfo={isLoadingInfo}
+                isConverting={isConverting}
+              />
+            ) : (
+              <LibraryView
+                library={{ tracks, visibleTracks: sortedVisibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms, storageInfo, sortBy, setSortBy, queueIds }}
+                filters={{ searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly }}
+                forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, signatureName, renameTrackId, renameDraft, setRenameDraft, pendingImport }}
+                playback={{ currentTrack, isPlaying, isPreparingAudio, currentTime, duration, pendingStatsRef, inlineProgressRef, inlineCurrentTimeRef, inlineDurationRef, onPlayTrack: playTrack, onAddToQueue: addToQueue, onSeekTrack: seekTrack }}
+                queue={{ showQueue, queueIndex, onPlayQueueTrack: (track, index) => { setQueueIndex(index); selectTrack(track, true); }, onRemoveFromQueue: removeFromQueue, onClearQueue: clearQueue }}
+                actions={{
+                  onCreateFolder: createFolder,
+                  onToggleCreateFolder: () => { setIsCreatingFolder((open) => !open); setNewFolderName(""); setError(""); },
+                  onOpenPersonalization: openPersonalization,
+                  onRenameTrack: renameTrack,
+                  onBeginRenameTrack: beginRenameTrack,
+                  onCancelRenameTrack: () => { setRenameTrackId(null); setRenameDraft(""); },
+                  onUpdatePlayCountLimit: updatePlayCountLimit,
+                  onToggleFavorite: toggleFavorite,
+                  onMoveTrackToFolder: moveTrackToFolder,
+                  onRemoveTrack: removeTrack,
+                  onRemoveFolder: removeFolder,
+                  onGoToConverter: resetConverter,
+                  onExportLibrary: exportLibrary,
+                  onImportLibrary: () => importInputRef.current?.click(),
+                  onDownloadTrack: downloadTrackFile,
+                  onReDownloadTrack: reDownloadTrack,
+                  onApplyImport: applyImport,
+                  onCancelImport: () => setPendingImport(null),
+                  onFetchMissingCovers: fetchMissingCovers,
+                  onToggleQueue: toggleInlineQueue,
+                  onShowAllCollection: () => { setActiveFolderId("all"); setFavoritesOnly(false); setSearchQuery(""); },
+                }}
+              />
+            )}
+          </section>
+        )}
 
         <footer className="page-footer">
-          <span>NOFI <span className="footer-dot">·</span> LISTEN ON YOUR TERMS</span>
+          <span>nofi <span className="footer-dot">✦</span> no skips · no ads · no wifi needed</span>
           <span>Audio you’re authorized to use.</span>
         </footer>
-      </main>
+      </PageShell>
+
+      {isPersonalizationReady && showPersonalization && (
+        <PersonalizationModal
+          initialName={signatureName}
+          isFirstVisit={!hasCompletedPersonalization}
+          error={error}
+          onSave={savePersonalization}
+          onClear={clearPersonalization}
+          onDismiss={closePersonalization}
+          onSkip={skipPersonalization}
+        />
+      )}
 
       <input ref={importInputRef} type="file" accept="application/json" hidden onChange={handleImportFile} />
 
       <PlayerDock
         player={{
           audioRef,
+          currentPage: activeTab,
           currentTrack,
           currentTime,
           duration,
@@ -1438,6 +1652,7 @@ export default function App() {
           playbackRate,
           autoPlay,
           audioSource,
+          queueOpen: showQueueDrawer,
           playerProgressRef,
           playerCurrentTimeRef,
           playerRemainingTimeRef,
@@ -1453,6 +1668,7 @@ export default function App() {
           onVolumeChange: updateVolume,
           onToggleAutoPlay: () => setAutoPlay((enabled) => !enabled),
           onSeek: seekTo,
+          onToggleQueue: toggleQueueDrawer,
           audioHandlers: {
             onPlay: () => {
               setIsPlaying(true);
@@ -1501,6 +1717,16 @@ export default function App() {
           },
         }}
       />
-    </div>
+      <QueueDrawer
+        open={showQueueDrawer}
+        tracks={tracks}
+        queueIds={queueIds}
+        queueIndex={queueIndex}
+        onClose={() => setShowQueueDrawer(false)}
+        onPlayQueueTrack={(track, index) => { setQueueIndex(index); selectTrack(track, true); }}
+        onRemoveFromQueue={removeFromQueue}
+        onClearQueue={clearQueue}
+      />
+    </AppShell>
   );
 }

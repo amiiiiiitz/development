@@ -2,6 +2,11 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
+import "./design/files (2)/tokens.css";
+import "./design/files (2)/base.css";
+import "./design/files (2)/pages.css";
+import "./design/files (2)/motion.css";
+import "./design/responsive.css";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
