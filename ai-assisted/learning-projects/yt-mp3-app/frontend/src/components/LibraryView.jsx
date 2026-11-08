@@ -1,71 +1,172 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
-  ArrowDownToLine, Check, ChevronDown, Disc3, Download, FolderPlus, Grid2X2, Heart,
-  ImagePlus, List, ListMusic, ListPlus, MoreHorizontal, Pause, Pencil, RefreshCw, Search,
-  Shield, SlidersHorizontal, Trash2, Upload, WifiOff, X,
+  ArrowDownToLine, Check, Disc3, FolderPlus, Grid2X2, Heart, List, ListPlus,
+  MoreHorizontal, Pencil, RefreshCw, Search, SlidersHorizontal, Trash2, WifiOff, X,
 } from "lucide-react";
-import MusicPlayIcon from "./MusicPlayIcon.jsx";
 import TrackArtwork from "./TrackArtwork.jsx";
 import { CassetteTape, EqBars, MiniCassette } from "./RemixAssets.jsx";
 import { cleanTrackTitle, formatDuration } from "../utils/trackFormatting.js";
-
-function formatBytes(bytes) {
-  if (!Number.isFinite(bytes) || bytes < 0) return "—";
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-}
+import { useViewMode } from "../hooks/useViewMode.js";
+import { usePortal } from "../hooks/usePortal.js";
 
 const STRIPES = ["#6B4EFF", "#F28C38", "#FFD93D", "#3EE0A0", "#2EC4B6", "#F28C38"];
 
 export default function LibraryView({ library, filters, forms, playback, queue = {}, actions }) {
   const {
-    tracks, visibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount,
-    storageInfo, sortBy, setSortBy, queueIds = [],
+    tracks, visibleTracks, folders, activeFolderId, setActiveFolderId, unfiledCount,
+    sortBy, setSortBy, queueIds = [],
   } = library;
   const { searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly } = filters;
-  const { isCreatingFolder, newFolderName, setNewFolderName, renameTrackId, renameDraft, setRenameDraft, pendingImport } = forms;
+  const { isCreatingFolder, newFolderName, setNewFolderName, renameTrackId, renameDraft, setRenameDraft } = forms;
   const { currentTrack, isPlaying, isPreparingAudio, currentTime, duration, inlineProgressRef, inlineCurrentTimeRef, inlineDurationRef, onPlayTrack, onAddToQueue, onSeekTrack } = playback;
-  const { showQueue = false, queueIndex = -1, onPlayQueueTrack, onRemoveFromQueue, onClearQueue } = queue;
+  const { queueIndex = -1, onPlayQueueTrack, onRemoveFromQueue, onClearQueue } = queue;
   const {
-    onCreateFolder, onToggleCreateFolder, onOpenPersonalization, onRenameTrack, onBeginRenameTrack, onCancelRenameTrack,
+    onCreateFolder, onToggleCreateFolder, onRenameTrack, onBeginRenameTrack, onCancelRenameTrack,
     onUpdatePlayCountLimit, onToggleFavorite, onMoveTrackToFolder, onRemoveTrack, onRemoveFolder, onGoToConverter,
-    onExportLibrary, onImportLibrary, onDownloadTrack, onReDownloadTrack, onApplyImport, onCancelImport, onFetchMissingCovers,
-    onToggleQueue, onShowAllCollection,
+    onDownloadTrack, onReDownloadTrack, onShowAllCollection,
   } = actions;
 
-  const [showTools, setShowTools] = useState(false);
-  const [showFolders, setShowFolders] = useState(false);
-  const [showStorage, setShowStorage] = useState(false);
-  const [viewMode, setViewMode] = useState("list");
+  const [activePanel, setActivePanel] = useState(() => favoritesOnly ? "favorites" : "all");
+  const [viewMode, setViewMode] = useViewMode();
   const [trackMenuId, setTrackMenuId] = useState(null);
-  const toolsRef = useRef(null);
+  const [trackMenuPosition, setTrackMenuPosition] = useState(null);
   const menuRef = useRef(null);
+  const portalRoot = usePortal();
 
   useEffect(() => {
-    if (!showTools && trackMenuId === null) return undefined;
-    const close = (event) => {
-      if (showTools && toolsRef.current && !toolsRef.current.contains(event.target)) setShowTools(false);
-      if (trackMenuId !== null && menuRef.current && !menuRef.current.contains(event.target)) setTrackMenuId(null);
+    if (trackMenuId === null) return undefined;
+    const closeOnOutsideClick = (event) => {
+      if (event.target.closest?.("[data-track-menu-trigger]")) return;
+      if (menuRef.current && !menuRef.current.contains(event.target)) setTrackMenuId(null);
     };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, [showTools, trackMenuId]);
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setTrackMenuId(null);
+    };
+    const closeOnViewportChange = () => setTrackMenuId(null);
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    window.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("scroll", closeOnViewportChange, true);
+    window.addEventListener("resize", closeOnViewportChange);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      window.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("scroll", closeOnViewportChange, true);
+      window.removeEventListener("resize", closeOnViewportChange);
+    };
+  }, [trackMenuId]);
 
   const queueTracks = useMemo(() => (
     (queueIds || []).map((id, index) => ({ track: tracks.find((item) => item.id === id), index })).filter(({ track }) => track)
   ), [queueIds, tracks]);
 
-  const storageUsage = storageInfo?.usage || 0;
-  const storageQuota = storageInfo?.quota || 0;
-  const storagePercent = storageQuota ? Math.min(100, (storageUsage / storageQuota) * 100) : 0;
+  const openTrackMenu = (event, trackId) => {
+    if (trackMenuId === trackId) {
+      setTrackMenuId(null);
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const menuWidth = 240;
+    const menuHeight = Math.min(360, window.innerHeight - 16);
+    const belowSpace = window.innerHeight - rect.bottom - 8;
+    const opensAbove = belowSpace < menuHeight && rect.top > belowSpace;
+    const maxHeight = Math.max(120, Math.min(menuHeight, opensAbove ? rect.top - 16 : belowSpace));
+    const top = opensAbove
+      ? Math.max(8, rect.top - maxHeight - 8)
+      : Math.min(rect.bottom + 8, window.innerHeight - maxHeight);
+    const left = Math.max(8, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8));
+    setTrackMenuPosition({ left, top, maxHeight });
+    setTrackMenuId(trackId);
+  };
+
+  const renderTrackMenuTrigger = (track) => {
+    const isCurrent = currentTrack?.id === track.id;
+    const menuOpen = trackMenuId === track.id;
+    return (
+      <button
+        className="ib rx-icon-btn"
+        type="button"
+        data-track-menu-trigger
+        onClick={(event) => { event.stopPropagation(); openTrackMenu(event, track.id); }}
+        aria-label={`More actions for ${cleanTrackTitle(track.title)}`}
+        aria-expanded={menuOpen}
+        style={{ width: 40, height: 40, boxShadow: "none", borderWidth: 2, background: "transparent", borderColor: isCurrent ? "rgba(255,255,255,.35)" : "transparent", color: "inherit" }}
+      >
+        <MoreHorizontal size={16} />
+      </button>
+    );
+  };
+
+  const renderTrackMenu = (track) => {
+    const queued = (queueIds || []).includes(track.id);
+    return (
+      <div className="rx-menu bd rx-track-menu" role="menu" ref={menuRef} style={trackMenuPosition}>
+        <button type="button" role="menuitem" onClick={() => { onAddToQueue?.(track); setTrackMenuId(null); }} disabled={queued}><ListPlus size={14} /> {queued ? "Already in queue" : "Add to queue"}</button>
+        <button type="button" role="menuitem" onClick={() => { onBeginRenameTrack(track); setTrackMenuId(null); }}><Pencil size={14} /> Rename</button>
+        <button type="button" role="menuitem" onClick={() => { onDownloadTrack(track); setTrackMenuId(null); }}><ArrowDownToLine size={14} /> Download file</button>
+        {track.downloaded === false && <button type="button" role="menuitem" onClick={() => { onReDownloadTrack(track); setTrackMenuId(null); }}><RefreshCw size={14} /> Re-download audio</button>}
+        {folders.length > 0 && (
+          <label className="rx-menu-select"><Disc3 size={14} />
+            <select value={track.folderId || ""} onChange={(e) => { onMoveTrackToFolder(track, e.target.value); setTrackMenuId(null); }} aria-label={`Move ${cleanTrackTitle(track.title)}`}>
+              <option value="">Move to Unfiled</option>
+              {folders.map((folder) => <option value={folder.id} key={folder.id}>{folder.name}</option>)}
+            </select>
+          </label>
+        )}
+        <label className="rx-menu-select"><SlidersHorizontal size={14} />
+          <select value={track.playCountLimit ?? 1} onChange={(e) => { onUpdatePlayCountLimit(track, e.target.value); setTrackMenuId(null); }} aria-label={`Play count for ${cleanTrackTitle(track.title)}`}>
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((count) => <option value={count} key={count}>Play {count}× then continue</option>)}
+            <option value="forever">Repeat until skipped</option>
+          </select>
+        </label>
+        <button type="button" role="menuitem" className="is-danger" onClick={() => { onRemoveTrack(track); setTrackMenuId(null); }}><Trash2 size={14} /> Remove from library</button>
+      </div>
+    );
+  };
+
+  const activatePanel = (panel) => {
+    if (panel === "all") {
+      setActivePanel("all");
+      onShowAllCollection();
+      return;
+    }
+    if (panel === "favorites") {
+      const activateFavorites = activePanel !== "favorites";
+      if (activateFavorites) {
+        setActivePanel("favorites");
+        setActiveFolderId("all");
+        setFavoritesOnly(true);
+      } else {
+        setActivePanel("all");
+        onShowAllCollection();
+      }
+      return;
+    }
+    if (panel === "folders") {
+      const activateFolders = activePanel !== "folders";
+      if (activateFolders) {
+        setActivePanel("folders");
+        setFavoritesOnly(false);
+      } else {
+        setActivePanel("all");
+        onShowAllCollection();
+      }
+      return;
+    }
+    const activateQueue = activePanel !== "queue";
+    if (activateQueue) {
+      setActivePanel("queue");
+      setFavoritesOnly(false);
+    } else {
+      setActivePanel("all");
+      onShowAllCollection();
+    }
+  };
 
   const renderRow = (track, index) => {
     const isCurrent = currentTrack?.id === track.id;
     const title = cleanTrackTitle(track.title);
     const artist = track.uploader || track.artist || "Offline track";
-    const queued = (queueIds || []).includes(track.id);
-    const menuOpen = trackMenuId === track.id;
     return (
       <article key={track.id} className={`bd rx-lib-row ${isCurrent ? "is-current" : ""}`} style={isCurrent ? { background: "#6B4EFF", color: "#fff" } : { background: "#fff" }}>
         <button className="rx-lib-art-btn" onClick={() => onPlayTrack(track)} disabled={isPreparingAudio && isCurrent} aria-label={`${isCurrent && isPlaying ? "Pause" : "Play"} ${title}`}>
@@ -97,34 +198,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         <button className="ib rx-icon-btn" onClick={() => onToggleFavorite(track)} aria-label={track.favorite ? `Remove ${title} from favorites` : `Add ${title} to favorites`} aria-pressed={Boolean(track.favorite)} style={{ width: 40, height: 40, boxShadow: "none", borderWidth: 2, background: track.favorite ? "#FFD93D" : "transparent", borderColor: isCurrent ? "rgba(255,255,255,.35)" : "transparent", color: "inherit" }}>
           <Heart size={15} fill={track.favorite ? "currentColor" : "none"} />
         </button>
-        <div className="rx-menu-wrap" ref={menuOpen ? menuRef : null}>
-          <button className="ib rx-icon-btn" type="button" onClick={() => setTrackMenuId(menuOpen ? null : track.id)} aria-label={`More actions for ${title}`} aria-expanded={menuOpen} style={{ width: 40, height: 40, boxShadow: "none", borderWidth: 2, background: "transparent", borderColor: isCurrent ? "rgba(255,255,255,.35)" : "transparent", color: "inherit" }}>
-            <MoreHorizontal size={16} />
-          </button>
-          {menuOpen && (
-            <div className="rx-menu bd" role="menu">
-              <button type="button" role="menuitem" onClick={() => { onAddToQueue?.(track); setTrackMenuId(null); }} disabled={queued}><ListPlus size={14} /> {queued ? "Already in queue" : "Add to queue"}</button>
-              <button type="button" role="menuitem" onClick={() => { onBeginRenameTrack(track); setTrackMenuId(null); }}><Pencil size={14} /> Rename</button>
-              <button type="button" role="menuitem" onClick={() => { onDownloadTrack(track); setTrackMenuId(null); }}><ArrowDownToLine size={14} /> Download file</button>
-              {track.downloaded === false && <button type="button" role="menuitem" onClick={() => { onReDownloadTrack(track); setTrackMenuId(null); }}><RefreshCw size={14} /> Re-download audio</button>}
-              {folders.length > 0 && (
-                <label className="rx-menu-select"><Disc3 size={14} />
-                  <select value={track.folderId || ""} onChange={(e) => { onMoveTrackToFolder(track, e.target.value); setTrackMenuId(null); }} aria-label={`Move ${title}`}>
-                    <option value="">Move to Unfiled</option>
-                    {folders.map((f) => <option value={f.id} key={f.id}>{f.name}</option>)}
-                  </select>
-                </label>
-              )}
-              <label className="rx-menu-select"><SlidersHorizontal size={14} />
-                <select value={track.playCountLimit ?? 1} onChange={(e) => { onUpdatePlayCountLimit(track, e.target.value); setTrackMenuId(null); }} aria-label={`Play count for ${title}`}>
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((c) => <option value={c} key={c}>Play {c}× then continue</option>)}
-                  <option value="forever">Repeat until skipped</option>
-                </select>
-              </label>
-              <button type="button" role="menuitem" className="is-danger" onClick={() => { onRemoveTrack(track); setTrackMenuId(null); }}><Trash2 size={14} /> Remove from library</button>
-            </div>
-          )}
-        </div>
+        {renderTrackMenuTrigger(track)}
       </article>
     );
   };
@@ -142,44 +216,28 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         {searchQuery && <button type="button" className="rx-link" onClick={() => setSearchQuery("")} aria-label="Clear search"><X size={16} /></button>}
       </div>
 
-      <div className="rx-filters">
-        <button type="button" className="ch" style={!favoritesOnly && activeFolderId === "all" ? { background: "#FFD93D" } : undefined} onClick={onShowAllCollection}>all</button>
-        <button type="button" className="ch" style={favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => setFavoritesOnly((v) => !v)}>favorites</button>
-        <button type="button" className="ch" style={showFolders ? { background: "#FFD93D" } : undefined} onClick={() => setShowFolders((v) => !v)} aria-expanded={showFolders}>playlists</button>
-        <button type="button" className="ch" style={showQueue ? { background: "#FFD93D" } : undefined} onClick={onToggleQueue} aria-expanded={showQueue}>queue {queueIds.length ? `(${queueIds.length})` : ""}</button>
+      <div className="rx-filters" role="group" aria-label="Library controls">
+        <div className="rx-panel-controls" role="group" aria-label="Library panels">
+          <button type="button" className="ch" aria-pressed={activePanel === "all"} style={activePanel === "all" ? { background: "#FFD93D" } : undefined} onClick={() => activatePanel("all")}>All</button>
+          <button type="button" className="ch" aria-pressed={activePanel === "favorites"} style={activePanel === "favorites" ? { background: "#FFD93D" } : undefined} onClick={() => activatePanel("favorites")}>Favorites</button>
+          <button type="button" className="ch" aria-pressed={activePanel === "folders"} style={activePanel === "folders" ? { background: "#FFD93D" } : undefined} onClick={() => activatePanel("folders")} aria-expanded={activePanel === "folders"}>Folders</button>
+          <button type="button" className="ch" aria-pressed={activePanel === "queue"} style={activePanel === "queue" ? { background: "#FFD93D" } : undefined} onClick={() => activatePanel("queue")} aria-expanded={activePanel === "queue"}>Queue {queueIds.length ? `(${queueIds.length})` : ""}</button>
+        </div>
         <label className="ch rx-sort-chip"><SlidersHorizontal size={14} aria-hidden="true" />
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort songs">
-            <option value="recent">recent</option><option value="mostPlayed">most played</option><option value="az">A–Z</option>
-            <option value="durationAsc">shortest</option><option value="durationDesc">longest</option>
+            <option value="newest">Newest First</option><option value="mostPlayed">Most Played</option><option value="az">A–Z</option>
+            <option value="durationAsc">Shortest</option><option value="durationDesc">Longest</option>
           </select>
         </label>
-        <div className="rx-tools-wrap" ref={toolsRef}>
-          <button type="button" className="ch" onClick={() => setShowTools((v) => !v)} aria-expanded={showTools}>tools <ChevronDown size={14} /></button>
-          {showTools && (
-            <div className="rx-menu bd" role="menu">
-              <button type="button" role="menuitem" onClick={() => { onExportLibrary(); setShowTools(false); }}><Download size={14} /> Export collection</button>
-              <button type="button" role="menuitem" onClick={() => { onImportLibrary(); setShowTools(false); }}><Upload size={14} /> Import collection</button>
-              <button type="button" role="menuitem" onClick={() => { onFetchMissingCovers(); setShowTools(false); }}><ImagePlus size={14} /> Fetch missing covers</button>
-              <button type="button" role="menuitem" onClick={() => { onOpenPersonalization(); setShowTools(false); }}><Pencil size={14} /> Personalize signature</button>
-            </div>
-          )}
+        <div className="rx-view-toggle" role="group" aria-label="Track display">
+          <button type="button" className="ch" aria-pressed={viewMode === "list"} style={viewMode === "list" ? { background: "#FFD93D" } : undefined} onClick={() => setViewMode("list")}><List size={15} /> List</button>
+          <button type="button" className="ch" aria-pressed={viewMode === "grid"} style={viewMode === "grid" ? { background: "#FFD93D" } : undefined} onClick={() => setViewMode("grid")}><Grid2X2 size={15} /> Grid</button>
         </div>
       </div>
 
-      {pendingImport && (
-        <div className="bd rx-panel" role="status">
-          <p><strong>Import collection?</strong> {pendingImport.tracks.length} tracks, {pendingImport.folders.length} folders.</p>
-          <div className="rx-panel-actions">
-            <button type="button" className="library-action-primary" onClick={() => onApplyImport("merge")}>Merge</button>
-            <button type="button" className="ch" onClick={() => onApplyImport("replace")}>Replace</button>
-            <button type="button" className="rx-link" onClick={onCancelImport}>Cancel</button>
-          </div>
-        </div>
-      )}
-
-      {showQueue && (
+      {activePanel === "queue" && (
         <section className="bd rx-panel" aria-label="Playback queue">
-          <div className="rx-panel-head"><h2 className="B">queue</h2><div className="rx-panel-actions">{queueTracks.length > 0 && <button type="button" className="rx-link" onClick={onClearQueue}>Clear</button>}<button type="button" className="rx-link" onClick={onToggleQueue}>Close</button></div></div>
+          <div className="rx-panel-head"><h2 className="B">queue</h2><div className="rx-panel-actions">{queueTracks.length > 0 && <button type="button" className="rx-link" onClick={onClearQueue}>Clear</button>}<button type="button" className="rx-link" onClick={() => activatePanel("all")}>Close</button></div></div>
           {queueTracks.length === 0 ? <p className="rx-muted">The queue is empty.</p> : (
             <div className="rx-queue-expanded">{queueTracks.map(({ track, index }) => (
               <div key={`${track.id}-${index}`} className={`rx-queue-row ${index === queueIndex ? "is-current" : ""}`}>
@@ -193,9 +251,9 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         </section>
       )}
 
-      {showFolders && (
+      {activePanel === "folders" && (
         <section className="bd rx-panel" aria-label="Folders">
-          <div className="rx-panel-head"><h2 className="B">folders &amp; favorites</h2><button type="button" className="ch" onClick={onToggleCreateFolder}><FolderPlus size={14} /> New folder</button></div>
+          <div className="rx-panel-head"><button type="button" className="ch" onClick={onToggleCreateFolder}><FolderPlus size={14} /> New folder</button></div>
           {isCreatingFolder && (
             <form className="rx-folder-form" onSubmit={onCreateFolder}>
               <label className="sr-only" htmlFor="new-folder-name">Folder name</label>
@@ -204,11 +262,11 @@ export default function LibraryView({ library, filters, forms, playback, queue =
             </form>
           )}
           <div className="rx-folder-pills">
-            <button type="button" className="ch" style={activeFolderId === "all" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={onShowAllCollection}>All <small>{tracks.length}</small></button>
-            <button type="button" className="ch" style={activeFolderId === "unfiled" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId("unfiled"); setFavoritesOnly(false); }}>Unfiled <small>{unfiledCount}</small></button>
+            <button type="button" className="ch" aria-pressed={activeFolderId === "all" && !favoritesOnly} style={activeFolderId === "all" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={onShowAllCollection}>All <small>{tracks.length}</small></button>
+            <button type="button" className="ch" aria-pressed={activeFolderId === "unfiled" && !favoritesOnly} style={activeFolderId === "unfiled" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId("unfiled"); setFavoritesOnly(false); }}>Unfiled <small>{unfiledCount}</small></button>
             {folders.map((folder) => (
               <span key={folder.id} className="rx-folder-pill-wrap">
-                <button type="button" className="ch" style={activeFolderId === folder.id && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId(folder.id); setFavoritesOnly(false); }}>{folder.name} <small>{tracks.filter((t) => t.folderId === folder.id).length}</small></button>
+                <button type="button" className="ch" aria-pressed={activeFolderId === folder.id && !favoritesOnly} style={activeFolderId === folder.id && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId(folder.id); setFavoritesOnly(false); }}>{folder.name} <small>{tracks.filter((t) => t.folderId === folder.id).length}</small></button>
                 <button type="button" className="rx-link" onClick={() => onRemoveFolder(folder)} aria-label={`Delete ${folder.name}`}><X size={12} /></button>
               </span>
             ))}
@@ -216,7 +274,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         </section>
       )}
 
-      <p className="B rx-section-kicker">NEWEST FIRST</p>
+      <p className="B rx-section-kicker">{sortBy === "mostPlayed" ? "MOST PLAYED" : sortBy === "az" ? "A–Z" : sortBy === "durationAsc" ? "SHORTEST FIRST" : sortBy === "durationDesc" ? "LONGEST FIRST" : "NEWEST FIRST"}</p>
       {tracks.length === 0 ? (
         <div className="bd rx-empty-state">
           <CassetteTape width={160} label="empty" />
@@ -233,7 +291,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         </div>
       ) : viewMode === "grid" ? (
         <div className="rx-lib-grid">
-          {visibleTracks.map((track, index) => {
+          {visibleTracks.map((track) => {
             const isCurrent = currentTrack?.id === track.id;
             return (
               <article key={track.id} className={`bd rx-grid-card ${isCurrent ? "is-current" : ""}`}>
@@ -241,8 +299,27 @@ export default function LibraryView({ library, filters, forms, playback, queue =
                   <TrackArtwork track={track} size="recent" />
                   {isCurrent && isPlaying && <span className="rx-grid-eq"><EqBars /></span>}
                 </button>
-                <button type="button" className="rx-lib-title" onClick={() => onPlayTrack(track)}>{cleanTrackTitle(track.title)}</button>
-                <p className="rx-lib-sub">{track.uploader || "Offline track"}</p>
+                {renameTrackId === track.id ? (
+                  <form className="rx-rename" onSubmit={(event) => onRenameTrack(event, track)}>
+                    <label className="sr-only" htmlFor={`rename-${track.id}`}>Song name</label>
+                    <input id={`rename-${track.id}`} autoFocus value={renameDraft} onChange={(event) => setRenameDraft(event.target.value)} maxLength={160} />
+                    <button type="submit" className="ib" style={{ width: 36, height: 36 }} aria-label="Save"><Check size={14} /></button>
+                    <button type="button" className="ib" style={{ width: 36, height: 36 }} onClick={onCancelRenameTrack} aria-label="Cancel"><X size={14} /></button>
+                  </form>
+                ) : (
+                  <>
+                    <button type="button" className="rx-lib-title" onClick={() => onPlayTrack(track)}>{cleanTrackTitle(track.title)}</button>
+                    <p className="rx-lib-sub">{track.uploader || "Offline track"} · {formatDuration(track.duration)}</p>
+                  </>
+                )}
+                {isCurrent && isPlaying && <EqBars light />}
+                <div className="rx-grid-actions">
+                  <button className="ib rx-icon-btn" type="button" onClick={() => onToggleFavorite(track)} aria-label={track.favorite ? `Remove ${cleanTrackTitle(track.title)} from favorites` : `Add ${cleanTrackTitle(track.title)} to favorites`} aria-pressed={Boolean(track.favorite)} style={{ width: 40, height: 40, boxShadow: "none", borderWidth: 2, background: track.favorite ? "#FFD93D" : "transparent", borderColor: isCurrent ? "rgba(255,255,255,.35)" : "transparent", color: "inherit" }}>
+                    <Heart size={15} fill={track.favorite ? "currentColor" : "none"} />
+                  </button>
+                  {track.savedAt && <span className="ch rx-saved-chip">saved</span>}
+                  {renderTrackMenuTrigger(track)}
+                </div>
               </article>
             );
           })}
@@ -251,22 +328,12 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         <div className="rx-lib-list">{visibleTracks.map((track, index) => renderRow(track, index))}</div>
       )}
 
-      <section className="rx-storage" aria-label="Storage">
-        <button type="button" className="rx-storage-toggle" onClick={() => setShowStorage((v) => !v)} aria-expanded={showStorage}>
-          <span><Shield size={15} /> <strong>Storage</strong> {storageInfo?.supported ? `${formatBytes(storageUsage)} used` : "unavailable"}</span>
-          <ChevronDown size={15} className={showStorage ? "is-open" : ""} />
-        </button>
-        {showStorage && storageInfo?.supported && (
-          <div className="bd rx-panel" style={{ marginTop: 8 }}>
-            <div className="rx-storage-bar"><span style={{ width: `${storagePercent}%` }} /></div>
-            <p className="rx-muted">{formatBytes(storageUsage)}{storageQuota ? ` of ${formatBytes(storageQuota)}` : ""} · {storageInfo.persistent ? "persistent" : "not persistent"}</p>
-          </div>
-        )}
-        <div className="rx-view-toggle" role="group" aria-label="Track display">
-          <button type="button" className="ch" style={viewMode === "list" ? { background: "#FFD93D" } : undefined} onClick={() => setViewMode("list")}><List size={15} /> List</button>
-          <button type="button" className="ch" style={viewMode === "grid" ? { background: "#FFD93D" } : undefined} onClick={() => setViewMode("grid")}><Grid2X2 size={15} /> Grid</button>
-        </div>
-      </section>
+      {trackMenuId && tracks.some((track) => track.id === trackMenuId) && createPortal(
+        <div onClick={(event) => event.stopPropagation()}>
+          {renderTrackMenu(tracks.find((track) => track.id === trackMenuId))}
+        </div>,
+        portalRoot,
+      )}
       <div className="rx-footnote"><WifiOff size={14} /> Stored on this device for offline playback.</div>
     </div>
   );

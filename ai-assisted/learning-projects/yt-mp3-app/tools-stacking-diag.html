@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tools stacking diagnostic</title>
+<link rel="stylesheet" href="assets/index-B6VICqaf.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f6ecd8; }
+  body { padding: 20px; }
+  .test-wrap { max-width: 480px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="test-wrap">
+  <div class="rx-page rx-enter rx-library">
+    <header class="rx-lib-header">
+      <h1 class="B rx-lib-title-main">ur library</h1>
+      <p class="H rx-lib-submain">everything lives offline here</p>
+    </header>
+
+    <div class="bd rx-search-bar">
+      <input type="search" placeholder="search songs or channels" />
+    </div>
+
+    <div class="rx-filters">
+      <button type="button" class="ch" style="background:#FFD93D">all</button>
+      <button type="button" class="ch">folders</button>
+      <button type="button" class="ch">favorites</button>
+      <button type="button" class="ch">queue (3)</button>
+      <label class="ch rx-sort-chip">
+        <select aria-label="Sort songs">
+          <option value="newest">newest first</option>
+          <option value="mostPlayed">most played</option>
+          <option value="az">A–Z</option>
+          <option value="durationAsc">shortest</option>
+          <option value="durationDesc">longest</option>
+        </select>
+      </label>
+      <div class="rx-tools-wrap" id="toolsWrap">
+        <button type="button" class="ch" aria-expanded="true" id="toolsBtn">tools</button>
+        <div class="rx-menu bd" role="menu" id="toolsMenu">
+          <button type="button" role="menuitem">Export collection</button>
+          <button type="button" role="menuitem">Import collection</button>
+          <button type="button" role="menuitem">Fetch missing covers</button>
+          <button type="button" role="menuitem">Personalize signature</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="B rx-section-kicker">NEWEST FIRST</p>
+    <div class="rx-lib-grid">
+      <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#6B4EFF"/></svg></div></div><div class="rx-grid-meta"><div class="rx-lib-title">Rainy Tea Stall</div><p class="rx-lib-sub">Old Radio Hour</p></div></article>
+      <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#F28C38"/></svg></div></div><div class="rx-grid-meta"><div class="rx-grid-title">Paper Moon Waltz</div><p class="rx-lib-sub">Lantern Tapes</p></div></article>
+      <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#FFD93D"/></svg></div></div><div class="rx-grid-meta"><div class="rx-grid-title">Midnight Drive</div><p class="rx-lib-sub">Highway Sessions</p></div></article>
+      <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#3EE0A0"/></svg></div></div><div class="rx-grid-meta"><div class="rx-grid-title">Cobalt</div><p class="rx-lib-sub">Neon Dreams</p></div></article>
+    </div>
+  </div>
+</div>
+
+<script>
+function describe(el) {
+  const cs = getComputedStyle(el);
+  return {
+    tag: el.tagName + (el.id ? "#" + el.id : "") + (el.className ? "." + String(el.className).split(" ")[0] : ""),
+    position: cs.position,
+    zAuto: cs.zIndex,
+    overflow: cs.overflow + "/" + cs.overflowY,
+    isolation: cs.isolation,
+    transform: cs.transform,
+    filter: cs.filter,
+    opacity: cs.opacity,
+    width: cs.width,
+    height: cs.height,
+    rect: el.getBoundingClientRect(),
+  };
+}
+
+function ancestors(el) {
+  const out = [];
+  let n = el;
+  while (n && n.nodeType === 1) {
+    out.push(describe(n));
+    n = n.parentNode;
+  }
+  return out;
+}
+
+const menu = document.getElementById("toolsMenu");
+const wrap = document.getElementById("toolsWrap");
+const grid = document.querySelector(".rx-lib-grid");
+const filters = document.querySelector(".rx-filters");
+const page = document.querySelector(".rx-page");
+
+const result = {
+  menuAncestors: ancestors(menu),
+  gridAncestors: ancestors(grid),
+  filtersAncestors: ancestors(filters),
+  pageAncestors: ancestors(page),
+  menuRect: menu.getBoundingClientRect(),
+  gridRect: grid.getBoundingClientRect(),
+  filtersRect: filters.getBoundingClientRect(),
+  overlap: {
+    menuTop: menu.getBoundingClientRect().top,
+    menuBottom: menu.getBoundingClientRect().bottom,
+    gridTop: grid.getBoundingClientRect().top,
+    gridBottom: grid.getBoundingClientRect().bottom,
+    filtersTop: filters.getBoundingClientRect().top,
+    filtersBottom: filters.getBoundingClientRect().bottom,
+  },
+};
+
+// Determine if menu is clipped by any ancestor
+function isClipped(el) {
+  let n = el;
+  while (n && n.nodeType === 1) {
+    const cs = getComputedStyle(n);
+    if (cs.overflow !== "visible" && cs.overflow !== "clip") {
+      const r = n.getBoundingClientRect();
+      const er = el.getBoundingClientRect();
+      if (er.top < r.top || er.bottom > r.bottom || er.left < r.left || er.right > r.right) {
+        return { clipped: true, by: n.tagName + (n.className ? "." + n.className.split(" ")[0] : ""), overflow: cs.overflow, rect: r };
+      }
+    }
+    n = n.parentNode;
+  }
+  return { clipped: false };
+}
+
+result.menuClipping = isClipped(menu);
+result.windowInner = { w: window.innerWidth, h: window.innerHeight };
+
+document.getElementById("diag").textContent = JSON.stringify(result, null, 2);
+</script>
+<pre id="diag"></pre>
+</body>
+</html>

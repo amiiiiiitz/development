@@ -30,6 +30,22 @@ export default function PersonalizationModal({
   onDismissRef.current = onDismiss;
   onSkipRef.current = onSkip;
 
+  const dismissRef = useRef(() => {});
+  dismissRef.current = () => {
+    if (isClosingRef.current) {
+      return;
+    }
+    isClosingRef.current = true;
+    setIsClosing(true);
+    window.setTimeout(() => {
+      if (isFirstVisit) {
+        onSkipRef.current();
+      } else {
+        onDismissRef.current();
+      }
+    }, 180);
+  };
+
   useEffect(() => {
     const previousFocus = document.activeElement;
     inputRef.current?.focus();
@@ -63,22 +79,6 @@ export default function PersonalizationModal({
       }
     };
   }, []);
-
-  const dismissRef = useRef(() => {});
-  dismissRef.current = () => {
-    if (isClosingRef.current) {
-      return;
-    }
-    isClosingRef.current = true;
-    setIsClosing(true);
-    window.setTimeout(() => {
-      if (isFirstVisit) {
-        onSkipRef.current();
-      } else {
-        onDismissRef.current();
-      }
-    }, 180);
-  };
 
   const closeWith = (callback) => {
     if (isClosingRef.current) {

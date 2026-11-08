@@ -87,10 +87,12 @@
 .rx-search-bar { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 0 14px; min-height: 52px; border-radius: var(--rx-radius-pill); background: #fff; }
 .rx-search-bar input { border: 0; min-height: 44px; padding: 0; box-shadow: none; background: transparent; }
 .rx-search-bar input:focus { outline: none; }
-.rx-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; align-items: center; }
-.rx-sort-chip select { border: 0; background: transparent; min-height: 0; padding: 0; width: auto; font: inherit; color: inherit; }
-.rx-tools-wrap, .rx-menu-wrap { position: relative; }
+.rx-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; min-width: 0; }
+.rx-panel-controls { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.rx-sort-chip { flex: 0 0 158px; justify-content: flex-start; min-width: 0; }
+.rx-sort-chip select { flex: 1; border: 0; background: transparent; min-height: 0; padding: 0; width: 100%; min-width: 0; font: inherit; color: inherit; white-space: nowrap; }
 .rx-menu { position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; min-width: 220px; padding: 8px; background: #fff; display: grid; gap: 4px; }
+.rx-track-menu { position: fixed; right: auto; z-index: 1000; width: 240px; min-width: 0; overflow-y: auto; overscroll-behavior: contain; }
 .rx-menu button, .rx-menu-select { display: flex; align-items: center; gap: 8px; width: 100%; border: 2px solid transparent; border-radius: 10px; padding: 9px 10px; background: transparent; color: var(--rx-ink); font: 700 13px var(--font-ui); text-align: left; }
 .rx-menu button:hover, .rx-menu-select:hover { background: var(--rx-cream); border-color: rgba(20,17,15,.15); }
 .rx-menu button.is-danger { color: var(--rx-red); }
@@ -113,21 +115,23 @@
 .rx-folder-pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
 .rx-folder-pill-wrap { display: inline-flex; align-items: center; gap: 4px; }
 .rx-lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-.rx-grid-card { padding: 10px; background: #fff; }
+.rx-grid-card { display: flex; flex-direction: column; gap: 6px; padding: 10px; background: #fff; }
 .rx-grid-card.is-current { background: #6B4EFF; color: #fff; }
-.rx-grid-art { position: relative; width: 100%; border: 0; padding: 0; background: transparent; border-radius: 10px; overflow: hidden; aspect-ratio: 1; }
+.rx-grid-art { position: relative; width: 100%; border: 0; padding: 0; background: transparent; border-radius: 10px; overflow: hidden; cursor: pointer; }
 .rx-grid-art .track-art { width: 100%; height: 100%; border: 0; border-radius: 0; }
 .rx-grid-eq { position: absolute; right: 8px; bottom: 8px; background: rgba(20,17,15,.6); padding: 4px 6px; border-radius: 8px; }
+.rx-grid-meta { min-width: 0; }
+.rx-grid-card .rx-lib-sub { opacity: .8; }
+.rx-grid-card.is-current .rx-lib-sub { opacity: .92; }
+.rx-grid-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: auto; }
+.rx-grid-card .rx-inline-seek { margin-top: 6px; }
+.rx-grid-card .rx-inline-seek input { width: 100%; }
+.nofi-shell .rx-grid-card.is-current .ib { color: #fff; }
+.nofi-shell .rx-grid-card.is-current .rx-icon-btn { border-color: rgba(255,255,255,.35) !important; }
 .rx-empty-state { margin-top: 14px; padding: 24px; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
 .rx-empty-state h2 { margin: 0; font-size: 24px; }
 .rx-empty-state p { margin: 0; }
-.rx-storage { margin-top: 18px; }
-.rx-storage-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; border: 0; background: transparent; padding: 8px 0; font: 700 13px var(--font-ui); color: var(--rx-ink); }
-.rx-storage-toggle span { display: inline-flex; align-items: center; gap: 8px; }
-.rx-storage-toggle .is-open { transform: rotate(180deg); }
-.rx-storage-bar { height: 10px; border: 2px solid var(--rx-ink); border-radius: 999px; background: #fff; overflow: hidden; }
-.rx-storage-bar span { display: block; height: 100%; background: var(--rx-mint); }
-.rx-view-toggle { display: flex; gap: 8px; margin-top: 10px; }
+.rx-view-toggle { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
 .rx-footnote { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 12px; opacity: .78; }
 
 /* CONVERT */

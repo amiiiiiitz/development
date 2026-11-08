@@ -51,6 +51,15 @@ function normalizePersonalizationName(value) {
     .join("");
 }
 
+/**
+ * Picks a random index from `items`, excluding `excludeIndex`.
+ * Returns -1 when there is no valid candidate (e.g. a single-item list).
+ */
+function pickShuffleIndex(items, excludeIndex) {
+  const candidates = items.map((_, index) => index).filter((index) => index !== excludeIndex);
+  return candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : -1;
+}
+
 const COVER_CACHE_NAME = "nofi-cover-cache-v1";
 const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
 
@@ -85,7 +94,11 @@ export default function App() {
   const [isPreparingAudio, setIsPreparingAudio] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const [sortBy, setSortBy] = useState(() => window.localStorage.getItem("nofi-sort") || "recent");
+  const [sortBy, setSortBy] = useState(() => {
+    const saved = window.localStorage.getItem("nofi-sort");
+    // "recent" is the legacy label for the newest-first sort.
+    return saved === "recent" || !saved ? "newest" : saved;
+  });
   useEffect(() => {
     try {
       window.localStorage.setItem("nofi-sort", sortBy);
@@ -328,6 +341,18 @@ export default function App() {
       updatePlaybackDisplay(playbackPosition);
     }
 
+    if ("mediaSession" in navigator && currentTrack?.id === trackId) {
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: duration || currentTrack.duration || 0,
+          playbackRate: playbackRate || 1,
+          position: Math.min(playbackPosition, duration || currentTrack.duration || 0),
+        });
+      } catch {
+        // Ignore browsers without position state support.
+      }
+    }
+
     if (isPlaying && elapsed > 0 && trackId) {
       const pending = pendingStatsRef.current.get(trackId) || { playCount: 0, listenSeconds: 0 };
       pending.listenSeconds += elapsed;
@@ -356,8 +381,7 @@ export default function App() {
       if (direction > 0) {
         let nextIndex = -1;
         if (isShuffle && queueIds.length > 1) {
-          const candidates = queueIds.map((_, index) => index).filter((index) => index !== queueIndex);
-          nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
+          nextIndex = pickShuffleIndex(queueIds, queueIndex);
         } else {
           nextIndex = queueIndex + 1;
           if (nextIndex >= queueIds.length) {
@@ -407,8 +431,7 @@ export default function App() {
     const currentIndex = filteredPlaylist.findIndex((track) => track.id === currentTrack?.id);
     let nextIndex;
     if (isShuffle && direction > 0 && filteredPlaylist.length > 1) {
-      const candidates = filteredPlaylist.map((_, index) => index).filter((index) => index !== currentIndex);
-      nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
+      nextIndex = pickShuffleIndex(filteredPlaylist, currentIndex);
     } else if (currentIndex === -1) {
       nextIndex = direction > 0 ? 0 : filteredPlaylist.length - 1;
     } else if (!wrap && (currentIndex + direction < 0 || currentIndex + direction >= filteredPlaylist.length)) {
@@ -429,7 +452,6 @@ export default function App() {
     }, 0);
     void flushTrackStats();
     playSessionCountedRef.current = false;
-    setIsPlaying(false);
     const completedPlays = completedPlaysRef.current.trackId === currentTrack?.id
       ? completedPlaysRef.current.count + 1
       : 1;
@@ -440,6 +462,7 @@ export default function App() {
       if (audio) {
         audio.currentTime = 0;
         audio.play().catch((playError) => {
+          setIsPlaying(false);
           setError(playError.message || "Could not replay this track.");
         });
       }
@@ -449,8 +472,7 @@ export default function App() {
     if (queueIds.length) {
       let nextIndex = -1;
       if (isShuffle && queueIds.length > 1) {
-        const candidates = queueIds.map((_, index) => index).filter((index) => index !== queueIndex);
-        nextIndex = candidates[Math.floor(Math.random() * candidates.length)];
+        nextIndex = pickShuffleIndex(queueIds, queueIndex);
       } else {
         nextIndex = queueIndex + 1;
         if (nextIndex >= queueIds.length && repeatMode === "all") {
@@ -484,10 +506,16 @@ export default function App() {
         : currentIndex >= 0 && currentIndex < filteredPlaylist.length - 1;
       if (hasNextTrack) {
         playRelativeTrack(1, { wrap: repeatMode === "all" });
+        return;
       } else if (repeatMode === "all" && filteredPlaylist.length) {
         selectTrack(filteredPlaylist[0]);
+        return;
+      } else {
+        setIsPlaying(false);
+        return;
       }
     }
+    setIsPlaying(false);
   };
 
   const seekTo = (event) => {
@@ -1339,7 +1367,7 @@ export default function App() {
   });
 
   const sortedVisibleTracks = [...visibleTracks].sort((a, b) => {
-    if (sortBy === "recent") {
+    if (sortBy === "newest" || sortBy === "recent") {
       return (b.savedAt || 0) - (a.savedAt || 0);
     }
     if (sortBy === "mostPlayed") {
@@ -1364,6 +1392,7 @@ export default function App() {
   const openLibrary = (showFavorites = false) => {
     setActiveTab("library");
     setFavoritesOnly(showFavorites);
+    if (showFavorites) setActiveFolderId("all");
     setSearchQuery("");
     setShowQueue(false);
     setShowQueueDrawer(false);
@@ -1583,15 +1612,14 @@ export default function App() {
               />
             ) : (
               <LibraryView
-                library={{ tracks, visibleTracks: sortedVisibleTracks, folders, activeFolderId, setActiveFolderId, activeFolder, unfiledCount, searchTerms, storageInfo, sortBy, setSortBy, queueIds }}
+                library={{ tracks, visibleTracks: sortedVisibleTracks, folders, activeFolderId, setActiveFolderId, unfiledCount, sortBy, setSortBy, queueIds }}
                 filters={{ searchQuery, setSearchQuery, favoritesOnly, setFavoritesOnly }}
-                forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, signatureName, renameTrackId, renameDraft, setRenameDraft, pendingImport }}
+                forms={{ isCreatingFolder, setIsCreatingFolder, newFolderName, setNewFolderName, renameTrackId, renameDraft, setRenameDraft }}
                 playback={{ currentTrack, isPlaying, isPreparingAudio, currentTime, duration, pendingStatsRef, inlineProgressRef, inlineCurrentTimeRef, inlineDurationRef, onPlayTrack: playTrack, onAddToQueue: addToQueue, onSeekTrack: seekTrack }}
-                queue={{ showQueue, queueIndex, onPlayQueueTrack: (track, index) => { setQueueIndex(index); selectTrack(track, true); }, onRemoveFromQueue: removeFromQueue, onClearQueue: clearQueue }}
+                queue={{ queueIndex, onPlayQueueTrack: (track, index) => { setQueueIndex(index); selectTrack(track, true); }, onRemoveFromQueue: removeFromQueue, onClearQueue: clearQueue }}
                 actions={{
                   onCreateFolder: createFolder,
                   onToggleCreateFolder: () => { setIsCreatingFolder((open) => !open); setNewFolderName(""); setError(""); },
-                  onOpenPersonalization: openPersonalization,
                   onRenameTrack: renameTrack,
                   onBeginRenameTrack: beginRenameTrack,
                   onCancelRenameTrack: () => { setRenameTrackId(null); setRenameDraft(""); },
@@ -1601,14 +1629,8 @@ export default function App() {
                   onRemoveTrack: removeTrack,
                   onRemoveFolder: removeFolder,
                   onGoToConverter: resetConverter,
-                  onExportLibrary: exportLibrary,
-                  onImportLibrary: () => importInputRef.current?.click(),
                   onDownloadTrack: downloadTrackFile,
                   onReDownloadTrack: reDownloadTrack,
-                  onApplyImport: applyImport,
-                  onCancelImport: () => setPendingImport(null),
-                  onFetchMissingCovers: fetchMissingCovers,
-                  onToggleQueue: toggleInlineQueue,
                   onShowAllCollection: () => { setActiveFolderId("all"); setFavoritesOnly(false); setSearchQuery(""); },
                 }}
               />

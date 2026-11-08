@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tools stacking diagnostic (after fix)</title>
+<link rel="stylesheet" href="file:///C:/Users/user/OneDrive/Desktop/development/ai-assisted/learning-projects/yt-mp3-app/frontend/dist/assets/index-D1MkghwI.css" />
+<style>
+  html, body { margin: 0; padding: 0; background: #f6ecd8; }
+  body { padding: 20px; }
+  .test-wrap { max-width: 480px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="test-wrap">
+  <main class="page" data-page="library" data-playing="false">
+    <div class="page__inner">
+      <div class="rx-page rx-enter rx-library">
+        <header class="rx-lib-header">
+          <h1 class="B rx-lib-title-main">ur library</h1>
+          <p class="H rx-lib-submain">everything lives offline here</p>
+        </header>
+
+        <div class="bd rx-search-bar">
+          <input type="search" placeholder="search songs or channels" />
+        </div>
+
+        <div class="rx-filters">
+          <button type="button" class="ch" style="background:#FFD93D">all</button>
+          <button type="button" class="ch">folders</button>
+          <button type="button" class="ch">favorites</button>
+          <button type="button" class="ch">queue (3)</button>
+          <label class="ch rx-sort-chip">
+            <select id="sortSelect" aria-label="Sort songs">
+              <option value="newest">newest first</option>
+              <option value="mostPlayed">most played</option>
+              <option value="az">A-Z</option>
+              <option value="durationAsc">shortest</option>
+              <option value="durationDesc">longest</option>
+            </select>
+          </label>
+          <div class="rx-tools-wrap" id="toolsWrap">
+            <button type="button" class="ch" aria-expanded="true" id="toolsBtn">tools</button>
+          </div>
+        </div>
+
+        <p class="B rx-section-kicker">NEWEST FIRST</p>
+        <div class="rx-lib-grid">
+          <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#6B4EFF"/></svg></div></div><div class="rx-grid-meta"><div class="rx-lib-title">Rainy Tea Stall</div><p class="rx-lib-sub">Old Radio Hour</p></div></article>
+          <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#F28C38"/></svg></div></div><div class="rx-grid-meta"><div class="rx-lib-title">Paper Moon Waltz</div><p class="rx-lib-sub">Lantern Tapes</p></div></article>
+          <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#FFD93D"/></svg></div></div><div class="rx-grid-meta"><div class="rx-lib-title">Midnight Drive</div><p class="rx-lib-sub">Highway Sessions</p></div></article>
+          <article class="bd rx-grid-card"><div class="rx-grid-art"><div class="track-art track-art-recent"><svg width="40" height="40"><circle cx="20" cy="20" r="10" fill="#3EE0A0"/></svg></div></div><div class="rx-grid-meta"><div class="rx-grid-title">Cobalt</div><p class="rx-lib-sub">Neon Dreams</p></div></article>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="toolsPortal"></div>
+</div>
+<script>
+  // Simulate the portal-rendered Tools menu (matches LibraryView.jsx after fix)
+  (function () {
+    const wrap = document.getElementById("toolsWrap");
+    const btn = document.getElementById("toolsBtn");
+    const portal = document.getElementById("toolsPortal");
+    const menu = document.createElement("div");
+    menu.className = "rx-menu bd rx-tools-portal";
+    menu.role = "menu";
+    menu.innerHTML = '<button type="button" role="menuitem">Export collection</button><button type="button" role="menuitem">Import collection</button><button type="button" role="menuitem">Fetch missing covers</button><button type="button" role="menuitem">Personalize signature</button>';
+    btn.addEventListener("click", function () {
+      const r = wrap.getBoundingClientRect();
+      menu.style.position = "fixed";
+      menu.style.left = r.left + "px";
+      menu.style.top = (r.bottom + 8) + "px";
+      menu.style.zIndex = "60";
+      if (portal.contains(menu)) portal.removeChild(menu);
+      portal.appendChild(menu);
+    });
+  })();
+</script>
+</body>
+</html>

@@ -83,7 +83,7 @@ export default function HomeView({ home, actions }) {
                 </button>
                 <button type="button" className="ib rx-mini-btn" onClick={onNextTrack} aria-label="Next track"><SkipForward size={18} /></button>
               </div>
-              <p className="H rx-time-readout">{formatDuration(currentTime)} / {formatDuration(trackDuration)}</p>
+              <p className="H rx-time-readout">{formatDuration(currentTime)} / {formatDuration(duration)}</p>
             </>
           ) : (
             <button type="button" className="ch" style={{ background: "#FFD93D" }} onClick={() => onNavigate("library")}>open library <ArrowUpRight size={15} /></button>

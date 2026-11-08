@@ -19,7 +19,8 @@ const readInteger = (name, fallback, minimum = 1) => {
 
   const parsed = Number(value);
   if (!Number.isSafeInteger(parsed) || parsed < minimum) {
-    throw new Error(`${name} must be an integer greater than or equal to ${minimum}.`);
+    console.warn(`Invalid ${name}=${value}; using fallback ${fallback}.`);
+    return fallback;
   }
   return parsed;
 };
