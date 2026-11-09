@@ -23,7 +23,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
   const { queueIndex = -1, onPlayQueueTrack, onRemoveFromQueue, onClearQueue } = queue;
   const {
     onCreateFolder, onToggleCreateFolder, onRenameTrack, onBeginRenameTrack, onCancelRenameTrack,
-    onUpdatePlayCountLimit, onToggleFavorite, onMoveTrackToFolder, onRemoveTrack, onRemoveFolder, onGoToConverter,
+    onUpdatePlayCountLimit, onToggleFavorite, onMoveTrackToFolder, onRemoveTrack, onRemoveFolder, onAddSong,
     onDownloadTrack, onReDownloadTrack, onShowAllCollection,
   } = actions;
 
@@ -210,7 +210,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         <p className="H rx-lib-submain">everything lives offline here</p>
       </header>
 
-      <div className="bd rx-search-bar">
+<div className="rx-search-bar">
         <Search size={20} aria-hidden="true" />
         <input type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="search songs or channels" aria-label="Search your collection" />
         {searchQuery && <button type="button" className="rx-link" onClick={() => setSearchQuery("")} aria-label="Clear search"><X size={16} /></button>}
@@ -252,8 +252,20 @@ export default function LibraryView({ library, filters, forms, playback, queue =
       )}
 
       {activePanel === "folders" && (
-        <section className="bd rx-panel" aria-label="Folders">
-          <div className="rx-panel-head"><button type="button" className="ch" onClick={onToggleCreateFolder}><FolderPlus size={14} /> New folder</button></div>
+        <section className="rx-folder-bar" aria-label="Folders">
+          <div className="rx-folder-row">
+            <div className="rx-folder-pills">
+              <button type="button" className="ch rx-folder-pill" aria-pressed={activeFolderId === "all" && !favoritesOnly} style={activeFolderId === "all" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={onShowAllCollection}>All <small>{tracks.length}</small></button>
+              <button type="button" className="ch rx-folder-pill" aria-pressed={activeFolderId === "unfiled" && !favoritesOnly} style={activeFolderId === "unfiled" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId("unfiled"); setFavoritesOnly(false); }}>Unfiled <small>{unfiledCount}</small></button>
+              {folders.map((folder) => (
+                <span key={folder.id} className={`rx-folder-pill-wrap ${activeFolderId === folder.id && !favoritesOnly ? "is-active" : ""}`}>
+                  <button type="button" className="ch rx-folder-pill" aria-pressed={activeFolderId === folder.id && !favoritesOnly} style={activeFolderId === folder.id && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId(folder.id); setFavoritesOnly(false); }}><span className="rx-folder-name">{folder.name}</span> <small>{tracks.filter((t) => t.folderId === folder.id).length}</small></button>
+                  <button type="button" className="rx-link rx-folder-delete" onClick={() => onRemoveFolder(folder)} aria-label={`Delete ${folder.name}`}><X size={12} /></button>
+                </span>
+              ))}
+            </div>
+            <button type="button" className="ch rx-folder-new" onClick={onToggleCreateFolder} aria-expanded={isCreatingFolder}><FolderPlus size={14} /> New folder</button>
+          </div>
           {isCreatingFolder && (
             <form className="rx-folder-form" onSubmit={onCreateFolder}>
               <label className="sr-only" htmlFor="new-folder-name">Folder name</label>
@@ -261,16 +273,6 @@ export default function LibraryView({ library, filters, forms, playback, queue =
               <button type="submit" className="library-action-primary" disabled={!newFolderName.trim()}>Create</button>
             </form>
           )}
-          <div className="rx-folder-pills">
-            <button type="button" className="ch" aria-pressed={activeFolderId === "all" && !favoritesOnly} style={activeFolderId === "all" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={onShowAllCollection}>All <small>{tracks.length}</small></button>
-            <button type="button" className="ch" aria-pressed={activeFolderId === "unfiled" && !favoritesOnly} style={activeFolderId === "unfiled" && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId("unfiled"); setFavoritesOnly(false); }}>Unfiled <small>{unfiledCount}</small></button>
-            {folders.map((folder) => (
-              <span key={folder.id} className="rx-folder-pill-wrap">
-                <button type="button" className="ch" aria-pressed={activeFolderId === folder.id && !favoritesOnly} style={activeFolderId === folder.id && !favoritesOnly ? { background: "#FFD93D" } : undefined} onClick={() => { setActiveFolderId(folder.id); setFavoritesOnly(false); }}>{folder.name} <small>{tracks.filter((t) => t.folderId === folder.id).length}</small></button>
-                <button type="button" className="rx-link" onClick={() => onRemoveFolder(folder)} aria-label={`Delete ${folder.name}`}><X size={12} /></button>
-              </span>
-            ))}
-          </div>
         </section>
       )}
 
@@ -280,7 +282,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
           <CassetteTape width={160} label="empty" />
           <h2 className="B">nothing here yet.</h2>
           <p>Your offline collection is ready when you are.</p>
-          <button type="button" className="library-action-primary" onClick={onGoToConverter}>Bring something home</button>
+          <button type="button" className="library-action-primary" onClick={onAddSong}>Bring something home</button>
         </div>
       ) : visibleTracks.length === 0 ? (
         <div className="bd rx-empty-state">
@@ -334,7 +336,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         </div>,
         portalRoot,
       )}
-      <div className="rx-footnote"><WifiOff size={14} /> Stored on this device for offline playback.</div>
     </div>
   );
 }
+	

@@ -6,7 +6,7 @@ import "./design/files (2)/tokens.css";
 import "./design/files (2)/base.css";
 import "./design/files (2)/pages.css";
 import "./design/files (2)/motion.css";
-import "./design/responsive.css";
+import "./styles/responsive.css";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

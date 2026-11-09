@@ -87,8 +87,8 @@ export const ART = {
 export const PLACEMENTS = {
   home: [
     { art: 'guitar', x: 352, y: 262, s: 0.75, r: 18, anim: 'fl', dur: 7 },
-    { art: 'vinyl', x: 30, y: 505, s: 0.8, r: 0, anim: 'sp', dur: 6 },
-    { art: 'note', x: 356, y: 742, s: 0.9, r: 10, anim: 'bob', dur: 3 },
+    { art: 'piano', x: 330, y: 730, s: 0.8, r: -8, anim: 'fl', dur: 7 },
+    { art: 'note', x: 180, y: 450, s: 0.9, r: 10, anim: 'bob', dur: 3 },
     { art: 'spark', x: 210, y: 252, s: 0.6, r: 0, anim: 'tw', dur: 2.4 },
     { art: 'spark', x: 34, y: 742, s: 0.7, r: 0, anim: 'tw', dur: 3 },
   ],
@@ -96,13 +96,13 @@ export const PLACEMENTS = {
     { art: 'phones', x: 326, y: 48, s: 0.95, r: 10, anim: 'bob', dur: 3.2 },
     { art: 'tape', x: 344, y: 212, s: 0.7, r: 12, anim: 'wb', dur: 3.5 },
     { art: 'piano', x: 330, y: 730, s: 0.8, r: -8, anim: 'fl', dur: 7 },
-    { art: 'note', x: 36, y: 735, s: 0.9, r: -10, anim: 'bob', dur: 2.8 },
+    { art: 'note', x: 36, y: 635, s: 0.9, r: -10, anim: 'bob', dur: 2.8 },
     { art: 'spark', x: 200, y: 744, s: 0.7, r: 0, anim: 'tw', dur: 2.6 },
   ],
   playing: [
-    { art: 'drum', x: 92, y: 772, s: 1, r: -8, anim: 'fl', dur: 6 },
-    { art: 'vinyl', x: 196, y: 742, s: 0.9, r: 0, anim: 'sp', dur: 5 },
-    { art: 'speaker', x: 300, y: 770, s: 0.95, r: 6, anim: 'fl', dur: 7 },
+    { art: 'drum', x: 92, y: 672, s: 1, r: -8, anim: 'fl', dur: 6 },
+    { art: 'vinyl', x: 236, y: 600, s: 0.9, r: 0, anim: 'sp', dur: 5 },
+    // { art: 'speaker', x: 300, y: 370, s: 0.95, r: 6, anim: 'fl', dur: 7 },
     { art: 'note', x: 350, y: 44, s: 0.8, r: 12, anim: 'bob', dur: 3 },
     { art: 'spark', x: 40, y: 60, s: 0.7, r: 0, anim: 'tw', dur: 2.5 },
   ],
@@ -127,19 +127,20 @@ export const PLACEMENTS_WIDE = {
   home: [
     { art: 'guitar', x: 1215, y: 120, s: 1.1, r: 18, anim: 'fl', dur: 7 },
     { art: 'spark', x: 690, y: 60, s: 0.8, r: 0, anim: 'tw', dur: 2.4 },
+    { art: 'sheet', x: 760, y: 690, s: 1.3, r: 0, anim: 'fl', dur: 6 }
   ],
   library: [
-    { art: 'phones', x: 1215, y: 64, s: 1.2, r: 10, anim: 'bob', dur: 3.2 },
-    { art: 'tape', x: 1230, y: 300, s: 1.2, r: 12, anim: 'wb', dur: 3.5 },
+    { art: 'phones', x: 1315, y: 64, s: 1.2, r: 10, anim: 'bob', dur: 3.2 },
+    { art: 'tape', x: 1190, y: 230, s: 1.2, r: 12, anim: 'wb', dur: 3.5 },
     { art: 'piano', x: 1200, y: 650, s: 1.3, r: -8, anim: 'fl', dur: 7 },
-    { art: 'note', x: 280, y: 690, s: 1.3, r: -10, anim: 'bob', dur: 2.8 },
+    { art: 'note', x: 380, y: 690, s: 1.3, r: -10, anim: 'bob', dur: 2.8 },
     { art: 'spark', x: 700, y: 40, s: 0.8, r: 0, anim: 'tw', dur: 2.6 },
   ],
   playing: [
-    { art: 'drum', x: 1200, y: 720, s: 1.5, r: 10, anim: 'fl', dur: 6 },
-    { art: 'vinyl', x: 320, y: 740, s: 1.2, r: 0, anim: 'sp', dur: 5 },
-    { art: 'speaker', x: 1130, y: 40, s: 1.1, r: 6, anim: 'fl', dur: 7 },
-    { art: 'note', x: 700, y: 760, s: 1.3, r: 12, anim: 'bob', dur: 3 },
+    { art: 'drum', x: 1200, y: 700, s: 1.5, r: 10, anim: 'fl', dur: 6 },
+    { art: 'vinyl', x: 320, y: 640, s: 1.2, r: 0, anim: 'sp', dur: 5 },
+    { art: 'speaker', x: 1130, y: 80, s: 1.1, r: 6, anim: 'fl', dur: 7 },
+    { art: 'note', x: 700, y: 690, s: 1.3, r: 12, anim: 'bob', dur: 3 },
     { art: 'spark', x: 270, y: 40, s: 0.8, r: 0, anim: 'tw', dur: 2.5 },
   ],
   add: [
