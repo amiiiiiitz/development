@@ -16,6 +16,9 @@
 
 @media (min-width:640px){
   .page__inner{max-width:720px;padding:28px 32px 0}
+}
+@media (min-width:1024px){
+  .page__inner{max-width:1000px;padding:28px 32px 0}
   .song-list{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
   .tape-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   .polaroid{width:260px}.polaroid__art{height:150px}
