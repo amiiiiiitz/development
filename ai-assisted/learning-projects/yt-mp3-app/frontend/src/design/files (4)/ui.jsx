@@ -30,22 +30,28 @@ export function useAudioPlaying(audioRef) {
 }
 
 /* Bottom nav with instrument icons. active: 'home'|'library'|'add'|'playing'. onNavigate(id) -> your router. */
+export const TABS_WITH_SETTINGS = [['home', 'home'], ['library', 'library'], ['add', 'add song'], ['playing', 'playing'], ['settings', 'settings']]
+
 export const ICONS = {
   home: <><circle cx="8.5" cy="15.5" r="5.5" /><circle cx="8.5" cy="15.5" r="1.5" /><path d="M13 11l6-6M17.5 3.5l3 3" /></>,                         // guitar
   library: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7.5 19v-6M12 19v-6M16.5 19v-6" /></>,                                     // piano
   add: <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M9 21h6" /></>,                              // microphone
   playing: <><ellipse cx="12" cy="11" rx="8" ry="3" /><path d="M4 11v5c0 1.7 3.6 3 8 3s8-1.3 8-3v-5M8 4l5 6M16 4l-5 6" /></>,                      // drum
+  settings: <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"><path d="M18 8h1a2 2 0 002-2V5a2 2 0 00-2-2h-1M14 12a4 4 0 01-4 4v4a2 2 0 01-2-2h-4a2 2 0 01-2-2v-4M7 6h5v2H7V6zm5 3v7a2 2 0 002-2H5a2 2 0 00-2 2v7z" /></svg>, // settings
 }
 export const TABS = [['home', 'home'], ['library', 'library'], ['add', 'add song'], ['playing', 'playing']]
-export function Dock({ active, onNavigate }) {
+export function Dock({ active, onNavigate, onSettings }) {
   return (
     <nav className="dock" aria-label="Main">
-      {TABS.map(([id, label]) => (
-        <button key={id} className={`dock__item${active === id ? ' is-active' : ''}`} aria-current={active === id ? 'page' : undefined} onClick={() => onNavigate(id)}>
-          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">{ICONS[id]}</svg>
-          {label}
-        </button>
-      ))}
+      {TABS_WITH_SETTINGS.map(([id, label]) => {
+        const onClick = id === 'settings' ? onSettings : () => onNavigate(id);
+        return (
+          <button key={id} className={`dock__item${active === id ? ' is-active' : ''}`} aria-current={active === id ? 'page' : undefined} onClick={onClick}>
+            <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">{ICONS[id]}</svg>
+            {label}
+          </button>
+        );
+      })}
     </nav>
   )
 }

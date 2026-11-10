@@ -24,7 +24,6 @@ export default function ConverterView({
             {isLoadingInfo ? <LoaderCircle className="spin" size={16} /> : "preview"}
           </button>
         </div>
-        <p className="rx-muted" style={{ marginTop: 10 }}>Only convert content you own or are authorized to download.</p>
 
         {video && (
           <section aria-label="Preview" style={{ marginTop: 14 }}>
@@ -46,6 +45,7 @@ export default function ConverterView({
           </section>
         )}
       </form>
+      <p className="rx-muted" style={{ marginTop: 40 }}>Only convert content you own or are authorized to download.</p>
 
       <div className="rx-steps" aria-label="How it works">
         {[{ n: 1, c: "#FFD93D", t: "paste" }, { n: 2, c: "#F28C38", t: "preview" }, { n: 3, c: "#3EE0A0", t: "save offline" }].map((s) => (

@@ -1,5 +1,5 @@
 import { Settings } from 'lucide-react'
-import { Dock, ICONS, TABS, SignatureTag, Cassette, Equalizer } from './ui.jsx'
+import { Dock, ICONS, TABS, TABS_WITH_SETTINGS, SignatureTag, Cassette, Equalizer } from './ui.jsx'
 
 /* Wrap the whole app once. It renders BOTH navigations; CSS shows the right one:
    <1024px  -> bottom <Dock/>       >=1024px -> <Sidebar/> + <PlayerBar/>
@@ -29,7 +29,7 @@ export function AppShell({
         {children}
         {active !== 'playing' && player?.song && <PlayerBar {...player} />}
       </div>
-      <Dock active={active} onNavigate={onNavigate} />
+      <Dock active={active} onNavigate={onNavigate} onSettings={onSettings} />
     </div>
   )
 }

@@ -1,3 +1,12 @@
+.rx-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.rx-step p {
+  text-align: center;
+}
 /* ===== responsive.css: import LAST (after motion.css) =====
    Mobile  <640   : what base.css already does (single column, bottom dock)
    Tablet  640-1023: roomier single column, 2-column song list, bottom dock
@@ -16,6 +25,11 @@
 
 @media (min-width:640px){
   .page__inner{max-width:720px;padding:28px 32px 0}
+  .rx-steps{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 80px;
+  }
 }
 @media (min-width:1024px){
   .page__inner{max-width:1000px;padding:28px 32px 0}
@@ -96,14 +110,18 @@
 /* Big monitors: content stays a centered column, backgrounds/stickers stay full width */
 @media (min-width:1440px){.page__inner{max-width:1120px}}
 
-@media (max-width:520px){
+@media (max-width:639px){
   .page__inner{padding-inline:16px}
   .rx-convert-card{padding:12px}
   .rx-url-row{flex-direction:column}
   .rx-url-field{flex-basis:auto;width:100%}
   .rx-paste-btn{width:100%;min-height:44px}
   .rx-convert-cta{min-height:52px;font-size:16px}
-  .rx-steps{gap:6px}
+  .rx-steps{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
 }
 
 /* Reference layouts: mobile-first page compositions */
@@ -219,6 +237,13 @@
 @media (min-width:861px) and (max-width:1023.98px){
   .rx-home-stage{grid-template-columns:minmax(0,360px) minmax(0,1fr)}
 }
+
+/* Ensure logo visibility across all breakpoints */
+.rx-wordmark{display:inline-block}
+
+/* Ensure logo visibility across all breakpoints */
+.rx-wordmark{display:inline-block}
+.sidebar__logo{font:400 42px/1 var(--font-display);color:var(--brass);display:inline-block}
 
 @media (min-width:1024px){
   .app[data-active="playing"] .dock{display:none}
@@ -339,7 +364,8 @@
   .rx-steps {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 80px;
+  overflow-x: hidden;
 }
   .rx-convert>section[aria-label="Preview"],.rx-convert>section[aria-label="In progress"]{grid-column:2}
   .rx-convert>section[aria-label="Preview"]{grid-row:1/span 2}
@@ -348,5 +374,13 @@
   .rx-convert .rx-preview-card,.rx-convert .rx-progress-card{max-width:100%}
   .rx-convert .rx-panel{grid-row:auto}
   .rx-convert>.rx-panel{grid-column:1/-1}
-  
+  .rx-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+  .rx-step p {
+  text-align: center;
+}
 }
