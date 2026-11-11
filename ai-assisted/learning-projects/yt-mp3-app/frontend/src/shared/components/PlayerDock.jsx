@@ -1,4 +1,4 @@
-import {
+﻿import {
   LoaderCircle,
   ListMusic,
   Pause,
@@ -11,19 +11,19 @@ import {
 import MicrophoneIcon from "./MicrophoneIcon.jsx";
 import MusicPlayIcon from "./MusicPlayIcon.jsx";
 import TrackArtwork from "./TrackArtwork.jsx";
-import { cleanTrackTitle, formatDuration } from "../utils/trackFormatting.js";
+import { cleanTrackTitle, formatDuration } from "../../shared/utils/trackFormatting.js";
 
 const PLAYBACK_SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
 export default function PlayerDock({ player, actions }) {
   const {
-    audioRef, currentTrack, currentTime, duration, isPlaying, isPreparingAudio, isShuffle, repeatMode,
-    tracksLength, volume, playbackRate, autoPlay, audioSource, queueOpen, playerProgressRef,
+    currentTrack, currentTime, duration, isPlaying, isPreparingAudio, isShuffle, repeatMode,
+    tracksLength, volume, playbackRate, autoPlay, queueOpen, playerProgressRef,
     playerCurrentTimeRef, playerRemainingTimeRef,
   } = player;
   const {
     onToggleShuffle, onPreviousTrack, onNextTrack, onTogglePlayback, onCycleRepeatMode,
-    onPlaybackRateChange, onToggleVolume, onVolumeChange, onToggleAutoPlay, onSeek, audioHandlers, onToggleQueue,
+    onPlaybackRateChange, onToggleVolume, onVolumeChange, onToggleAutoPlay, onSeek, onToggleQueue,
   } = actions;
   const trackDuration = duration || currentTrack?.duration || 0;
 
@@ -55,13 +55,12 @@ export default function PlayerDock({ player, actions }) {
           </button>
           <button type="button" className="player-mode-button" onClick={onNextTrack} disabled={!tracksLength} aria-label="Next track"><SkipForward size={18} fill="currentColor" /></button>
           <button type="button" className={`player-mode-button ${repeatMode !== "off" ? "is-active" : ""}`} onClick={onCycleRepeatMode} aria-label={`Repeat ${repeatMode}`} aria-pressed={repeatMode !== "off"} title={`Repeat ${repeatMode}`}>{repeatMode === "one" ? <Repeat1 size={17} /> : <Repeat size={17} />}</button>
-          <audio ref={audioRef} src={audioSource || undefined} {...audioHandlers} preload="metadata" />
         </div>
 
         <div className="player-options">
           <label className="playback-speed-control"><span>speed</span>
             <select value={playbackRate} onChange={(e) => onPlaybackRateChange(Number(e.target.value))} aria-label="Playback speed">
-              {PLAYBACK_SPEEDS.map((speed) => <option value={speed} key={speed}>{speed}×</option>)}
+              {PLAYBACK_SPEEDS.map((speed) => <option value={speed} key={speed}>{speed}Ã—</option>)}
             </select>
           </label>
           <div className="volume-control">

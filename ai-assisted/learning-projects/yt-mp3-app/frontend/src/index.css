@@ -1,5 +1,5 @@
-@import "./styles/remix-motion.css";
-@import "./styles/remix-views.css";
+@import "./shared/styles/remix-motion.css";
+@import "./shared/styles/remix-views.css";
 @import "tailwindcss";
 
 *,

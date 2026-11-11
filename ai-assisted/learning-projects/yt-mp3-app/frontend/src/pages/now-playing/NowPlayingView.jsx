@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowDownToLine,
   ArrowLeft,
   Heart,
@@ -11,8 +11,8 @@ import {
   SkipBack,
   SkipForward,
 } from "lucide-react";
-import { CassetteTape, EqBars, MiniCassette } from "./RemixAssets.jsx";
-import { cleanTrackTitle, formatDuration } from "../utils/trackFormatting.js";
+import { CassetteTape, EqBars, MiniCassette } from "../../shared/components/RemixAssets.jsx";
+import { cleanTrackTitle, formatDuration } from "../../shared/utils/trackFormatting.js";
 
 export default function NowPlayingView({ player, queue, actions }) {
   const {
@@ -117,3 +117,4 @@ export default function NowPlayingView({ player, queue, actions }) {
     </div>
   );
 }
+

@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   ArrowDownToLine, Check, Disc3, FolderPlus, Grid2X2, Heart, List, ListPlus,
   MoreHorizontal, Pencil, RefreshCw, Search, SlidersHorizontal, Trash2, WifiOff, X,
 } from "lucide-react";
-import TrackArtwork from "./TrackArtwork.jsx";
-import { CassetteTape, EqBars, MiniCassette } from "./RemixAssets.jsx";
-import { cleanTrackTitle, formatDuration } from "../utils/trackFormatting.js";
-import { useViewMode } from "../hooks/useViewMode.js";
-import { usePortal } from "../hooks/usePortal.js";
+import TrackArtwork from "../../shared/components/TrackArtwork.jsx";
+import { CassetteTape, EqBars, MiniCassette } from "../../shared/components/RemixAssets.jsx";
+import { cleanTrackTitle, formatDuration } from "../../shared/utils/trackFormatting.js";
+import { useViewMode } from "../../shared/hooks/useViewMode.js";
+import { usePortal } from "../../shared/hooks/usePortal.js";
 
 const STRIPES = ["#6B4EFF", "#F28C38", "#FFD93D", "#3EE0A0", "#2EC4B6", "#F28C38"];
 
@@ -115,7 +115,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         )}
         <label className="rx-menu-select"><SlidersHorizontal size={14} />
           <select value={track.playCountLimit ?? 1} onChange={(e) => { onUpdatePlayCountLimit(track, e.target.value); setTrackMenuId(null); }} aria-label={`Play count for ${cleanTrackTitle(track.title)}`}>
-            {Array.from({ length: 10 }, (_, i) => i + 1).map((count) => <option value={count} key={count}>Play {count}× then continue</option>)}
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((count) => <option value={count} key={count}>Play {count}Ã— then continue</option>)}
             <option value="forever">Repeat until skipped</option>
           </select>
         </label>
@@ -183,7 +183,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
           ) : (
             <>
               <button className="rx-lib-title" onClick={() => onPlayTrack(track)} disabled={isPreparingAudio && isCurrent} title={title}>{title}</button>
-              <p className="rx-lib-sub">{artist} · {formatDuration(track.duration)} {track.favorite ? "· ♥" : ""}</p>
+              <p className="rx-lib-sub">{artist} Â· {formatDuration(track.duration)} {track.favorite ? "Â· â™¥" : ""}</p>
             </>
           )}
           {isCurrent && (
@@ -225,7 +225,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         </div>
         <label className="ch rx-sort-chip"><SlidersHorizontal size={14} aria-hidden="true" />
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} aria-label="Sort songs">
-            <option value="newest">Newest First</option><option value="mostPlayed">Most Played</option><option value="az">A–Z</option>
+            <option value="newest">Newest First</option><option value="mostPlayed">Most Played</option><option value="az">Aâ€“Z</option>
             <option value="durationAsc">Shortest</option><option value="durationDesc">Longest</option>
           </select>
         </label>
@@ -276,7 +276,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
         </section>
       )}
 
-      <p className="B rx-section-kicker">{sortBy === "mostPlayed" ? "MOST PLAYED" : sortBy === "az" ? "A–Z" : sortBy === "durationAsc" ? "SHORTEST FIRST" : sortBy === "durationDesc" ? "LONGEST FIRST" : "NEWEST FIRST"}</p>
+      <p className="B rx-section-kicker">{sortBy === "mostPlayed" ? "MOST PLAYED" : sortBy === "az" ? "Aâ€“Z" : sortBy === "durationAsc" ? "SHORTEST FIRST" : sortBy === "durationDesc" ? "LONGEST FIRST" : "NEWEST FIRST"}</p>
       {tracks.length === 0 ? (
         <div className="bd rx-empty-state">
           <CassetteTape width={160} label="empty" />
@@ -311,7 +311,7 @@ export default function LibraryView({ library, filters, forms, playback, queue =
                 ) : (
                   <>
                     <button type="button" className="rx-lib-title" onClick={() => onPlayTrack(track)}>{cleanTrackTitle(track.title)}</button>
-                    <p className="rx-lib-sub">{track.uploader || "Offline track"} · {formatDuration(track.duration)}</p>
+                    <p className="rx-lib-sub">{track.uploader || "Offline track"} Â· {formatDuration(track.duration)}</p>
                   </>
                 )}
                 {isCurrent && isPlaying && <EqBars light />}

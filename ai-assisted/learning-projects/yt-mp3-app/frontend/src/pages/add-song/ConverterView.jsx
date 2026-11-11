@@ -1,6 +1,6 @@
-import { ArrowDownToLine, ChevronRight, LoaderCircle, Link2, WifiOff, Youtube } from "lucide-react";
-import { formatDuration } from "../utils/trackFormatting.js";
-import { CassetteTape, MiniCassette } from "./RemixAssets.jsx";
+﻿import { ArrowDownToLine, ChevronRight, LoaderCircle, Link2, WifiOff, Youtube } from "lucide-react";
+import { formatDuration } from "../../shared/utils/trackFormatting.js";
+import { CassetteTape, MiniCassette } from "../../shared/components/RemixAssets.jsx";
 
 export default function ConverterView({
   url, onUrlChange, onPreview, onSaveOffline, video, isOnline, isLoadingInfo, isConverting,
@@ -39,7 +39,7 @@ export default function ConverterView({
                 <p style={{ margin: 0, opacity: .75 }}>{video.uploader}</p>
               </div>
               <button type="button" className="library-action-primary" onClick={onSaveOffline} disabled={isConverting} style={{ width: "100%", marginTop: 12 }}>
-                {isConverting ? <><LoaderCircle className="spin" size={17} /> Saving…</> : <><ArrowDownToLine size={17} /> Save offline <ChevronRight size={16} /></>}
+                {isConverting ? <><LoaderCircle className="spin" size={17} /> Savingâ€¦</> : <><ArrowDownToLine size={17} /> Save offline <ChevronRight size={16} /></>}
               </button>
             </article>
           </section>
@@ -54,7 +54,7 @@ export default function ConverterView({
       </div>
 
       {!isOnline && (
-        <div className="bd rx-panel" style={{ background: "#fff" }}><p style={{ display: "flex", gap: 8, alignItems: "center", margin: 0 }}><WifiOff size={17} /> You’re offline. Your saved tracks are ready; reconnect to preview or download.</p></div>
+        <div className="bd rx-panel" style={{ background: "#fff" }}><p style={{ display: "flex", gap: 8, alignItems: "center", margin: 0 }}><WifiOff size={17} /> Youâ€™re offline. Your saved tracks are ready; reconnect to preview or download.</p></div>
       )}
 
       {isConverting && (
@@ -62,7 +62,7 @@ export default function ConverterView({
           <p className="B rx-section-kicker">IN PROGRESS</p>
           <div className="bd rx-progress-card">
             <MiniCassette stripe="#F28C38" />
-            <div style={{ flex: 1 }}><p style={{ margin: 0, fontWeight: 700 }}>{video?.title || "Saving track"}</p><p style={{ margin: 0, fontSize: 12 }}>converting…</p>
+            <div style={{ flex: 1 }}><p style={{ margin: 0, fontWeight: 700 }}>{video?.title || "Saving track"}</p><p style={{ margin: 0, fontSize: 12 }}>convertingâ€¦</p>
               <div className="rx-progress-bar"><div className="rx-st" style={{ width: "62%", height: "100%" }} /></div>
             </div>
           </div>
@@ -76,3 +76,4 @@ export default function ConverterView({
     </div>
   );
 }
+

@@ -4,38 +4,39 @@ import {
   Music2,
   X,
 } from "lucide-react";
-import { AppShell } from "./design/files (4)/AppShell.jsx";
-import { PageShell, useAudioPlaying } from "./design/files (4)/ui.jsx";
+import { AppShell } from "./app/shell/AppShell.jsx";
+import { PageShell, useAudioPlaying } from "./app/shell/ui.jsx";
 import {
   deleteTrackMetadata,
   deleteFolder as deleteFolderFromDB,
   getAllFolders,
   getAllTracksMetadata,
-  getQueue,
   getResumePosition,
   incrementTrackStats,
   saveFolder,
-  saveQueue,
   saveResumePosition,
   saveTrackMetadata,
   updateTrackMetadata,
 } from "./db.js";
-import useOnlineStatus from "./hooks/useOnlineStatus.js";
-import { convertVideoToAudio, fetchVideoInfo } from "./services/videoApi.js";
+import useOnlineStatus from "./shared/hooks/useOnlineStatus.js";
+import { convertVideoToAudio, fetchVideoInfo } from "./shared/services/videoApi.js";
 import {
   cleanTrackTitle,
   createTrackId,
   formatDuration,
   normalizeSearchText,
-} from "./utils/trackFormatting.js";
-import ConverterView from "./components/ConverterView.jsx";
-import HomeView from "./components/HomeView.jsx";
-import LibraryView from "./components/LibraryView.jsx";
-import NowPlayingView from "./components/NowPlayingView.jsx";
-import PersonalizationModal from "./components/PersonalizationModal.jsx";
-import PlayerDock from "./components/PlayerDock.jsx";
-import QueueDrawer from "./components/QueueDrawer.jsx";
-import SettingsView from "./components/SettingsView.jsx";
+} from "./shared/utils/trackFormatting.js";
+import ConverterView from "./pages/add-song/ConverterView.jsx";
+import HomeView from "./pages/home/HomeView.jsx";
+import LibraryView from "./pages/library/LibraryView.jsx";
+import NowPlayingView from "./pages/now-playing/NowPlayingView.jsx";
+import PersonalizationModal from "./pages/settings/PersonalizationModal.jsx";
+import PlayerDock from "./shared/components/PlayerDock.jsx";
+import QueueDrawer from "./shared/components/QueueDrawer.jsx";
+import SettingsView from "./pages/settings/SettingsView.jsx";
+import { useAudio } from "./features/audio/index.jsx";
+import { useQueue } from "./features/queue/useQueue.jsx";
+import { usePlayback, useMediaSession } from "./features/playback";
 
 const PERSONALIZATION_NAME_KEY = "nofi-personalization-name";
 const PERSONALIZATION_STATUS_KEY = "nofi-personalization-status";
@@ -68,30 +69,25 @@ export default function App() {
   const [url, setUrl] = useState("");
   const [video, setVideo] = useState(null);
   const [tracks, setTracks] = useState([]);
-  const [currentTrack, setCurrentTrack] = useState(null);
   const [renameTrackId, setRenameTrackId] = useState(null);
   const [renameDraft, setRenameDraft] = useState("");
   const [signatureName, setSignatureName] = useState("");
   const [isPersonalizationReady, setIsPersonalizationReady] = useState(false);
   const [hasCompletedPersonalization, setHasCompletedPersonalization] = useState(false);
   const [showPersonalization, setShowPersonalization] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [repeatMode, setRepeatMode] = useState("off");
-  const [isShuffle, setIsShuffle] = useState(false);
-  const [autoPlay, setAutoPlay] = useState(true);
-  const [volume, setVolume] = useState(0.8);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [folders, setFolders] = useState([]);
   const [activeFolderId, setActiveFolderId] = useState("all");
   const [newFolderName, setNewFolderName] = useState("");
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
-  const isOnline = useOnlineStatus();
+  const isOnline = useOnlineStatus()
+
+// Media Session API integration - extracted to useMediaSession hook
+// Call once inside App which is a descendant of PlaybackProvider
+useMediaSession();
   const [isLoadingInfo, setIsLoadingInfo] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
-  const [isPreparingAudio, setIsPreparingAudio] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [sortBy, setSortBy] = useState(() => {
@@ -106,19 +102,57 @@ export default function App() {
       // Ignore storage errors.
     }
   }, [sortBy]);
-  const [audioSource, setAudioSource] = useState(null);
   const [backendReady, setBackendReady] = useState(true);
-  const [queueIds, setQueueIds] = useState([]);
   const transitionGuardRef = useRef(false);
   const [showQueue, setShowQueue] = useState(false);
   const [showQueueDrawer, setShowQueueDrawer] = useState(false);
-  const [queueIndex, setQueueIndex] = useState(-1);
-  const queueLoadedRef = useRef(false);
   const resumeRestoredRef = useRef(false);
+
+  const { queueIds, queueIndex, setQueueIndex, addToQueue, removeFromQueue: queueRemoveFromQueue, clearQueue } = useQueue();
+  const {
+    currentTrack,
+    isPlaying,
+    duration,
+    currentTime,
+    isShuffle,
+    repeatMode,
+    autoPlay,
+    playbackError,
+    setCurrentTrack,
+    setIsPlaying,
+    setDuration,
+    setIsShuffle,
+    setAutoPlay,
+    selectTrack,
+    playRelativeTrack,
+    registerTrackNavigator,
+    cycleRepeatMode,
+    seekTo,
+  } = usePlayback();
+  const {
+    audioRef,
+    audioSource,
+    audioError,
+    isPreparingAudio,
+    volume,
+    playbackRate,
+    setVolume,
+    setPlaybackRate,
+    audioHandlersRef,
+  } = useAudio();
+  useEffect(() => {
+    if (audioError) {
+      setError(audioError.message || "Could not load this song from offline storage.");
+    }
+  }, [audioError]);
+  useEffect(() => {
+    if (playbackError) {
+      setError(playbackError.message || "Could not play this track.");
+    }
+  }, [playbackError]);
   const [storageInfo, setStorageInfo] = useState({ supported: false, persistent: null, usage: 0, quota: 0 });
   const [pendingImport, setPendingImport] = useState(null);
   const importInputRef = useRef(null);
-  const audioRef = useRef(null);
   const playerBarProgressRef = useRef(null);
   const playerBarCurrentTimeRef = useRef(null);
   const playerBarDurationRef = useRef(null);
@@ -130,15 +164,13 @@ export default function App() {
   const inlineProgressRef = useRef(null);
   const inlineCurrentTimeRef = useRef(null);
   const inlineDurationRef = useRef(null);
-  const audioSourceRef = useRef(null);
-  const pendingPlaybackRef = useRef(false);
   const completedPlaysRef = useRef({ trackId: null, count: 0 });
   const playSessionCountedRef = useRef(false);
   const activePlaybackTrackIdRef = useRef(null);
   const lastPlaybackPositionRef = useRef(0);
   const pendingStatsRef = useRef(new Map());
   const statsWritesInFlightRef = useRef(new Set());
-  const currentTime = currentTimeRef.current;
+  const appCurrentTime = currentTimeRef.current;
 
   const updatePlaybackDisplay = (playbackPosition, trackDuration = duration || currentTrack?.duration || 0) => {
     currentTimeRef.current = playbackPosition;
@@ -341,17 +373,6 @@ export default function App() {
       updatePlaybackDisplay(playbackPosition);
     }
 
-    if ("mediaSession" in navigator && currentTrack?.id === trackId) {
-      try {
-        navigator.mediaSession.setPositionState({
-          duration: duration || currentTrack.duration || 0,
-          playbackRate: playbackRate || 1,
-          position: Math.min(playbackPosition, duration || currentTrack.duration || 0),
-        });
-      } catch {
-        // Ignore browsers without position state support.
-      }
-    }
 
     if (isPlaying && elapsed > 0 && trackId) {
       const pending = pendingStatsRef.current.get(trackId) || { playCount: 0, listenSeconds: 0 };
@@ -363,20 +384,18 @@ export default function App() {
     }
   };
 
-  const selectTrack = (track, shouldPlay = true) => {
+  const appSelectTrack = (track, shouldPlay = true) => {
     if (currentTrack && currentTrack.id !== track.id) {
       void flushTrackStats(currentTrack.id);
     }
     playSessionCountedRef.current = false;
     lastPlaybackPositionRef.current = 0;
     completedPlaysRef.current = { trackId: track.id, count: 0 };
-    pendingPlaybackRef.current = shouldPlay;
-    setCurrentTrack(track);
+    selectTrack(track, shouldPlay);
     updatePlaybackDisplay(0, Number.isFinite(track.duration) ? track.duration : 0);
-    setDuration(Number.isFinite(track.duration) ? track.duration : 0);
   };
 
-  const playRelativeTrack = (direction, { wrap = false } = {}) => {
+  const appPlayRelativeTrack = (direction, { wrap = false } = {}) => {
     if (queueIds.length) {
       if (direction > 0) {
         let nextIndex = -1;
@@ -395,7 +414,7 @@ export default function App() {
         const nextTrack = tracks.find((track) => track.id === queueIds[nextIndex]);
         if (nextTrack) {
           setQueueIndex(nextIndex);
-          selectTrack(nextTrack);
+          appSelectTrack(nextTrack);
         }
         return;
       }
@@ -404,7 +423,7 @@ export default function App() {
         const previousTrack = tracks.find((track) => track.id === queueIds[queueIndex - 1]);
         if (previousTrack) {
           setQueueIndex(queueIndex - 1);
-          selectTrack(previousTrack);
+          appSelectTrack(previousTrack);
         }
         return;
       }
@@ -439,8 +458,13 @@ export default function App() {
     } else {
       nextIndex = (currentIndex + direction + filteredPlaylist.length) % filteredPlaylist.length;
     }
-    selectTrack(filteredPlaylist[nextIndex]);
+    appSelectTrack(filteredPlaylist[nextIndex]);
   };
+
+  useEffect(
+    () => registerTrackNavigator(appPlayRelativeTrack),
+    [registerTrackNavigator, appPlayRelativeTrack]
+  );
 
   const handleTrackEnded = () => {
     if (transitionGuardRef.current) {
@@ -518,7 +542,7 @@ export default function App() {
     setIsPlaying(false);
   };
 
-  const seekTo = (event) => {
+  const appSeekTo = (event) => {
     const nextTime = Number(event.target.value);
     if (audioRef.current && Number.isFinite(nextTime)) {
       audioRef.current.currentTime = nextTime;
@@ -539,9 +563,6 @@ export default function App() {
     updatePlaybackDisplay(nextTime);
   };
 
-  const cycleRepeatMode = () => {
-    setRepeatMode((mode) => (mode === "off" ? "all" : mode === "all" ? "one" : "off"));
-  };
 
   const updateVolume = (nextVolume) => {
     setVolume(nextVolume);
@@ -631,84 +652,41 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    if (queueLoadedRef.current || !tracks.length) {
-      return;
-    }
-    queueLoadedRef.current = true;
-    getQueue()
-      .then((ids) => {
-        if (Array.isArray(ids)) {
-          setQueueIds(ids.filter((id) => tracks.some((track) => track.id === id)));
-        }
-      })
-      .catch(() => {});
-  }, [tracks]);
-
-  useEffect(() => {
-    void saveQueue(queueIds);
-  }, [queueIds]);
-
-  useEffect(() => {
-    setQueueIds((ids) => ids.filter((id) => tracks.some((track) => track.id === id)));
-  }, [tracks]);
-
-  const addToQueue = (song) => {
-    if (!song?.id) {
-      return;
-    }
-    setQueueIds((ids) => (ids.includes(song.id) ? ids : [...ids, song.id]));
-  };
-
   const removeFromQueue = (songId) => {
     if (!songId) {
       return;
     }
-    setQueueIds((ids) => {
-      const index = ids.indexOf(songId);
-      if (index === -1) {
-        return ids;
+    const index = queueIds.indexOf(songId);
+    if (index === -1) {
+      return;
+    }
+    const wasCurrent = index === queueIndex;
+    const nextQueueIds = queueIds.filter((_, i) => i !== index);
+    let nextQueueIndex = queueIndex;
+    if (wasCurrent) {
+      if (nextQueueIds.length && index < nextQueueIds.length) {
+        nextQueueIndex = index;
+      } else if (nextQueueIds.length) {
+        nextQueueIndex = Math.max(0, index - 1);
+      } else {
+        nextQueueIndex = -1;
       }
-      const next = ids.filter((_, itemIndex) => itemIndex !== index);
-      if (index === queueIndex) {
-        if (next.length && index < next.length) {
-          const nextTrack = tracks.find((track) => track.id === next[index]);
-          if (nextTrack) {
-            setQueueIndex(index);
-            selectTrack(nextTrack, true);
-          } else {
-            setQueueIndex(-1);
-          }
-        } else if (next.length) {
-          setQueueIndex(Math.max(0, index - 1));
-        } else {
-          setQueueIndex(-1);
-        }
-      } else if (index < queueIndex) {
-        setQueueIndex((value) => Math.max(0, value - 1));
+    } else if (index < queueIndex) {
+      nextQueueIndex = Math.max(0, queueIndex - 1);
+    }
+
+    queueRemoveFromQueue(songId);
+
+    // Temporary coordination: PlaybackProvider will own track progression in Step 4b.
+    // When the current track is removed from the queue, select the next available track.
+    if (wasCurrent && nextQueueIds.length && index < nextQueueIds.length) {
+      const nextTrack = tracks.find((track) => track.id === nextQueueIds[index]);
+      if (nextTrack) {
+        selectTrack(nextTrack, true);
       }
-      return next;
-    });
+    }
   };
 
-  const clearQueue = () => {
-    setQueueIds([]);
-  };
-
-  useEffect(() => {
-    setQueueIndex((index) => {
-      if (queueIds.length === 0) {
-        return -1;
-      }
-      if (index < 0) {
-        return -1;
-      }
-      if (index >= queueIds.length) {
-        return queueIds.length - 1;
-      }
-      return index;
-    });
-  }, [queueIds]);
   useEffect(() => {
     let cancelled = false;
     const checkHealth = async () => {
@@ -814,85 +792,6 @@ export default function App() {
     };
     void loadStorage();
   }, []);
-
-  useEffect(() => {
-    if (!currentTrack) {
-      setIsPreparingAudio(false);
-      setAudioSource(null);
-      return undefined;
-    }
-
-    let isCurrent = true;
-    let objectUrl;
-    audioRef.current?.pause();
-    setIsPreparingAudio(true);
-    setAudioSource(null);
-
-    const loadSavedAudio = async () => {
-      try {
-        const cache = await caches.open(AUDIO_CACHE_NAME);
-        const audioRequest = new Request(
-          new URL(`/offline-audio/${encodeURIComponent(currentTrack.id)}`, window.location.origin)
-        );
-        const response = await cache.match(audioRequest);
-        if (!response) {
-          throw new Error("This song is missing from offline storage. Save it again while online.");
-        }
-
-        const audioBlob = await response.blob();
-        if (!audioBlob.size) {
-          throw new Error("The saved audio file is empty. Save this song again.");
-        }
-
-        objectUrl = URL.createObjectURL(audioBlob);
-        if (isCurrent) {
-          audioSourceRef.current = objectUrl;
-          setAudioSource(objectUrl);
-          setIsPreparingAudio(false);
-        }
-      } catch (audioError) {
-        if (isCurrent) {
-          setIsPreparingAudio(false);
-          setError(audioError.message || "Could not load this song from offline storage.");
-        }
-      }
-    };
-
-    void loadSavedAudio();
-    return () => {
-      isCurrent = false;
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-      if (audioSourceRef.current === objectUrl) {
-        audioSourceRef.current = null;
-      }
-    };
-  }, [currentTrack?.id]);
-
-  useEffect(() => {
-    if (!audioSource || !pendingPlaybackRef.current) {
-      return;
-    }
-
-    pendingPlaybackRef.current = false;
-    audioRef.current?.play().catch((playError) => {
-      setIsPlaying(false);
-      setError(playError.message || "Could not play this track.");
-    });
-  }, [audioSource]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
-  }, [volume]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = playbackRate;
-    }
-  }, [playbackRate, audioSource]);
 
   useEffect(() => {
     const saveStatsWhenLeaving = () => {
@@ -1013,8 +912,7 @@ export default function App() {
       setFavoritesOnly(false);
       setSearchQuery("");
       setTracks((existingTracks) => [savedTrack, ...existingTracks]);
-      pendingPlaybackRef.current = false;
-      setCurrentTrack(savedTrack);
+      selectTrack(savedTrack, false);
       completedPlaysRef.current = { trackId: savedTrack.id, count: 0 };
       setNotice("Saved to your offline library. Ready to play anywhere.");
       setUrl("");
@@ -1044,8 +942,7 @@ export default function App() {
         completedPlaysRef.current = { trackId: track.id, count: 0 };
       }
       if (!audioSource) {
-        pendingPlaybackRef.current = true;
-        setIsPreparingAudio(true);
+        selectTrack(track, true);
         return;
       }
       audio?.play().catch((playError) => {
@@ -1055,7 +952,7 @@ export default function App() {
       return;
     }
 
-    selectTrack(track);
+    appSelectTrack(track)
   };
 
   const togglePlayback = () => {
@@ -1076,91 +973,6 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    if (!("mediaSession" in navigator)) {
-      return undefined;
-    }
-
-    const session = navigator.mediaSession;
-    if (currentTrack && "MediaMetadata" in window) {
-      session.metadata = new window.MediaMetadata({
-        title: cleanTrackTitle(currentTrack.title),
-        artist: currentTrack.uploader || "Offline track",
-        album: "NoFi Offline Library",
-        ...(currentTrack.thumbnail
-          ? { artwork: [{ src: currentTrack.thumbnail, sizes: "512x512", type: "image/jpeg" }] }
-          : {}),
-      });
-    } else {
-      session.metadata = null;
-    }
-
-    const actions = {
-      play: () => audioRef.current?.play().catch((playError) => { setError(playError.message || "Could not play this track."); }),
-      pause: () => audioRef.current?.pause(),
-      previoustrack: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
-      nexttrack: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
-      seekto: (details) => {
-        if (audioRef.current && Number.isFinite(details.seekTime)) {
-          audioRef.current.currentTime = details.seekTime;
-          lastPlaybackPositionRef.current = details.seekTime;
-          updatePlaybackDisplay(details.seekTime);
-        }
-      },
-      seekbackward: (details) => {
-        if (audioRef.current) {
-          const offset = details.seekOffset || 10;
-          const next = Math.max(0, audioRef.current.currentTime - offset);
-          audioRef.current.currentTime = next;
-          lastPlaybackPositionRef.current = next;
-          updatePlaybackDisplay(next);
-        }
-      },
-      seekforward: (details) => {
-        if (audioRef.current) {
-          const offset = details.seekOffset || 10;
-          const durationValue = duration || currentTrack?.duration || 0;
-          const next = Math.min(durationValue, audioRef.current.currentTime + offset);
-          audioRef.current.currentTime = next;
-          lastPlaybackPositionRef.current = next;
-          updatePlaybackDisplay(next);
-        }
-      },
-    };
-
-    Object.entries(actions).forEach(([action, handler]) => {
-      try {
-        session.setActionHandler(action, currentTrack ? handler : null);
-      } catch {
-        // Some browsers do not support every action.
-      }
-    });
-
-    return () => {
-      Object.keys(actions).forEach((action) => {
-        try {
-          session.setActionHandler(action, null);
-        } catch {
-          // Ignore unsupported cleanup.
-        }
-      });
-    };
-  }, [currentTrack, tracks, isShuffle, repeatMode, activeFolderId, favoritesOnly, duration]);
-
-  useEffect(() => {
-    if (!("mediaSession" in navigator) || !currentTrack) {
-      return;
-    }
-    try {
-      navigator.mediaSession.setPositionState({
-        duration: duration || currentTrack.duration || 0,
-        playbackRate: playbackRate || 1,
-        position: Math.min(currentTimeRef.current, duration || currentTrack.duration || 0),
-      });
-    } catch {
-      // Ignore browsers without position state support.
-    }
-  }, [currentTrack, duration, playbackRate, currentTime]);
 
   const exportLibrary = () => {
     const data = { version: 1, exportedAt: Date.now(), tracks, folders };
@@ -1341,10 +1153,9 @@ export default function App() {
       setTracks((existingTracks) => existingTracks.filter((item) => item.id !== track.id));
       if (currentTrack?.id === track.id) {
         audioRef.current?.pause();
-        setCurrentTrack(null);
+        selectTrack(null, false);
         setIsPlaying(false);
         updatePlaybackDisplay(0, 0);
-        setDuration(0);
       }
       setNotice("Track removed from your offline library.");
     } catch (removeError) {
@@ -1438,6 +1249,53 @@ export default function App() {
   };
   const shellActive = activeTab === "convert" ? "add" : activeTab;
   const shellPage = activeTab === "convert" ? "add" : activeTab;
+  const audioHandlers = {
+    onPlay: () => {
+      setIsPlaying(true);
+      if (currentTrack) {
+        activePlaybackTrackIdRef.current = currentTrack.id;
+        recordTrackPlay(currentTrack.id);
+      }
+      if (audioRef.current) {
+        lastPlaybackPositionRef.current = audioRef.current.currentTime;
+      }
+    },
+    onPause: () => {
+      const pausedTrackId = activePlaybackTrackIdRef.current;
+      if (audioRef.current && pausedTrackId) {
+        recordPlaybackTime(audioRef.current, pausedTrackId);
+        void flushTrackStats(pausedTrackId);
+      }
+      if (pausedTrackId === currentTrack?.id) {
+        setIsPlaying(false);
+      }
+      activePlaybackTrackIdRef.current = null;
+    },
+    onTimeUpdate: (event) => recordPlaybackTime(event.currentTarget),
+    onSeeking: (event) => {
+      lastPlaybackPositionRef.current = event.currentTarget.currentTime;
+    },
+    onLoadedMetadata: (event) => {
+      if (Number.isFinite(event.currentTarget.duration)) {
+        setDuration(event.currentTarget.duration);
+        updatePlaybackDisplay(event.currentTarget.currentTime, event.currentTarget.duration);
+      }
+    },
+    onDurationChange: (event) => {
+      if (Number.isFinite(event.currentTarget.duration)) {
+        setDuration(event.currentTarget.duration);
+        updatePlaybackDisplay(event.currentTarget.currentTime, event.currentTarget.duration);
+      }
+    },
+    onEnded: handleTrackEnded,
+    onError: () => {
+      if (currentTrack) {
+        setIsPlaying(false);
+        setError("This track could not be loaded from offline storage.");
+      }
+    },
+  };
+  audioHandlersRef.current = audioHandlers;
 
   return (
     <AppShell
@@ -1454,16 +1312,16 @@ export default function App() {
               channel: currentTrack.uploader || currentTrack.artist || "Offline track",
             }
           : null,
-        playing,
+        isPlaying,
         percent: duration ? Math.min(100, (currentTime / duration) * 100) : 0,
         current: currentTime,
         duration,
         onToggle: togglePlayback,
-        onPrev: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
-        onNext: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+        onPrev: () => appPlayRelativeTrack(-1, { wrap: repeatMode === "all" }),
+        onNext: () => appPlayRelativeTrack(1, { wrap: repeatMode === "all" }),
         onSeek: (percent) => {
           const trackDuration = duration || currentTrack?.duration || 0;
-          seekTo({ target: { value: String((trackDuration * percent) / 100) } });
+          appSeekTo({ target: { value: String((trackDuration * percent) / 100) } });
         },
         progressRef: playerBarProgressRef,
         currentTimeRef: playerBarCurrentTimeRef,
@@ -1519,8 +1377,8 @@ export default function App() {
               onPlayTrack: playTrack,
               onPlayQueueTrack: (track, index) => { setQueueIndex(index); selectTrack(track, true); },
               onTogglePlayback: togglePlayback,
-              onPreviousTrack: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
-              onNextTrack: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+              onPreviousTrack: () => appPlayRelativeTrack(-1, { wrap: repeatMode === "all" }),
+              onNextTrack: () => appPlayRelativeTrack(1, { wrap: repeatMode === "all" }),
               onToggleShuffle: () => setIsShuffle((shuffle) => !shuffle),
               onCycleRepeatMode: cycleRepeatMode,
               onSeek: seekTo,
@@ -1538,8 +1396,8 @@ export default function App() {
             actions={{
               onBack: openHome,
               onTogglePlayback: togglePlayback,
-              onPreviousTrack: () => playRelativeTrack(-1, { wrap: repeatMode === "all" }),
-              onNextTrack: () => playRelativeTrack(1, { wrap: repeatMode === "all" }),
+              onPreviousTrack: () => appPlayRelativeTrack(-1, { wrap: repeatMode === "all" }),
+              onNextTrack: () => appPlayRelativeTrack(1, { wrap: repeatMode === "all" }),
               onToggleShuffle: () => setIsShuffle((shuffle) => !shuffle),
               onCycleRepeatMode: cycleRepeatMode,
               onSeek: seekTo,
@@ -1660,7 +1518,6 @@ export default function App() {
 
       <PlayerDock
         player={{
-          audioRef,
           currentPage: activeTab,
           currentTrack,
           currentTime,
@@ -1673,7 +1530,6 @@ export default function App() {
           volume,
           playbackRate,
           autoPlay,
-          audioSource,
           queueOpen: showQueueDrawer,
           playerProgressRef,
           playerCurrentTimeRef,
@@ -1691,52 +1547,6 @@ export default function App() {
           onToggleAutoPlay: () => setAutoPlay((enabled) => !enabled),
           onSeek: seekTo,
           onToggleQueue: toggleQueueDrawer,
-          audioHandlers: {
-            onPlay: () => {
-              setIsPlaying(true);
-              if (currentTrack) {
-                activePlaybackTrackIdRef.current = currentTrack.id;
-                recordTrackPlay(currentTrack.id);
-              }
-              if (audioRef.current) {
-                lastPlaybackPositionRef.current = audioRef.current.currentTime;
-              }
-            },
-            onPause: () => {
-              const pausedTrackId = activePlaybackTrackIdRef.current;
-              if (audioRef.current && pausedTrackId) {
-                recordPlaybackTime(audioRef.current, pausedTrackId);
-                void flushTrackStats(pausedTrackId);
-              }
-              if (pausedTrackId === currentTrack?.id) {
-                setIsPlaying(false);
-              }
-              activePlaybackTrackIdRef.current = null;
-            },
-            onTimeUpdate: (event) => recordPlaybackTime(event.currentTarget),
-            onSeeking: (event) => {
-              lastPlaybackPositionRef.current = event.currentTarget.currentTime;
-            },
-            onLoadedMetadata: (event) => {
-              if (Number.isFinite(event.currentTarget.duration)) {
-                setDuration(event.currentTarget.duration);
-                updatePlaybackDisplay(event.currentTarget.currentTime, event.currentTarget.duration);
-              }
-            },
-            onDurationChange: (event) => {
-              if (Number.isFinite(event.currentTarget.duration)) {
-                setDuration(event.currentTarget.duration);
-                updatePlaybackDisplay(event.currentTarget.currentTime, event.currentTarget.duration);
-              }
-            },
-            onEnded: handleTrackEnded,
-            onError: () => {
-              if (currentTrack) {
-                setIsPlaying(false);
-                setError("This track could not be loaded from offline storage.");
-              }
-            },
-          },
         }}
       />
       <QueueDrawer

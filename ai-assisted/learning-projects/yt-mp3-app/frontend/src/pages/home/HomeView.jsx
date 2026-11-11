@@ -1,4 +1,4 @@
-import {
+﻿import {
   ArrowUpRight,
   Disc3,
   Heart,
@@ -9,8 +9,8 @@ import {
   SkipForward,
   X,
 } from "lucide-react";
-import { CassetteTape, EqBars, MiniCassette, SignatureScribble } from "./RemixAssets.jsx";
-import { cleanTrackTitle, formatDuration } from "../utils/trackFormatting.js";
+import { CassetteTape, EqBars, MiniCassette, SignatureScribble } from "../../shared/components/RemixAssets.jsx";
+import { cleanTrackTitle, formatDuration } from "../../shared/utils/trackFormatting.js";
 
 const MOODS = [
   { label: "main character", bg: "#FFD93D", fg: "#14110F", rot: -2 },
@@ -41,7 +41,7 @@ export default function HomeView({ home, actions }) {
         <button type="button" className="rx-sig-card rx-wg" onClick={onEditSignature} aria-label="Edit your signature">
           <SignatureScribble name={signatureName} />
         </button>
-        <p className="H rx-greeting">hey you, what&apos;s the mood? <span aria-hidden="true">↷</span></p>
+        <p className="H rx-greeting">hey you, what&apos;s the mood? <span aria-hidden="true">â†·</span></p>
         <div className="rx-moods" aria-label="Moods">
           {MOODS.map((m) => (
             <button key={m.label} type="button" className="ch rx-mood" style={{ background: m.bg, color: m.fg, transform: `rotate(${m.rot}deg)` }} onClick={() => onNavigate("library")}>{m.label}</button>
@@ -92,7 +92,7 @@ export default function HomeView({ home, actions }) {
       </section>
 
       <div className="rx-marquee" aria-hidden="true">
-        <span className="rx-mq-track">NO SKIPS ✦ NO ADS ✦ NO WIFI NEEDED ✦ NO SKIPS ✦ NO ADS ✦ NO WIFI NEEDED ✦ NO SKIPS ✦ NO ADS ✦ NO WIFI NEEDED ✦ NO SKIPS ✦ NO ADS ✦ NO WIFI NEEDED ✦ </span>
+        <span className="rx-mq-track">NO SKIPS âœ¦ NO ADS âœ¦ NO WIFI NEEDED âœ¦ NO SKIPS âœ¦ NO ADS âœ¦ NO WIFI NEEDED âœ¦ NO SKIPS âœ¦ NO ADS âœ¦ NO WIFI NEEDED âœ¦ NO SKIPS âœ¦ NO ADS âœ¦ NO WIFI NEEDED âœ¦ </span>
       </div>
 
       <section className="rx-home-tiles" aria-label="Quick actions">
@@ -174,3 +174,4 @@ export default function HomeView({ home, actions }) {
     </div>
   );
 }
+

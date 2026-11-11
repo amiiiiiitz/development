@@ -1,0 +1,41 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ListMusic,
+  Music2,
+  X,
+} from "lucide-react";
+import { AppShell } from "./design/files (4)/AppShell.jsx";
+import { PageShell, useAudioPlaying } from "./design/files (4)/ui.jsx";
+import {
+  deleteTrackMetadata,
+  deleteFolder as deleteFolderFromDB,
+  getAllFolders,
+  getAllTracksMetadata,
+  getQueue,
+  getResumePosition,
+  incrementTrackStats,
+  saveFolder,
+  saveQueue,
+  saveResumePosition,
+  saveTrackMetadata,
+  updateTrackMetadata,
+} from "./db.js";
+import useOnlineStatus from "./hooks/useOnlineStatus.js";
+import { convertVideoToAudio, fetchVideoInfo } from "./services/videoApi.js";
+import {
+  cleanTrackTitle,
+  createTrackId,
+  formatDuration,
+  normalizeSearchText,
+} from "./utils/trackFormatting.js";
+import ConverterView from "./components/ConverterView.jsx";
+import HomeView from "./components/HomeView.jsx";
+import LibraryView from "./components/LibraryView.jsx";
+import NowPlayingView from "./components/NowPlayingView.jsx";
+import PersonalizationModal from "./components/PersonalizationModal.jsx";
+import PlayerDock from "./components/PlayerDock.jsx";
+import QueueDrawer from "./components/QueueDrawer.jsx";
+import SettingsView from "./components/SettingsView.jsx";
+
+const PERSONALIZATION_NAME_KEY = "nofi-personalization-name";
+
