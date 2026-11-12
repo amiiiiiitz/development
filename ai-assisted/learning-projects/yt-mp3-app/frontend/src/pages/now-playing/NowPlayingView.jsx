@@ -90,7 +90,6 @@ export default function NowPlayingView({ player, queue, actions }) {
             <button type="button" className="ch rx-np-save" onClick={() => currentTrack && onDownloadTrack(currentTrack)} disabled={!currentTrack}><ArrowDownToLine size={17} /> save mp3</button>
             <button type="button" className="ch" onClick={onOpenPlaylists}>+ playlist</button>
           </div>
-          {!currentTrack && <button type="button" className="ch" onClick={onOpenPlaylists}>open your library</button>}
         </section>
 
         <aside className="bd rx-np-queue" aria-label="Up next">

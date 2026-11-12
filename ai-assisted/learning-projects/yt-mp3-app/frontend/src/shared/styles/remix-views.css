@@ -21,8 +21,8 @@
 .rx-polaroid-wrap { position: relative; }
 .rx-tape-strip { position: absolute; top: -10px; left: 34%; width: 84px; height: 22px; background: rgba(255,200,60,.85); transform: rotate(-5deg); z-index: 2; }
 .rx-polaroid { background: #fff; padding: 10px; border-radius: 4px; }
-.rx-polaroid-art { position: relative; display: grid; place-items: center; min-height: 170px; border: 2px solid var(--rx-ink); background: radial-gradient(var(--rx-ink) 1.3px, transparent 1.7px) 0 0/9px 9px, var(--rx-orange); overflow: hidden; }
-.rx-polaroid-feature { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 170px; padding: 10px; }
+.rx-polaroid-art { position: relative; display: grid; place-items: center; border: 2px solid var(--rx-ink); background: radial-gradient(var(--rx-ink) 1.3px, transparent 1.7px) 0 0/9px 9px, var(--rx-orange); overflow: hidden; }
+.rx-polaroid-feature { display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; }
 .rx-polaroid-cassette { display: block; width: min(100%, 250px); height: auto; filter: drop-shadow(2px 2px 0 rgba(0,0,0,.25)); }
 .rx-polaroid-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; color: var(--rx-ink); }
 .rx-polaroid-empty .H { font-size: 28px; }
@@ -336,3 +336,4 @@
 }
 
 
+.rx-memory-quote { background: #0f0f0e; color: #d9d8d1; border-radius: 8px; min-height: 200px; }

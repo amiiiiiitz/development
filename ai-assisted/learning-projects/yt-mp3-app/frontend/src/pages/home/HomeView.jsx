@@ -11,6 +11,7 @@
 } from "lucide-react";
 import { CassetteTape, EqBars, MiniCassette, SignatureScribble } from "../../shared/components/RemixAssets.jsx";
 import { cleanTrackTitle, formatDuration } from "../../shared/utils/trackFormatting.js";
+import MemoryQuote from "../../components/home/MemoryQuote";
 
 const MOODS = [
   { label: "main character", bg: "#FFD93D", fg: "#14110F", rot: -2 },
@@ -96,17 +97,7 @@ export default function HomeView({ home, actions }) {
       </div>
 
       <section className="rx-home-tiles" aria-label="Quick actions">
-        <button type="button" className="bd rx-tile rx-tile-big" style={{ background: "#F28C38" }} onClick={() => onNavigate("library")}>
-          <p className="B">ur saved tapes</p><p>songs kept offline, always</p>
-        </button>
-        <div className="rx-tile-stack">
-          <button type="button" className="bd rx-tile" style={{ background: "#3EE0A0" }} onClick={() => onNavigate("convert")}>
-            <p className="B">+ add a link</p><p>paste. convert. done.</p>
-          </button>
-          <button type="button" className="bd rx-tile" style={{ background: "#FFD93D" }} onClick={() => onNavigate("library")}>
-            <p className="B">playlists</p><p>folders & favorites</p>
-          </button>
-        </div>
+        <MemoryQuote />
       </section>
 
       <section className="rx-up-next bd" aria-labelledby="up-next-title">

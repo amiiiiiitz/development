@@ -31,19 +31,21 @@ export function CassetteTape({ className = "", width = 150, spinning = false, la
         <>
           <rect x="14" y="40" width="142" height="9" fill={stripe} />
           <rect x="14" y="49" width="142" height="5" fill={stripe2} />
-          <path d="M132 20v17.5a5 5 0 1 1-3-4.6V25l13-3v11.5a5 5 0 1 1-3-4.6V18z" fill="#6B4EFF" stroke="#14110F" strokeWidth="1.5" />
+          <g transform="translate(6 -4)">
+  <path d="M132 20v17.5a5 5 0 1 1-3-4.6V25l13-3v11.5a5 5 0 1 1-3-4.6V18z" fill="#6B4EFF" stroke="#14110F" strokeWidth="1.5" />
+</g> fill="#6B4EFF" stroke="#14110F" strokeWidth="1.5" />
         </>
       )}
       <text
-        x="20"
-        y="34"
-        textLength={label.length > (artwork ? 9 : 11) ? (artwork ? 92 : 130) : undefined}
-        lengthAdjust="spacingAndGlyphs"
-        fontFamily="Caveat,cursive"
-        fontWeight="700"
-        fontSize={label.length > (artwork ? 14 : 18) ? 14 : label.length > (artwork ? 9 : 11) ? 18 : 24}
-        fill="#14110F"
-      >{label}</text>
+  x="20"
+  y="34"
+  textLength={label.length > (artwork ? 9 : 8) ? (artwork ? 92 : 96) : undefined}
+  lengthAdjust="spacingAndGlyphs"
+  fontFamily="Caveat,cursive"
+  fontWeight="700"
+  fontSize={label.length > (artwork ? 14 : 14) ? 14 : label.length > (artwork ? 9 : 8) ? 18 : 24}
+  fill="#14110F"
+>{label}</text>
       <rect x="44" y="68" width="82" height="30" rx="6" fill="#14110F" />
       <g className={spinning ? "rx-sp rx-tape-reel" : "rx-tape-reel"}>
         <circle cx="64" cy="83" r="10" fill="#444" stroke="#ddd" strokeWidth="2" />

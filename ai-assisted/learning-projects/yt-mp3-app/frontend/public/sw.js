@@ -1,5 +1,5 @@
 const AUDIO_CACHE_NAME = "mp3-offline-cache-v1";
-const APP_CACHE_NAME = "nofi-app-shell-v2-remix";
+const APP_CACHE_NAME = "nofi-app-shell-v2-remix-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
@@ -21,6 +21,13 @@ self.addEventListener("install", (event) => {
     for (const [, assetPath] of appHtml.matchAll(assetPattern)) {
       const assetUrl = new URL(assetPath, appUrl);
       if (assetUrl.origin !== self.location.origin) {
+        continue;
+      }
+      // Defensive filtering: skip Vite development/HMR/FS resources
+      // that would bloat the app-shell cache.
+      if (assetUrl.pathname.startsWith("/@") ||
+          assetUrl.pathname.includes("/node_modules/.vite/") ||
+          assetUrl.pathname.startsWith("/@fs/")) {
         continue;
       }
 
@@ -116,23 +123,39 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (["script", "style", "image", "font", "worker"].includes(event.request.destination)) {
-    event.respondWith((async () => {
-      try {
-        const response = await fetch(event.request);
-        if (response.ok) {
+  //
+    // Production caching: only cache essential resources for the offline app shell.
+    // Use an allowlist based on destination to avoid caching large or transient
+    // development artifacts. Workers are not cached to prevent HMR module
+    // accumulation. Scripts, styles, images, and fonts that are part of the
+    // production build are cached; all other destinations use default fetch.
+    if (event.request.destination === "script" ||
+        event.request.destination === "style" ||
+        event.request.destination === "image" ||
+        event.request.destination === "font") {
+      event.respondWith((async () => {
+        try {
+          const response = await fetch(event.request);
+          if (response.ok) {
+            const cache = await caches.open(APP_CACHE_NAME);
+            await cache.put(event.request, response.clone());
+          }
+          return response;
+        } catch {
           const cache = await caches.open(APP_CACHE_NAME);
-          await cache.put(event.request, response.clone());
+          const cachedAsset = await cache.match(event.request);
+          if (cachedAsset) {
+            return cachedAsset;
+          }
+          throw new Error(`This app resource is not available offline: ${requestUrl.pathname}`);
         }
-        return response;
-      } catch {
-        const cache = await caches.open(APP_CACHE_NAME);
-        const cachedAsset = await cache.match(event.request);
-        if (cachedAsset) {
-          return cachedAsset;
-        }
-        throw new Error(`This app resource is not available offline: ${requestUrl.pathname}`);
-      }
-    })());
-  }
-});
+      })());
+    } else if (event.request.destination === "worker") {
+      // Workers are not cached to avoid HMR module accumulation.
+      event.respondWith(fetch(event.request));
+    } else {
+      // For other destinations (navigate, audio, range requests, etc.), use
+      // default fetch behavior. Do not cache indiscriminately.
+      event.respondWith(fetch(event.request));
+    }
+  });
