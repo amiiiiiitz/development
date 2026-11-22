@@ -1,0 +1,208 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useAudio } from "../audio/index.jsx";
+import { useQueue } from "../queue/useQueue.js";
+
+const PlaybackContext = createContext(null);
+
+/**
+ * PlaybackProvider owns playback behavior and current playback state.
+ *
+ * Dependency order: AudioProvider ⊃ QueueProvider ⊃ PlaybackProvider
+ *
+ * PlaybackProvider does not duplicate AudioProvider's state (volume, playbackRate)
+ * or QueueProvider's state (queueIds, queueIndex). It consumes those through
+ * context and owns the playback-specific semantics.
+ */
+export function PlaybackProvider({ children }) {
+  const { play, pause, seek, setVolume, setPlaybackRate, volume, playbackRate, audioRef } = useAudio();
+  const { queueIds, queueIndex, setQueueIndex, addToQueue, removeFromQueue, clearQueue } = useQueue();
+  const [currentTrack, setCurrentTrack] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [repeatMode, setRepeatMode] = useState("off");
+  const [autoPlay, setAutoPlay] = useState(true);
+
+  // Ref tracking for race conditions during track changes
+  const trackChangeRef = useRef(false);
+  const lastPlaybackPositionRef = useRef(0);
+  const playbackRateRef = useRef(1);
+  playbackRateRef.current = playbackRate;
+
+  // Effect: sync currentTime from audio element's timeupdate event
+  useEffect(() => {
+    if (!audioRef.current) return;
+    const updateCurrentTime = () => {
+      if (trackChangeRef.current) return;
+      setCurrentTime(audioRef.current.currentTime);
+      lastPlaybackPositionRef.current = audioRef.current.currentTime;
+    };
+    audioRef.current.addEventListener("timeupdate", updateCurrentTime);
+    return () => {
+      audioRef.current.removeEventListener("timeupdate", updateCurrentTime);
+    };
+  }, [audioRef]);
+
+  // Effect: handle track ended
+  useEffect(() => {
+    if (!audioRef.current) return;
+    const handleAudioEnded = () => {
+      if (trackChangeRef.current) {
+        trackChangeRef.current = false;
+        return;
+      }
+      if (repeatMode === "one") {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch((e) => setIsPlaying(false));
+        return;
+      }
+      handleTrackEnded();
+    };
+    audioRef.current.addEventListener("ended", handleAudioEnded);
+    return () => {
+      audioRef.current.removeEventListener("ended", handleAudioEnded);
+    };
+  }, [audioRef, repeatMode, handleTrackEnded]);
+
+  // Function: select a track and optionally play it
+  const selectTrack = useCallback(
+    (track, shouldPlay = true) => {
+      if (trackChangeRef.current) return;
+      trackChangeRef.current = true;
+      setCurrentTrack(track);
+      setDuration(Number.isFinite(track.duration) ? track.duration : 0);
+      trackChangeRef.current = false;
+    },
+    []
+  );
+
+  // Function: play relative track (next/previous) with queue/playlist awareness
+  const playRelativeTrack = useCallback(
+    (direction, { wrap = false } = {}) => {
+      if (!queueIds.length && !currentTrack) return;
+
+      let nextIndex;
+
+      if (queueIds.length) {
+        if (isShuffle && queueIds.length > 1) {
+          nextIndex = pickShuffleIndex(queueIds, queueIndex);
+        } else {
+          nextIndex = queueIndex + direction;
+          if (nextIndex >= queueIds.length) {
+            if (repeatMode === "all") nextIndex = 0;
+            else { setIsPlaying(false); return; }
+          } else if (nextIndex < 0) {
+            if (repeatMode === "all") nextIndex = queueIds.length - 1;
+            else { setIsPlaying(false); return; }
+          }
+        }
+        setQueueIndex(nextIndex);
+        const nextTrack = /* find track by queueIds[nextIndex] */;
+        selectTrack(nextTrack, true);
+      } else {
+        // playlist navigation logic
+      }
+    },
+    [queueIds, queueIndex, isShuffle, repeatMode, selectTrack]
+  );
+
+  // Function: handle track ended
+  const handleTrackEnded = useCallback(() => {
+    if (trackChangeRef.current) {
+      trackChangeRef.current = false;
+      return;
+    }
+    trackChangeRef.current = true;
+    window.setTimeout(() => { trackChangeRef.current = false; }, 0);
+    // Flush stats and play next track
+    const completedPlays = completedPlaysRef.current.trackId === currentTrack?.id
+      ? completedPlaysRef.current.count + 1
+      : 1;
+    completedPlaysRef.current = { trackId: currentTrack?.id || null, count: completedPlays };
+    const playCountLimit = currentTrack?.playCountLimit ?? 1;
+    if (repeatMode === "one" || playCountLimit === "forever" || completedPlays < playCountLimit) {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch((playError) => { setIsPlaying(false); });
+      }
+      return;
+    }
+    // Play next track from queue
+    if (queueIds.length) {
+      let nextIndex = queueIndex + 1;
+      if (nextIndex >= queueIds.length && repeatMode === "all") {
+        nextIndex = 0;
+      } else if (nextIndex >= queueIds.length) {
+        setIsPlaying(false);
+        return;
+      }
+      if (nextIndex >= 0 && nextIndex < queueIds.length) {
+        const nextTrack = /* find track by queueIds[nextIndex] */;
+        setQueueIndex(nextIndex);
+        selectTrack(nextTrack, true);
+        return;
+      }
+    }
+    setIsPlaying(false);
+  }, [audioRef, currentTrack, repeatMode, queueIds, queueIndex, completedPlaysRef, playSessionCountedRef]);
+
+  // Function: cycle repeat mode
+  const cycleRepeatMode = useCallback(() => {
+    setRepeatMode((mode) => (mode === "off" ? "all" : mode === "all" ? "one" : "off"));
+  }, []);
+
+  // Function: toggle shuffle
+  const toggleShuffle = useCallback(() => {
+    setIsShuffle((val) => !val);
+  }, []);
+
+  // Function: toggle autoPlay
+  const toggleAutoPlay = useCallback(() => {
+    setAutoPlay((val) => !val);
+  }, []);
+
+  // Function: seek to a position
+  const seekTo = useCallback((time) => {
+    if (audioRef.current && Number.isFinite(time)) {
+      audioRef.current.currentTime = time;
+      lastPlaybackPositionRef.current = time;
+    }
+  }, [audioRef]);
+
+  const value = useMemo(
+    () => ({
+      currentTrack,
+      isPlaying,
+      duration,
+      currentTime,
+      isShuffle,
+      repeatMode,
+      autoPlay,
+      selectTrack,
+      playRelativeTrack,
+      cycleRepeatMode,
+      toggleShuffle,
+      toggleAutoPlay,
+      seekTo,
+    }),
+    [currentTrack, isPlaying, duration, currentTime, isShuffle, repeatMode, autoPlay, selectTrack, playRelativeTrack, cycleRepeatMode, toggleShuffle, toggleAutoPlay, seekTo]
+  );
+
+  return (
+    <PlaybackContext.Provider value={value}>
+      {children}
+    </PlaybackContext.Provider>
+  );
+}
+
+/**
+ * Consume the playback context. Must be used within a PlaybackProvider.
+ */
+export function usePlayback() {
+  const context = useContext(PlaybackContext);
+  if (!context) {
+    throw new Error("usePlayback must be used within a PlaybackProvider");
+  }
+  return context;
+}

@@ -1,0 +1,328 @@
+@import "./shared/styles/tokens.css";
+@import "./shared/styles/base.css";
+@import "./shared/styles/pages.css";
+@import "./shared/styles/motion.css";
+@import "./shared/styles/remix-motion.css";
+@import "./shared/styles/remix-views.css";
+@import "./shared/styles/responsive.css";
+@import "tailwindcss";
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { color-scheme: light; }
+body {
+  min-width: 320px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button { cursor: pointer; }
+button:disabled, input:disabled, select:disabled { cursor: not-allowed; opacity: 0.55; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+:focus-visible {
+  outline: 3px solid var(--rx-yellow);
+  outline-offset: 3px;
+}
+#root, .app-shell { min-height: 100vh; }
+
+/* Shared Remix primitives */
+.B { font-family: var(--font-display); font-weight: 400; }
+.H { font-family: var(--font-script); font-weight: 700; }
+
+.bd {
+  border: var(--rx-border);
+  box-shadow: var(--rx-shadow);
+  border-radius: var(--rx-radius);
+  background: var(--rx-white);
+}
+
+/* Shared look of all small "sticker" buttons */
+.ch,
+.ib,
+.library-action-primary {
+  border: var(--rx-border);
+  box-shadow: var(--rx-shadow-sm);
+}
+
+.ch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--rx-radius-pill);
+  background: var(--rx-white);
+  color: var(--rx-ink);
+  font: 700 14px var(--font-ui);
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.ib {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--rx-white);
+  color: var(--rx-ink);
+}
+
+.eyebrow {
+  display: inline-block;
+  font: 700 11px var(--font-ui);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.spin { animation: rx-sp 0.9s linear infinite; }
+
+/* App shell */
+
+.error-message { background: color-mix(in srgb, var(--rose) 30%, var(--surface)); }
+
+.duplicate-toast {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(92vw, 520px);
+  border: var(--rx-border);
+  border-radius: var(--rx-radius-pill);
+  box-shadow: var(--rx-shadow);
+  padding: 10px 14px;
+  background: var(--rx-mint);
+  font-weight: 700;
+}
+
+.duplicate-toast button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--rx-ink);
+  border-radius: 50%;
+  background: #fff;
+  padding: 0;
+}
+
+.page-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 10px 4px 0;
+  font: 700 11px var(--font-ui);
+  letter-spacing: .04em;
+  opacity: .78;
+}
+
+.footer-dot { color: var(--rx-orange); }
+
+/* Buttons/inputs shared */
+
+.library-action-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: var(--rx-radius-pill);
+  background: var(--btn-primary);
+  color: #fff;
+  font: 700 15px var(--font-ui);
+}
+
+.library-action-primary:hover { background: var(--btn-primary-hover); }
+
+.library-action-primary:active,
+.ib:active,
+.ch:active {
+  translate: 3px 3px;
+  box-shadow: 0 0 0 var(--rx-ink);
+}
+
+input[type="text"],
+input[type="url"],
+input[type="search"],
+select,
+textarea {
+  width: 100%;
+  min-height: 48px;
+  border: var(--rx-border-thin);
+  border-radius: 12px;
+  padding: 0 12px;
+  background: #fff;
+  color: var(--rx-ink);
+  font: 600 14px var(--font-ui);
+}
+
+input::placeholder { color: rgba(20,17,15,.45); }
+
+/* EQ bars */
+
+.eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+}
+
+.eq i {
+  display: block;
+  width: 5px;
+  height: 22px;
+  border-radius: 1px;
+  background: var(--rx-ink);
+  transform-origin: bottom;
+  animation: rx-eq .9s ease-in-out infinite;
+}
+
+/* Track art fallbacks */
+
+.track-art {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid var(--rx-ink);
+  border-radius: 10px;
+  background: var(--rx-paper);
+  color: var(--rx-ink);
+}
+
+.track-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.track-art-small { width: 44px; height: 44px; }
+.track-art-recent,
+.track-art-hero { width: 100%; aspect-ratio: 1; border-radius: 14px; }
+
+/* Range inputs (progress/volume) */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 12px;
+  border: 2px solid var(--rx-ink);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rx-orange) var(--progress, 0%), var(--border) var(--progress, 0%));
+  padding: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--rx-ink);
+  border-radius: 50%;
+  background: var(--rx-yellow);
+  box-shadow: 2px 2px 0 var(--rx-ink);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--rx-ink);
+  border-radius: 50%;
+  background: var(--rx-yellow);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.hidden { display: none; }
+
+/* ---- NoFi semantic button system (vintage identity) ----
+   Colour overlays for .ch / plain buttons. Shared pressed state comes from
+   the global .ch:active / .ib:active / .library-action-primary:active rule. */
+.btn-primary { background: var(--btn-primary); color: #fff; }
+.btn-primary:hover { background: var(--btn-primary-hover); }
+
+.btn-secondary { background: var(--btn-secondary); color: var(--ink); }
+.btn-secondary:hover { background: var(--btn-secondary-hover); }
+
+.btn-info { background: var(--btn-info); color: #fff; }
+.btn-info:hover { background: var(--btn-info-hover); }
+
+.btn-save { background: var(--btn-save); color: #fff; }
+.btn-save:hover { background: var(--btn-save-hover); }
+
+.btn-destructive { background: var(--btn-destructive); color: #fff; }
+.btn-destructive:hover { background: var(--btn-destructive-hover); }
+
+.btn-neutral { background: var(--btn-neutral); color: #F1E8D6; }
+.btn-neutral:hover { background: var(--btn-neutral-hover); }
+
+/* Standard desktop layout.
+   The .rx-home-stage columns and gap now live in responsive.css. */
+
+@media (min-width: 1024px) {
+  .rx-recent-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+/* Refined playback layout: medium desktop.
+   width:100%, min-width:0 and flex:none already come from responsive.css. */
+
+@media (min-width: 1024px) and (max-width: 1205px) {
+  .rx-home-stage {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .rx-stage-controls {
+    max-width: 340px;
+    justify-self: center;
+    gap: 9px;
+  }
+
+  .rx-home-controls {
+    gap: 5px;
+    flex-wrap: nowrap;
+  }
+
+  .rx-home-controls .rx-mini-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .rx-home-controls .rx-main-play {
+    width: 54px;
+    height: 54px;
+  }
+
+  .rx-time-readout {
+    font-size: 17px;
+  }
+}
+
+/* Keep the Home controls beside, and vertically centered against, the cassette card below desktop. */
+@media (max-width: 1023.98px) {
+  .rx-home-stage { align-items: center; }
+  .rx-stage-controls { align-self: center; }
+}
+

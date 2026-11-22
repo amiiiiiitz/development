@@ -1,0 +1,126 @@
+/* NoFi — Heritage / old-money palette.
+   Palette-only update: illustration SVGs, artwork, layout and motion are untouched. */
+:root {
+  /* Core palette */
+  --ink: #202820;          /* deep olive ink */
+  --paper: #EDE4D1;        /* aged parchment */
+  --ivory: #F5EEDC;        /* warm ivory */
+  --paper-dot: #CFC2A5;
+  --brass: #B99A5C;        /* antique brass */
+  --amber: #A9824F;        /* muted tobacco */
+  --teal: #82917A;         /* sage */
+  --violet: #7C5651;       /* muted oxblood */
+  --velvet: #81534D;       /* burgundy */
+
+  /* Dark listening-room surfaces */
+  --bg: #1B2922;
+  --surface: #26372E;
+  --raised: #34463A;
+  --text: #F1E8D6;
+  --sand: #E5D9C1;
+  --border: #536253;
+  --lilac: #A99A7C;
+  --peach: #B88D70;
+  --rose: #9A6C62;
+  --hl: #B99A5C;
+
+  /* ---- Realistic artwork palette (natural object colors) ----
+     Used by the die-cut stickers, cassette illustrations and small
+     decorative art. Each token maps to a real material so illustrations
+     keep their natural, distinguishable colors instead of a muddy wash. */
+  --text-muted: #D9D1BE;      /* warm light grey — reel hubs, metal highlights */
+  --pistachio: #9CA96B;       /* natural pistachio / sage green */
+  --art-ink: #241B12;         /* dark ink for outlines / detail lines */
+  --art-cream: #EFE4C6;       /* cream paper labels, drum heads */
+  --art-ivory: #F4EBD6;       /* ivory piano keys */
+  --art-wood: #B77C3C;        /* warm acoustic-wood body */
+  --art-wood-light: #CE9553;  /* wood highlight */
+  --art-wood-dark: #7C4E22;   /* wood shadow */
+  --art-brass: #C5A46D;       /* antique brass */
+  --art-brass-light: #E0C489; /* brass highlight */
+  --art-terracotta: #B87961;  /* terracotta */
+  --art-dusty-rose: #CB9089;  /* dusty pink */
+  --art-sage: #8FA079;        /* botanical leaf green */
+  --art-olive: #6E7A48;       /* olive */
+  --art-silver: #CFCCC2;      /* brushed silver */
+  --art-steel: #8C8A81;       /* steel mesh */
+  --art-charcoal: #2B2723;    /* near-black rubber / plastic */
+  --art-leather: #5C3B26;     /* brown leather */
+  --art-smoke: #6B5238;       /* smoky brown translucent cassette plastic */
+  --art-smoke-light: #8A6C46; /* amber plastic highlight */
+  --art-smoke-dark: #35271A;  /* cassette dark edge / tape path */
+  --art-tape: #1D1711;        /* magnetic tape */
+  --art-paper: #F0E6CC;       /* aged cream sheet music */
+  --art-paper-line: #8A7A5A;  /* staff lines on paper */
+
+  /* ---- Dark vintage cassette (realistic black audio cassette) ----
+     Shell #171715, secondary detail #24231F, reel hubs #A99A7D,
+     magnetic tape #090909, warm-charcoal labels #34312B,
+     muted antique-silver small details #9C968A. A light tonal stripe
+     (#413E34) keeps the label construction readable without colour. */
+  --cass-shell: #171715;      /* main cassette shell */
+  --cass-shell-2: #24231F;    /* secondary shell detail / dark stripe */
+  --cass-label: #34312B;      /* warm charcoal label */
+  --cass-stripe: #413E34;     /* light tonal stripe on the label */
+  --cass-hub: #A99A7D;        /* reel hubs */
+  --cass-tape: #090909;       /* magnetic tape */
+  --cass-detail: #9C968A;     /* small details / screws */
+
+  /* ---- Selected / active foreground-background contrast pairs ----
+     Dark selected background  -> light cream text
+     Light selected background -> dark charcoal text
+     Explicit pairs so selected text never inherits an unsuitable muted colour. */
+  --sel-bg: var(--violet);      /* dark selected list / row background (burgundy) */
+  --sel-fg: var(--text);        /* light cream text on dark selection */
+  --sel-fg-dim: var(--sand);    /* secondary light text on dark selection */
+  --sel-bg-alt: var(--paper);   /* light selected background (chips, pills, nav) */
+  --sel-fg-alt: var(--ink);     /* dark charcoal text on light selection */
+
+  --bd: 2px solid var(--ink);
+  --shadow: 4px 4px 0 rgba(15, 25, 19, .42);
+  --radius: 14px;
+  --font-display: "Bowlby One", sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-hand: "Caveat", cursive;
+  --dock-h: 68px;
+
+  --rx-ink: var(--ink);
+  --rx-paper: var(--paper);
+  --rx-cream: var(--ivory);
+  --rx-white: #F5EEDC;
+  --rx-yellow: var(--brass);
+  --rx-orange: var(--amber);
+  --rx-mint: var(--teal);
+  --rx-violet: var(--violet);
+  --rx-red: var(--velvet);
+  --rx-border: var(--bd);
+  --rx-border-thin: 1px solid rgba(32, 40, 32, .45);
+  --rx-shadow: var(--shadow);
+  --rx-shadow-sm: 3px 3px 0 rgba(15, 25, 19, .38);
+  --rx-radius: var(--radius);
+  --rx-radius-pill: 999px;
+  --font-ui: var(--font-body);
+  --font-script: var(--font-hand);
+
+  /* ---- NoFi semantic button system (vintage music identity) ----
+     Primary forest green / antique brass secondary / dusty blue info /
+     botanical green save / muted burgundy destructive / warm charcoal neutral. */
+  --btn-primary: #526F4E;        /* vintage forest green — primary action */
+  --btn-primary-hover: #405C3C;
+  --btn-secondary: var(--brass); /* antique brass — secondary action */
+  --btn-secondary-hover: var(--amber);
+  --btn-info: #718B91;           /* dusty blue — paste / preview */
+  --btn-info-hover: #5F767B;
+  --btn-save: #66845F;           /* botanical green — save / offline */
+  --btn-save-hover: #526F4E;
+  --btn-saved: #81534D;          /* muted vintage burgundy — Library "Saved" badge (distinct from green Save offline) */
+  --btn-saved-hover: #98645B;
+  --btn-saved-active: #70443F;
+  --btn-saved-text: #F5EBDD;
+  --btn-saved-border: #A8796F;
+  --btn-destructive: #955B54;    /* muted burgundy — destructive action */
+  --btn-destructive-hover: var(--velvet);
+  --btn-neutral: #51463A;        /* warm charcoal — neutral action */
+  --btn-neutral-hover: #3E352C;
+  --btn-text-light: #E8EEDC;     /* light text/icon on green buttons */
+}

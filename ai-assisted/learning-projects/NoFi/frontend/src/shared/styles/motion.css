@@ -1,0 +1,166 @@
+/* All motion lives here. Rule: motion = life of the app. Pause it when audio is paused. */
+
+/* SVG animation helpers: shared transform-box, each with its own origin */
+.s,.kp,.hit{transform-box:fill-box}
+.s{transform-origin:center}
+.kp{transform-origin:top}
+.hit{transform-origin:50% 100%}
+
+.sp{animation:sp 3s linear infinite}   /* spin: reels, vinyl */
+.fl{animation:fl 7s ease-in-out infinite;--r:0deg} /* float: guitar, piano, speaker */
+.bob{animation:bob 2.6s ease-in-out infinite}
+.wb,.wg{animation:wob 3s ease-in-out infinite}
+.wb{--a:9deg}  /* wobble: wide swing */
+.wg{--a:3deg}  /* wobble: gentle swing */
+.tw{animation:tw 2.4s ease-in-out infinite}
+.pl{animation:pl 1.6s ease-out infinite}  /* pulse ring on play button */
+.kp{animation:kp 1.2s ease-in-out infinite}
+.hit{animation:hit .7s ease-in-out infinite}
+.rg{animation:rg 1.8s ease-out infinite}
+.pls{animation:pls .8s ease-in-out infinite}
+
+/* entrance: sections slide up once, in order (uses `translate`, so it never fights transforms) */
+.page__inner>*{animation:up .6s ease-out both}
+.page__inner>:nth-child(2){animation-delay:.08s}.page__inner>:nth-child(3){animation-delay:.16s}.page__inner>:nth-child(4){animation-delay:.24s}.page__inner>:nth-child(5){animation-delay:.32s}.page__inner>:nth-child(6){animation-delay:.4s}.page__inner>:nth-child(7){animation-delay:.48s}
+
+/* rising notes */
+.note-burst{position:absolute;pointer-events:none;z-index:2}
+.note-burst svg{position:absolute;top:0;opacity:0;animation:rise 3.6s ease-in infinite}
+
+/* tie motion to playback: <PageShell playing={isPlaying}> sets data-playing.
+   Covers the old classes and their rx- twins from remix-motion.css. */
+[data-playing="false"] :is(.sp,.eq i,.pl,.note-burst svg,.hit,.pls,.rg,.rx-sp,.rx-eq i,.rx-pl,.rx-note,.rx-hit,.rx-rg){animation-play-state:paused}
+
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes fl{0%,100%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(-12px) rotate(calc(var(--r) + 4deg))}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes wob{0%,100%{transform:rotate(calc(var(--a) * -1))}50%{transform:rotate(var(--a))}}
+@keyframes tw{0%,100%{transform:scale(.6);opacity:.5}50%{transform:scale(1.15);opacity:1}}
+@keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* Eq bars must stay visible on dark page backgrounds (home & playing pages).
+   index.css sets them to --rx-ink (black), which disappears on the dark page bg. */
+[data-page="home"] .eq i,
+[data-page="playing"] .eq i {
+  background: var(--brass);
+}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(107,78,255,.55)}100%{box-shadow:0 0 0 20px rgba(107,78,255,0)}}
+@keyframes st{to{background-position:28px 0,0 0}}
+@keyframes up{from{opacity:0;translate:0 18px}}
+@keyframes rise{0%{opacity:0;transform:translateY(0) rotate(-8deg)}15%{opacity:.95}100%{opacity:0;transform:translateY(-80px) translateX(16px) rotate(14deg)}}
+@keyframes bn{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-9deg)}}
+@keyframes kp{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.82)}}
+@keyframes hit{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}}
+@keyframes rg{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@keyframes pls{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* ============================================================
+   Musical flow around play buttons.
+   Notes, sound-wave lines and particles drift outward from both
+   sides of the play button while playback is active.
+   Transform + opacity only — no layout impact, no click impact.
+   ============================================================ */
+
+/* Wrapper that lets the flow overlay sit exactly on a play button
+   without changing the button's size, position or click target. */
+.play-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Container sits on top of the play button (parent must be position:relative). */
+.music-flow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Each element starts at the button centre; keyframes move it outward. */
+.music-flow__el {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -8px;      /* centre the 16x16 svg on the button centre */
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.music-flow__el svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* --- small floating musical notes --- */
+.mf-note svg {
+  fill: var(--amber);
+  stroke: var(--ink);
+  stroke-width: 0.5;
+}
+.mf-note.l { animation: mf-note-l var(--mf-d, 3s) var(--mf-delay, 0s) ease-out infinite; }
+.mf-note.r { animation: mf-note-r var(--mf-d, 3s) var(--mf-delay, 0s) ease-out infinite; }
+@keyframes mf-note-l {
+  0%   { opacity: 0; transform: translate(0, 0) scale(1) rotate(-6deg); }
+  35%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(var(--mf-tx, -56px), var(--mf-ty, -10px)) scale(0.55) rotate(18deg); }
+}
+@keyframes mf-note-r {
+  0%   { opacity: 0; transform: translate(0, 0) scale(1) rotate(6deg); }
+  35%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(var(--mf-tx, 56px), var(--mf-ty, -10px)) scale(0.55) rotate(-18deg); }
+}
+
+/* --- subtle sound-wave lines --- */
+.mf-wave path {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+.mf-wave.l { animation: mf-wave-l var(--mf-d, 3s) var(--mf-delay, 0s) ease-out infinite; }
+.mf-wave.r { animation: mf-wave-r var(--mf-d, 3s) var(--mf-delay, 0s) ease-out infinite; }
+@keyframes mf-wave-l {
+  0%   { opacity: 0; transform: translate(0, 0) scalex(0.35); }
+  40%  { opacity: 0.55; }
+  100% { opacity: 0; transform: translate(var(--mf-tx, -48px), var(--mf-ty, 6px)) scalex(1.3); }
+}
+@keyframes mf-wave-r {
+  0%   { opacity: 0; transform: translate(0, 0) scalex(0.35); }
+  40%  { opacity: 0.55; }
+  100% { opacity: 0; transform: translate(var(--mf-tx, 48px), var(--mf-ty, 6px)) scalex(1.3); }
+}
+
+/* --- tiny musical particles --- */
+.mf-particle circle {
+  fill: var(--amber);
+  stroke: var(--ink);
+  stroke-width: 0.5;
+}
+.mf-particle.l { animation: mf-particle-l var(--mf-d, 3s) var(--mf-delay, 0s) ease-out infinite; }
+.mf-particle.r { animation: mf-particle-r var(--mf-d, 3s) var(--mf-delay, 0s) ease-out infinite; }
+@keyframes mf-particle-l {
+  0%   { opacity: 0; transform: translate(0, 0) scale(1); }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(var(--mf-tx, -40px), var(--mf-ty, 10px)) scale(0.3); }
+}
+@keyframes mf-particle-r {
+  0%   { opacity: 0; transform: translate(0, 0) scale(1); }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(var(--mf-tx, 40px), var(--mf-ty, 10px)) scale(0.3); }
+}
+
+/* Pause playback: stop the loops and smoothly fade out existing elements. */
+[data-playing="false"] .music-flow__el {
+  animation: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* Accessibility: respect the OS setting. Never remove this block. */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Low-end phones: add data-lite="true" on <html> to drop sticker outlines + sticker animation */
+[data-lite="true"] .sticker-layer g{filter:none}
+[data-lite="true"] .sticker-layer *{animation:none!important}

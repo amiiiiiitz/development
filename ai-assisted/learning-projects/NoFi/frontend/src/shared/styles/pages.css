@@ -1,0 +1,82 @@
+/* Page colors support the illustrated backdrops. Existing StickerLayer stays independent.
+   Each major page owns a distinct vintage background while sharing one design identity. */
+[data-page] {
+  /* --mixtape-paper is the page's base colour; --page-glow is a soft complementary
+     light that gives each room its own atmosphere without touching components. */
+  --mixtape-paper: var(--sand);
+  --page-glow: rgba(255, 255, 255, .04);
+  background-color: var(--mixtape-paper);
+  background-image: radial-gradient(120% 90% at 50% 0%, var(--page-glow) 0%, rgba(0, 0, 0, 0) 60%);
+}
+
+/* Distinct backgrounds per page (slightly dimmed for a cinematic listening room) */
+[data-page="home"] {
+  --mixtape-paper: #1F3229;   /* deep vintage forest green */
+  --page-glow: rgba(197, 164, 109, .12);
+}
+[data-page="library"] {
+  --mixtape-paper: #30251E;   /* warm dark walnut */
+  --page-glow: rgba(203, 144, 137, .10);
+}
+[data-page="add"] {
+  --mixtape-paper: #333526;   /* slightly dimmer vintage olive */
+  --page-glow: rgba(150, 160, 125, .16);
+}
+[data-page="playing"] {
+  --mixtape-paper: #392425;   /* deep burgundy */
+  --page-glow: rgba(224, 196, 137, .11);
+}
+[data-page="settings"] {
+  --mixtape-paper: #26231F;   /* deep espresso charcoal */
+  --page-glow: rgba(197, 164, 109, .09);
+}
+
+/* Faint decorative line-art, tinted to complement each page's own background.
+   Kept low-alpha so it reads as a background motif, slightly dimmed. */
+.page-backdrop--home{color:rgba(214,186,120,.15)}.page-backdrop--library{color:rgba(214,160,118,.14)}.page-backdrop--add{color:rgba(198,210,150,.20)}.page-backdrop--playing{color:rgba(216,178,120,.14)}.page-backdrop--settings{color:rgba(214,192,150,.13)}
+
+/* New page? Add only its color variables here plus its sticker placement entry. */
+
+/* Page footer text on dark page backgrounds */
+[data-page="home"] .page-footer,
+[data-page="library"] .page-footer,
+[data-page="add"] .page-footer,
+[data-page="playing"] .page-footer,
+[data-page="settings"] .page-footer {
+  color: var(--sand);
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------
+   Subtle ambient light reflection for background artwork.
+   Soft, coloured drop-shadows that complement each illustration
+   without looking like neon. Applied to the artwork containers
+   (never to the UI layer). Smooth transitions on hover/focus.
+   ------------------------------------------------------------ */
+
+/* Page backdrop line-art: soft diffused glow around the strokes */
+.page-backdrop {
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, .10));
+  transition: filter .6s ease;
+}
+
+/* Add a Song: warm ambient halo around the background artwork so the
+   dimmer page still feels lit from within, never flat or muddy. */
+.page-backdrop--add {
+  filter: drop-shadow(0 0 16px rgba(198, 210, 150, .35));
+  transition: filter .6s ease;
+}
+
+/* Sticker artwork: coloured ambient glow that matches each illustration */
+.sticker--guitar   { filter: drop-shadow(0 0 10px rgba(183, 124, 60, .30)); }
+.sticker--vinyl    { filter: drop-shadow(0 0 10px rgba(43, 39, 35, .24)); }
+.sticker--note     { filter: drop-shadow(0 0 10px rgba(197, 164, 109, .32)); }
+.sticker--spark    { filter: drop-shadow(0 0 10px rgba(224, 196, 137, .34)); }
+.sticker--piano    { filter: drop-shadow(0 0 10px rgba(244, 235, 214, .22)); }
+.sticker--tape     { filter: drop-shadow(0 0 10px rgba(107, 82, 56, .30)); }
+.sticker--phones   { filter: drop-shadow(0 0 10px rgba(92, 59, 38, .28)); }
+.sticker--speaker  { filter: drop-shadow(0 0 10px rgba(124, 78, 34, .28)); }
+.sticker--drum     { filter: drop-shadow(0 0 10px rgba(197, 164, 109, .32)); }
+.sticker--mic      { filter: drop-shadow(0 0 10px rgba(207, 204, 194, .28)); }
+.sticker--chain    { filter: drop-shadow(0 0 10px rgba(156, 150, 138, .28)); }
+.sticker--sheet    { filter: drop-shadow(0 0 10px rgba(240, 230, 204, .24)); }

@@ -1,0 +1,19 @@
+{
+  "name": "yt-mp3-app-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local API for converting YouTube videos to MP3 files.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.7.1"
+  }
+}
