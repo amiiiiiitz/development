@@ -1,0 +1,6 @@
+{
+  "name": "Real Estate ERP",
+  "description": "End-to-end Real Estate Enterprise Resource Planning system for projects, property inventory, CRM leads, bookings, collections, complaints, and operational reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1579 @@
+# MASTER DEVELOPMENT PROMPT — REAL ESTATE ERP SYSTEM
+
+## 1. YOUR ROLE
+
+Act as a senior full-stack software architect, senior React.js developer, senior Python/FastAPI backend engineer, PostgreSQL database architect, UI/UX designer, QA engineer, and application security engineer.
+
+Your responsibility is to design, develop, test, and deliver a complete, functional, end-to-end Real Estate ERP system.
+
+This is not a UI prototype, static dashboard, or demonstration application.
+
+Build an actual working business management application with:
+- A complete React frontend.
+- A complete Python FastAPI backend.
+- A properly designed PostgreSQL database.
+- Secure authentication and authorization.
+- Fully connected frontend and backend.
+- Real CRUD operations.
+- Validated business workflows.
+- Error handling and loading states.
+- Automated tests.
+- Database migrations.
+- Deployment documentation.
+
+You must work as if this application will eventually be used by a real estate company to manage its projects, properties, customers, bookings, payments, and complaints.
+
+Do not sacrifice architecture, data integrity, or functionality for development speed.
+
+---
+
+# 2. PROJECT OVERVIEW
+
+Project name: Real Estate ERP
+
+Project type: Full-stack web-based Enterprise Resource Planning application.
+
+Primary objective:
+
+Develop a centralized real estate management system that allows a real estate company to manage its projects, property inventory, customers, sales leads, bookings, collections, customer complaints, and operational reports.
+
+The application should provide a unified workspace for administrators and employees.
+
+Target users:
+- System Administrator
+- Management / Manager
+- Sales Executive
+- Accounts / Collection Officer
+- Customer Support Officer
+
+The application should support multiple employees working with shared company data under role-based permissions.
+
+Initial scope: A single-company ERP system with multiple employees. Do not introduce unnecessary multi-tenant complexity.
+
+---
+
+# 3. MANDATORY TECHNOLOGY STACK
+
+Use the following technologies.
+
+## Frontend
+
+- React.js
+- Vite
+- JavaScript (ES6+)
+- Tailwind CSS
+- React Router
+- TanStack Query for server state and API caching
+- Axios for HTTP communication
+- React Hook Form for form management
+- Zod for frontend validation
+- Recharts for charts and analytics
+- Lucide React for icons
+
+Do not use TypeScript. Keep the frontend in JavaScript and JSX.
+
+## Backend
+
+- Python
+- FastAPI
+- SQLAlchemy 2.x ORM
+- Pydantic v2
+- PostgreSQL
+- Alembic for database migrations
+- JWT authentication
+- Argon2 or bcrypt password hashing
+- Pytest for backend testing
+- Uvicorn for the ASGI server
+
+## Database
+
+PostgreSQL is the primary database.
+
+Use:
+- UUID primary keys.
+- Foreign key constraints.
+- Unique constraints.
+- Appropriate indexes.
+- Database transactions.
+- Proper relationships.
+- Created and updated timestamps.
+- Soft deletion where appropriate.
+
+## Development tools
+
+- Git and GitHub
+- VS Code compatibility
+- Python virtual environment
+- npm
+- Environment variables
+- Docker and Docker Compose configuration for local development and deployment.
+
+IMPORTANT:
+
+Google AI Studio may use its own Node.js runtime for previewing generated applications. Do not use that runtime as a replacement for the required Python backend.
+
+Generate the FastAPI application as a separate backend service. Generate the React frontend as a separate frontend application.
+
+The frontend must communicate with FastAPI through documented REST API endpoints.
+
+If the FastAPI backend cannot execute inside the AI Studio preview environment, still generate its complete source code. Clearly explain how to run both services locally.
+
+Do not replace the requested stack with Firebase, Firestore, Express.js, MongoDB, Supabase, or another backend architecture without explicit authorization.
+
+---
+
+# 4. SYSTEM ARCHITECTURE
+
+Use a Modular Monolith architecture.
+
+Maintain clear separation between frontend, backend, database, and shared infrastructure.
+
+Recommended project structure:
+
+real-estate-erp/
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── router/
+│   │   │   ├── providers/
+│   │   │   └── layouts/
+│   │   │
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   ├── ui/
+│   │   │   ├── common/
+│   │   │   ├── forms/
+│   │   │   ├── tables/
+│   │   │   └── feedback/
+│   │   │
+│   │   ├── features/
+│   │   │   ├── auth/
+│   │   │   ├── dashboard/
+│   │   │   ├── projects/
+│   │   │   ├── inventory/
+│   │   │   ├── customers/
+│   │   │   ├── bookings/
+│   │   │   ├── collections/
+│   │   │   ├── complaints/
+│   │   │   └── reports/
+│   │   │
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   ├── lib/
+│   │   ├── utils/
+│   │   ├── constants/
+│   │   └── styles/
+│   │
+│   ├── .env.example
+│   ├── package.json
+│   └── vite.config.js
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── core/
+│   │   │   ├── config.py
+│   │   │   ├── security.py
+│   │   │   ├── permissions.py
+│   │   │   ├── database.py
+│   │   │   └── logging.py
+│   │   │
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       ├── router.py
+│   │   │       └── endpoints/
+│   │   │
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── repositories/
+│   │   ├── services/
+│   │   ├── dependencies/
+│   │   └── utils/
+│   │
+│   ├── alembic/
+│   ├── tests/
+│   ├── .env.example
+│   ├── requirements.txt
+│   └── alembic.ini
+│
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── DATABASE_SCHEMA.md
+│   ├── API_DOCUMENTATION.md
+│   ├── SETUP_GUIDE.md
+│   ├── USER_GUIDE.md
+│   └── DEPLOYMENT.md
+│
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+
+You may improve this structure when necessary, but preserve the architectural separation and modular organization.
+
+Do not create unnecessary folders, duplicate files, redundant abstractions, or giant components.
+
+---
+
+# 5. AUTHENTICATION AND USER MANAGEMENT
+
+Authentication is a foundational requirement.
+
+Implement:
+
+1. Employee login.
+2. Secure password hashing.
+3. JWT access tokens.
+4. Refresh token functionality.
+5. Logout.
+6. Current-user profile.
+7. Change password.
+8. Employee creation.
+9. Employee editing.
+10. Employee activation and deactivation.
+11. Role-based access control.
+
+Roles:
+
+ADMIN:
+- Full system access.
+- Manage employees and roles.
+- Access every module.
+- Manage all projects and inventory.
+- Access financial and operational reports.
+
+MANAGER:
+- Access operational modules.
+- Manage projects, inventory, customers, bookings, and complaints.
+- View financial summaries and reports.
+- Cannot change system administrator privileges.
+
+SALES EXECUTIVE:
+- View assigned projects and available inventory.
+- Manage assigned leads and customers.
+- Create and manage permitted bookings.
+- View relevant booking information.
+
+ACCOUNTANT:
+- View confirmed bookings.
+- Record and manage permitted collection entries.
+- View payment history.
+- Access collection reports.
+
+SUPPORT OFFICER:
+- View relevant customer records.
+- Create and manage customer complaints.
+- Update complaint status.
+
+Implement permissions on the backend, not just by hiding frontend buttons.
+
+Prevent inactive employees from accessing protected endpoints.
+
+Do not trust user-submitted role information.
+
+Create a secure initial administrator setup process. Never hardcode production credentials.
+
+---
+
+# 6. CORE MODULE REQUIREMENTS
+
+Build all eight modules completely.
+
+## MODULE 01 — DASHBOARD
+
+Create an operational overview of the entire company.
+
+Display:
+
+- Total projects.
+- Active projects.
+- Total inventory units.
+- Available units.
+- Reserved units.
+- Booked units.
+- Sold units.
+- Total customers.
+- Total leads.
+- Total bookings.
+- Total collected payments.
+- Pending collections.
+- Open complaints.
+
+Charts:
+
+1. Inventory status distribution.
+2. Monthly booking trends.
+3. Monthly collection trends.
+4. Project-wise inventory overview.
+5. Recent operational activities.
+
+Include:
+
+- Recent bookings.
+- Recent customer registrations.
+- Recent collections.
+- Recent complaints.
+- Important activity notifications.
+
+Requirements:
+- All figures must come from actual backend data.
+- Support date-based filtering where appropriate.
+- Respect user permissions.
+- Handle empty datasets.
+- Avoid hardcoded dashboard numbers.
+
+## MODULE 02 — PROJECT MANAGEMENT
+
+Allow authorized employees to manage real estate projects.
+
+Project fields:
+
+- Project name.
+- Project code.
+- Project description.
+- Project location.
+- Project address.
+- Project type.
+- Total land area (optional).
+- Number of buildings (optional).
+- Project start date (optional).
+- Expected completion date (optional).
+- Project status.
+- Project image (optional).
+- Created by.
+- Created date.
+- Updated date.
+
+Project statuses:
+
+- Planning
+- Active
+- On Hold
+- Completed
+- Cancelled
+
+Features:
+
+- Create project.
+- View project details.
+- Edit project.
+- Archive project when appropriate.
+- Search projects.
+- Filter by status.
+- Sort projects.
+- View associated inventory.
+- View project-wise booking statistics.
+- View project-wise collection summaries.
+
+Prevent deletion of projects that contain associated business records unless a safe archival procedure is used.
+
+## MODULE 03 — INVENTORY MANAGEMENT
+
+This is one of the most important modules.
+
+Manage individual property units under each project.
+
+Supported inventory types:
+
+- Apartment / Flat.
+- Residential Plot.
+- Commercial Space.
+- Office Space.
+- Shop.
+
+Inventory fields:
+
+- Unit ID.
+- Project ID.
+- Unit number.
+- Building name or block (optional).
+- Floor number (optional).
+- Unit type.
+- Bedrooms (optional).
+- Bathrooms (optional).
+- Size in square feet.
+- Facing or orientation (optional).
+- Base price.
+- Additional charges (optional).
+- Discount (optional).
+- Final selling price.
+- Description.
+- Inventory status.
+- Created date.
+- Updated date.
+
+Inventory statuses:
+
+1. Available
+2. Reserved
+3. Booked
+4. Sold
+5. Handover Complete
+6. Cancelled
+
+Features:
+
+- Create inventory units.
+- Edit inventory information.
+- View complete unit details.
+- Search by unit number.
+- Filter by project.
+- Filter by unit type.
+- Filter by price range.
+- Filter by size.
+- Filter by status.
+- Sort inventory.
+- View inventory availability.
+- View unit booking history.
+
+IMPORTANT INVENTORY BUSINESS RULES:
+
+- Every unit must belong to a valid project.
+- Unit identifiers must be unique within their project.
+- Sold units must not be available for new bookings.
+- Reserved and booked units must not be booked again.
+- A unit must not have multiple active bookings.
+- Inventory status changes must be handled through authorized business operations.
+- Maintain historical records when booking status changes.
+- Do not allow arbitrary status changes that violate booking or sales history.
+
+The system must preserve inventory consistency even when multiple employees attempt to book the same unit simultaneously.
+
+## MODULE 04 — CUSTOMER AND LEAD MANAGEMENT
+
+Build a basic CRM system.
+
+Customer information:
+
+- Customer ID.
+- Full name.
+- Phone number.
+- Email address (optional).
+- Address (optional).
+- Nationality (optional).
+- Occupation (optional).
+- Identification reference (optional).
+- Notes.
+- Assigned sales executive.
+- Created date.
+
+Do not require unnecessary sensitive identity documents or store full national ID information in the MVP.
+
+Lead management:
+
+Lead fields:
+
+- Lead ID.
+- Customer name.
+- Contact number.
+- Email.
+- Interested project.
+- Interested unit type.
+- Budget range.
+- Lead source.
+- Assigned employee.
+- Follow-up date.
+- Lead status.
+- Notes.
+
+Lead statuses:
+
+- New
+- Contacted
+- Interested
+- Qualified
+- Converted
+- Lost
+
+Features:
+
+- Add customers.
+- Edit customer information.
+- View customer profile.
+- Search by name, phone, or email.
+- Create leads.
+- Assign leads.
+- Update lead status.
+- Convert a lead into a customer.
+- View customer booking history.
+- View customer payment history.
+- View customer complaints.
+- Track basic follow-up information.
+
+Prevent accidental duplicate customer creation using sensible duplicate detection and confirmation.
+
+## MODULE 05 — BOOKING MANAGEMENT
+
+Implement a proper booking workflow with strong data integrity.
+
+Booking information:
+
+- Booking ID.
+- Booking reference number.
+- Customer ID.
+- Project ID.
+- Inventory unit ID.
+- Assigned sales executive.
+- Booking date.
+- Unit price at booking.
+- Discount.
+- Final agreed price.
+- Initial booking amount.
+- Payment method.
+- Booking status.
+- Notes.
+- Created by.
+- Created date.
+
+Booking statuses:
+
+- Pending
+- Confirmed
+- Cancelled
+
+Booking workflow:
+
+1. Authorized employee selects a project.
+2. System displays available inventory.
+3. Employee selects a customer.
+4. Employee selects an available property unit.
+5. System displays the property's pricing information.
+6. Employee enters booking details.
+7. Backend validates the booking.
+8. Backend creates the booking within a database transaction.
+9. Inventory becomes Reserved.
+10. After confirmation, inventory becomes Booked.
+11. The system records the relevant activity.
+12. Authorized employees can view the complete booking history.
+
+CANCELLATION WORKFLOW:
+
+- Only authorized employees can cancel a booking.
+- Cancellation must require a reason.
+- Cancelled bookings must remain in the database for historical records.
+- Inventory must be restored to Available when cancellation is valid.
+- Related collection records must not be silently deleted.
+- Any refund or financial adjustment must be explicitly recorded.
+- The system must prevent invalid cancellation of completed sales.
+
+CRITICAL CONCURRENCY REQUIREMENT:
+
+Use database transactions and appropriate row-level locking or equivalent concurrency control.
+
+If two employees attempt to book the same unit simultaneously, only one transaction may succeed.
+
+Never rely solely on frontend validation to prevent duplicate bookings.
+
+Maintain an auditable booking history.
+
+## MODULE 06 — BASIC COLLECTION MANAGEMENT
+
+This module handles manual payment recording.
+
+Do not build a complete accounting system.
+
+Collection fields:
+
+- Collection ID.
+- Collection reference.
+- Booking ID.
+- Customer ID.
+- Payment amount.
+- Payment date.
+- Payment method.
+- Transaction reference (optional).
+- Payment type.
+- Notes.
+- Recorded by.
+- Created date.
+
+Payment methods:
+
+- Cash
+- Bank Transfer
+- Cheque
+- Mobile Financial Service
+- Other
+
+Payment types:
+
+- Booking Payment
+- Partial Payment
+- Other Payment
+- Refund
+
+Features:
+
+- Record a collection.
+- View collection details.
+- Search collection records.
+- Filter by date.
+- Filter by customer.
+- Filter by booking.
+- Filter by payment method.
+- View customer payment history.
+- View booking-wise collection history.
+- Calculate total collected amount.
+- Calculate outstanding amount.
+- Generate collection summaries.
+
+FINANCIAL VALIDATION:
+
+- Payment amount must be positive for normal collection entries.
+- Validate payments against the booking's outstanding balance.
+- Prevent accidental overpayment unless explicitly supported and authorized.
+- Do not silently modify historical payment records.
+- Use a proper adjustment or reversal workflow for corrections.
+- Maintain an immutable audit trail for financial changes.
+- Do not count cancelled bookings as normal active sales.
+- Handle refunds separately from collections.
+- Never calculate financial totals using unreliable frontend-only state.
+
+For the MVP, outstanding balance is calculated from the agreed booking price and valid recorded collections.
+
+Do not implement automated installment schedules, recurring payment reminders, payroll, tax calculations, or full accounting.
+
+## MODULE 07 — CUSTOMER COMPLAINT MANAGEMENT
+
+Build a complaint tracking system.
+
+Complaint fields:
+
+- Complaint ID.
+- Complaint reference.
+- Customer ID.
+- Related project.
+- Related inventory unit (optional).
+- Complaint subject.
+- Complaint description.
+- Complaint category.
+- Priority.
+- Assigned employee.
+- Complaint status.
+- Resolution details.
+- Created date.
+- Updated date.
+- Resolved date.
+
+Complaint priorities:
+
+- Low
+- Medium
+- High
+- Critical
+
+Complaint statuses:
+
+- Open
+- In Progress
+- Resolved
+- Closed
+
+Features:
+
+- Create complaint.
+- View complaint details.
+- Assign complaint.
+- Update priority.
+- Update status.
+- Add resolution notes.
+- Search complaints.
+- Filter by status.
+- Filter by priority.
+- Filter by customer.
+- Filter by assigned employee.
+- View complaint history.
+
+Maintain timestamps and employee information for status changes.
+
+## MODULE 08 — BASIC REPORTS
+
+Build useful operational reports.
+
+Required reports:
+
+1. Project Overview Report.
+2. Inventory Status Report.
+3. Project-wise Inventory Report.
+4. Customer Report.
+5. Lead Status Report.
+6. Booking Report.
+7. Booking Cancellation Report.
+8. Collection Report.
+9. Outstanding Balance Report.
+10. Complaint Report.
+
+Report functionality:
+
+- Date range filtering.
+- Project filtering.
+- Status filtering.
+- Customer filtering where appropriate.
+- Search and sorting.
+- Pagination for large datasets.
+- Summary totals.
+- CSV export.
+
+All reports must use backend-generated data and calculations.
+
+Do not generate fake analytics.
+
+Ensure the user only sees reports they are authorized to access.
+
+---
+
+# 7. DATABASE DESIGN
+
+Design a normalized PostgreSQL relational database.
+
+At minimum, create these entities:
+
+1. employees
+2. roles
+3. permissions
+4. role_permissions
+5. projects
+6. inventory_units
+7. customers
+8. leads
+9. bookings
+10. collections
+11. complaints
+12. activity_logs
+13. booking_status_history
+14. inventory_status_history
+15. refresh_tokens
+
+You may add supporting tables when genuinely required.
+
+DATABASE RULES:
+
+- Use UUID identifiers.
+- Use foreign key relationships.
+- Use database-level constraints.
+- Add indexes for frequently searched fields.
+- Use unique booking references.
+- Use unique project codes.
+- Enforce unique inventory unit numbers within each project.
+- Use NUMERIC/DECIMAL for monetary values.
+- Never use floating-point numbers for financial calculations.
+- Store timestamps consistently in UTC.
+- Use appropriate date types for business dates.
+- Define deletion and archival behavior carefully.
+- Implement Alembic migrations.
+- Never modify the production database schema manually without migrations.
+
+Create a database schema document explaining the entities and relationships.
+
+---
+
+# 8. BACKEND DEVELOPMENT REQUIREMENTS
+
+Build a complete FastAPI REST API.
+
+Use API versioning:
+
+/api/v1/
+
+Organize endpoints by module.
+
+Example:
+
+/api/v1/auth/
+/api/v1/employees/
+/api/v1/projects/
+/api/v1/inventory/
+/api/v1/customers/
+/api/v1/leads/
+/api/v1/bookings/
+/api/v1/collections/
+/api/v1/complaints/
+/api/v1/reports/
+/api/v1/dashboard/
+
+For every module, implement appropriate:
+
+- Create endpoints.
+- Read/list endpoints.
+- Detail endpoints.
+- Update endpoints.
+- Delete or archive endpoints where appropriate.
+- Search.
+- Filtering.
+- Sorting.
+- Pagination.
+
+Follow HTTP conventions.
+
+Use appropriate status codes:
+
+- 200
+- 201
+- 204
+- 400
+- 401
+- 403
+- 404
+- 409
+- 422
+- 500
+
+Backend requirements:
+
+- Separate routers, schemas, models, repositories, and services.
+- Keep business logic out of route handlers.
+- Use dependency injection.
+- Validate all incoming data.
+- Handle exceptions consistently.
+- Implement structured logging.
+- Avoid N+1 database queries.
+- Use database transactions for critical workflows.
+- Protect sensitive endpoints.
+- Implement CORS correctly.
+- Add health-check endpoints.
+- Generate OpenAPI documentation.
+- Never expose stack traces or secrets to clients.
+
+Do not create a giant main.py file.
+
+---
+
+# 9. FRONTEND DEVELOPMENT REQUIREMENTS
+
+Build a complete professional ERP interface.
+
+Use a clean, modern, enterprise-grade design.
+
+DESIGN DIRECTION:
+
+- Professional real estate business application.
+- Premium, minimal and clean.
+- Neutral background.
+- White or light surfaces.
+- Restrained dark navy or charcoal accents.
+- Consistent typography.
+- Clear visual hierarchy.
+- Subtle borders and shadows.
+- Consistent spacing.
+- Professional data tables.
+- Functional charts.
+- Consistent iconography.
+- Avoid excessive gradients.
+- Avoid unnecessary animations.
+- Avoid generic AI-generated dashboard aesthetics.
+
+LAYOUT:
+
+Desktop:
+- Persistent left sidebar.
+- Top navigation bar.
+- Main content area.
+- Responsive tables.
+- Dashboard cards.
+- Proper page spacing.
+
+Sidebar navigation:
+
+1. Dashboard
+2. Projects
+3. Inventory
+4. Customers & Leads
+5. Bookings
+6. Collections
+7. Complaints
+8. Reports
+9. Employees (authorized users only)
+10. Settings
+
+Include:
+
+- User profile menu.
+- Logout.
+- Notification area.
+- Breadcrumb navigation.
+- Global search where appropriate.
+
+REUSABLE COMPONENTS:
+
+Create reusable components for:
+
+- Buttons.
+- Inputs.
+- Select fields.
+- Date pickers.
+- Modals.
+- Confirmation dialogs.
+- Dropdowns.
+- Status badges.
+- Data tables.
+- Pagination.
+- Search bars.
+- Filter panels.
+- Form layouts.
+- Empty states.
+- Loading skeletons.
+- Error states.
+- Toast notifications.
+
+Do not duplicate components across modules.
+
+FUNCTIONAL UI REQUIREMENTS:
+
+Every button must perform its intended action.
+
+Every form must validate its inputs.
+
+Every table must use actual API data.
+
+Every filter must affect displayed results.
+
+Every modal must open and close correctly.
+
+Every navigation item must lead to a functional page.
+
+Implement proper loading, empty, success, and error states.
+
+Do not use static arrays as permanent substitutes for backend data.
+
+Do not leave placeholder pages pretending to be completed features.
+
+RESPONSIVE DESIGN:
+
+Support:
+- Desktop.
+- Laptop.
+- Tablet.
+- Mobile.
+
+The desktop experience should be optimized for daily ERP operations, but mobile users must still be able to access essential functions.
+
+---
+
+# 10. SECURITY REQUIREMENTS
+
+Security is mandatory.
+
+Implement:
+
+- Secure password hashing.
+- JWT access and refresh token handling.
+- Refresh token rotation and revocation.
+- Backend authorization.
+- Input validation.
+- SQL injection protection through ORM and safe queries.
+- CORS restrictions.
+- Environment-based configuration.
+- Safe error handling.
+- Rate limiting on sensitive authentication endpoints.
+- Secure file upload validation if file uploads are implemented.
+- Protection against unauthorized resource access.
+- Audit logging for sensitive operations.
+- Employee deactivation checks.
+- Secure production cookie and token handling.
+
+Never:
+
+- Hardcode secrets.
+- Commit .env files.
+- Store plaintext passwords.
+- Trust frontend role information.
+- Expose private financial data to unauthorized users.
+- Allow employees to access resources outside their permissions.
+- Log passwords, tokens, or unnecessary sensitive information.
+
+---
+
+# 11. AUDIT LOGGING AND BUSINESS DATA INTEGRITY
+
+Create a centralized activity logging mechanism.
+
+Record important actions, including:
+
+- Employee creation and deactivation.
+- Project creation and updates.
+- Inventory status changes.
+- Customer creation and updates.
+- Booking creation and cancellation.
+- Collection recording and reversal.
+- Complaint assignment and status changes.
+- Permission changes.
+
+Each log should include:
+
+- Employee ID.
+- Action.
+- Entity type.
+- Entity ID.
+- Timestamp.
+- Relevant change metadata, excluding secrets and sensitive personal data.
+
+Financial and booking records must maintain historical integrity.
+
+Never silently erase important business history.
+
+---
+
+# 12. TESTING REQUIREMENTS
+
+Do not consider the project complete merely because the frontend builds successfully.
+
+BACKEND TESTING:
+
+Use pytest.
+
+Test:
+
+- Authentication.
+- Authorization.
+- Employee permissions.
+- Project CRUD.
+- Inventory CRUD.
+- Customer CRUD.
+- Lead workflows.
+- Booking creation.
+- Duplicate booking prevention.
+- Booking cancellation.
+- Inventory restoration.
+- Collection validation.
+- Outstanding balance calculations.
+- Complaint workflows.
+- Report calculations.
+
+Include tests for concurrent booking attempts where practical.
+
+FRONTEND TESTING:
+
+Use Vitest and React Testing Library.
+
+Test:
+
+- Component rendering.
+- Form validation.
+- Navigation.
+- Authentication states.
+- API error handling.
+- Permission-based UI.
+- Important booking workflows.
+
+INTEGRATION TESTING:
+
+Verify that frontend actions communicate with actual backend endpoints.
+
+Verify that database records persist after application restarts.
+
+Verify that unauthorized requests are rejected.
+
+Verify that the complete booking and collection workflows work.
+
+Run:
+
+- Frontend build.
+- Frontend tests.
+- Backend tests.
+- Migration checks.
+- API integration tests.
+
+Fix failures before reporting completion.
+
+Do not claim tests passed unless they were actually executed.
+
+---
+
+# 13. ERROR HANDLING AND RELIABILITY
+
+Implement centralized error handling.
+
+Handle:
+
+- Network failures.
+- Database connection failures.
+- Validation errors.
+- Unauthorized access.
+- Forbidden access.
+- Duplicate records.
+- Concurrent booking conflicts.
+- Missing resources.
+- Invalid business operations.
+- Expired sessions.
+
+Provide understandable user-facing error messages.
+
+Do not hide errors with empty catch blocks.
+
+Do not silently ignore failed API requests.
+
+Use proper database rollback behavior when transactions fail.
+
+---
+
+# 14. PERFORMANCE AND MAINTAINABILITY
+
+Build for maintainability rather than unnecessary complexity.
+
+Requirements:
+
+- Modular architecture.
+- Reusable components.
+- Reusable backend services.
+- Efficient database queries.
+- Pagination.
+- Search optimization.
+- Appropriate database indexes.
+- API response consistency.
+- Clean imports.
+- No circular dependencies.
+- No duplicated business logic.
+- No unused dependencies.
+- No dead code.
+- No unnecessary abstractions.
+- No oversized components or files.
+
+Avoid premature microservices architecture.
+
+A modular monolith is the required architecture for this MVP.
+
+---
+
+# 15. DEPLOYMENT AND CONFIGURATION
+
+Prepare the application for deployment.
+
+Include:
+
+- Frontend production build.
+- FastAPI production configuration.
+- PostgreSQL connection configuration.
+- Alembic migration commands.
+- Environment variable examples.
+- Dockerfiles.
+- Docker Compose configuration.
+- Health checks.
+- Production logging.
+- CORS configuration.
+- Database backup instructions.
+- Database restoration instructions.
+
+Prepare deployment documentation for:
+
+- Local development.
+- Frontend hosting.
+- FastAPI backend hosting.
+- PostgreSQL hosting.
+- Production environment variables.
+- Database migrations.
+- Backup and restore.
+
+Do not assume that a successful preview means production deployment is complete.
+
+Keep secrets out of source code and GitHub.
+
+---
+
+# 16. SAMPLE DATA AND INITIAL SETUP
+
+Provide a controlled development seed system.
+
+Include realistic sample records for:
+
+- Projects.
+- Inventory units.
+- Customers.
+- Leads.
+- Bookings.
+- Collections.
+- Complaints.
+
+Development sample data must be clearly distinguishable from production records.
+
+Provide a secure initial administrator creation command or setup procedure.
+
+Never create an undocumented default production password.
+
+---
+
+# 17. DOCUMENTATION
+
+Generate complete documentation.
+
+README.md:
+- Project introduction.
+- Technology stack.
+- Features.
+- Architecture overview.
+- Setup instructions.
+- Run instructions.
+- Testing instructions.
+- Deployment overview.
+
+ARCHITECTURE.md:
+- System architecture.
+- Frontend structure.
+- Backend structure.
+- Module relationships.
+- Data flow.
+
+DATABASE_SCHEMA.md:
+- All database entities.
+- Fields.
+- Relationships.
+- Constraints.
+- Indexes.
+
+API_DOCUMENTATION.md:
+- All endpoints.
+- HTTP methods.
+- Request schemas.
+- Response schemas.
+- Authentication requirements.
+- Permission requirements.
+- Error responses.
+
+SETUP_GUIDE.md:
+- Python environment setup.
+- Node.js setup.
+- PostgreSQL setup.
+- Environment configuration.
+- Database migrations.
+- Running the application.
+
+USER_GUIDE.md:
+- Login.
+- Dashboard usage.
+- Project management.
+- Inventory management.
+- Customer management.
+- Booking workflow.
+- Collection management.
+- Complaint management.
+- Reporting.
+
+DEPLOYMENT.md:
+- Production setup.
+- Environment variables.
+- Hosting.
+- Database backups.
+- Restore procedure.
+
+---
+
+# 18. DEVELOPMENT EXECUTION STRATEGY
+
+Do not generate an entire application as disconnected files without checking dependencies and integration.
+
+Work systematically.
+
+PHASE 1 — PROJECT FOUNDATION
+
+- Initialize frontend and backend.
+- Configure dependencies.
+- Establish project structure.
+- Configure PostgreSQL.
+- Configure environment variables.
+- Configure SQLAlchemy.
+- Configure Alembic.
+- Create initial database migrations.
+- Configure API communication.
+- Create the base frontend layout.
+
+PHASE 2 — AUTHENTICATION AND ACCESS CONTROL
+
+- Employee model.
+- Roles and permissions.
+- Password hashing.
+- Login.
+- JWT access tokens.
+- Refresh tokens.
+- Logout.
+- Protected routes.
+- Backend permission enforcement.
+- Employee management.
+
+PHASE 3 — PROJECT AND INVENTORY
+
+- Project CRUD.
+- Inventory CRUD.
+- Project-inventory relationships.
+- Inventory filtering.
+- Inventory status management.
+- Inventory history.
+
+PHASE 4 — CUSTOMER AND LEAD MANAGEMENT
+
+- Customer CRUD.
+- Lead CRUD.
+- Lead assignment.
+- Lead status management.
+- Lead conversion.
+- Customer history.
+
+PHASE 5 — BOOKING MANAGEMENT
+
+- Booking creation.
+- Unit reservation.
+- Booking confirmation.
+- Booking cancellation.
+- Inventory synchronization.
+- Duplicate booking protection.
+- Booking history.
+
+PHASE 6 — COLLECTION MANAGEMENT
+
+- Payment recording.
+- Payment validation.
+- Collection history.
+- Outstanding balance calculations.
+- Reversal and adjustment workflows.
+- Collection summaries.
+
+PHASE 7 — COMPLAINT MANAGEMENT
+
+- Complaint creation.
+- Assignment.
+- Priority management.
+- Status updates.
+- Resolution history.
+
+PHASE 8 — DASHBOARD AND REPORTS
+
+- Dashboard metrics.
+- Charts.
+- Operational summaries.
+- Reports.
+- Filtering.
+- CSV export.
+
+PHASE 9 — INTEGRATION AND QUALITY ASSURANCE
+
+- Connect every frontend module to its backend.
+- Verify every API endpoint.
+- Test all CRUD operations.
+- Test role permissions.
+- Test booking concurrency.
+- Test collection calculations.
+- Fix broken navigation.
+- Fix UI issues.
+- Fix backend errors.
+- Remove duplicate code.
+- Run all automated tests.
+
+PHASE 10 — FINALIZATION
+
+- Complete documentation.
+- Prepare production configuration.
+- Verify migrations.
+- Prepare backups and restoration instructions.
+- Verify production builds.
+- Provide the final project status report.
+
+---
+
+# 19. CRITICAL DEVELOPMENT RULES
+
+These instructions take priority throughout development.
+
+1. Build a real application, not a visual mockup.
+
+2. Do not generate fake API responses as a substitute for the backend.
+
+3. Do not use localStorage as the primary database.
+
+4. Do not replace PostgreSQL with browser storage.
+
+5. Do not replace FastAPI with Node.js or Express.
+
+6. Do not replace React with another frontend framework.
+
+7. Do not use TypeScript.
+
+8. Do not omit any of the eight agreed modules.
+
+9. Do not create unnecessary features outside the agreed MVP.
+
+10. Do not duplicate components, services, schemas, or business logic.
+
+11. Do not create multiple files with overlapping responsibilities.
+
+12. Do not put all application logic in a single file.
+
+13. Do not leave nonfunctional buttons.
+
+14. Do not use fake dashboard statistics.
+
+15. Do not bypass backend validation.
+
+16. Do not implement permissions exclusively in the frontend.
+
+17. Do not allow duplicate bookings.
+
+18. Do not delete historical financial or booking records.
+
+19. Do not introduce unnecessary dependencies.
+
+20. Do not break previously implemented functionality when modifying existing files.
+
+21. Inspect existing files before changing them.
+
+22. Reuse existing working components and services where appropriate.
+
+23. Keep frontend and backend API contracts consistent.
+
+24. Run relevant tests after each significant implementation phase.
+
+25. Never report a feature as complete unless it has actually been implemented and verified.
+
+26. If a requirement cannot be implemented, explain the limitation and provide the remaining work rather than pretending it is complete.
+
+27. Do not ask unnecessary questions when a requirement is already defined in this specification. Use sensible, documented defaults for minor implementation decisions.
+
+28. Do not stop after generating the initial dashboard or project structure.
+
+29. Continue until all eight modules, integration, testing, and documentation are implemented.
+
+30. Maintain a development progress tracker throughout the project.
+
+---
+
+# 20. DEVELOPMENT PROGRESS TRACKER
+
+Maintain a file named:
+
+docs/DEVELOPMENT_PROGRESS.md
+
+Track:
+
+- Current phase.
+- Completed features.
+- In-progress features.
+- Pending features.
+- Frontend completion.
+- Backend completion.
+- Database completion.
+- Integration completion.
+- Test results.
+- Known issues.
+- Next implementation tasks.
+
+Use the following status values:
+
+- NOT STARTED
+- IN PROGRESS
+- IMPLEMENTED
+- VERIFIED
+- BLOCKED
+
+IMPORTANT:
+
+IMPLEMENTED does not mean VERIFIED.
+
+A feature can only be marked VERIFIED after its implementation and relevant tests have been checked.
+
+Update the tracker after each major development phase.
+
+---
+
+# 21. FINAL ACCEPTANCE CRITERIA
+
+The project is considered complete only when all the following conditions are satisfied:
+
+[ ] React frontend is implemented.
+
+[ ] FastAPI backend is implemented.
+
+[ ] PostgreSQL database is connected.
+
+[ ] Database migrations work.
+
+[ ] Authentication works.
+
+[ ] Role-based authorization works.
+
+[ ] Employee management works.
+
+[ ] Project management works.
+
+[ ] Inventory management works.
+
+[ ] Customer management works.
+
+[ ] Lead management works.
+
+[ ] Booking management works.
+
+[ ] Duplicate bookings are prevented.
+
+[ ] Booking cancellation restores valid inventory availability.
+
+[ ] Collection management works.
+
+[ ] Financial calculations are validated.
+
+[ ] Complaint management works.
+
+[ ] Dashboard displays actual database information.
+
+[ ] All required reports work.
+
+[ ] CSV export works.
+
+[ ] All frontend modules communicate with the backend.
+
+[ ] All critical business operations are tested.
+
+[ ] No known critical security vulnerabilities remain.
+
+[ ] No major broken navigation or nonfunctional controls remain.
+
+[ ] Frontend production build succeeds.
+
+[ ] Backend starts successfully.
+
+[ ] Database backup and restore procedures are documented.
+
+[ ] Documentation is complete.
+
+[ ] Development progress tracker is updated.
+
+---
+
+# 22. YOUR FIRST ACTION
+
+Before generating the application:
+
+1. Read and understand the entire specification.
+2. Identify the complete architecture.
+3. Design the database relationships.
+4. Establish the frontend and backend directory structures.
+5. Identify the dependencies between modules.
+6. Create an implementation plan.
+7. Identify technical risks and critical business rules.
+8. Begin implementation immediately.
+
+Do not spend the entire response describing what you intend to build.
+
+Start creating the actual application files.
+
+Generate real source code, connect the modules, execute available checks, and progressively complete the system.
+
+If the development environment imposes execution or context limitations, continue from the existing project state in subsequent iterations. Never regenerate the entire project unnecessarily.
+
+At every stage, preserve working code and verify new changes.
+
+## FINAL OBJECTIVE
+
+Deliver a complete, maintainable, secure, functional, end-to-end Real Estate ERP application using:
+
+- React.js + Vite + JavaScript
+- Tailwind CSS
+- Python + FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Alembic
+- JWT authentication
+- Modular Monolith architecture
+
+The finished application must be suitable as a serious real-world MVP, not merely a student-level UI demonstration.
+
+Prioritize correctness, data integrity, clean architecture, security, usability, and maintainability.
+
+**Start building the complete project now.**
